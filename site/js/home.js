@@ -30,7 +30,7 @@ const platform = /android/i.test(ua)
 const titles = {
     android: ["Скачать для Android", "downloads/DarkPrinceVPN.apk"],
     ios: ["Установить для iPhone", "https://apps.apple.com/app/id6756943388"],
-    windows: ["Скачать для Windows", "downloads/DarkPrinceVPN-windows.zip"],
+    windows: ["Скачать для Windows", "downloads/DarkPrinceVPN-setup.exe"],
     linux: ["Как подключить на Linux", "#install"],
 };
 if (platform) {

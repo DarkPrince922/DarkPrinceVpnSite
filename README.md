@@ -62,13 +62,31 @@ Certbot сам допишет в конфиг 443-й порт, пути к се�
 ### 5. Положить приложения
 
 ```bash
-sudo cp DarkPrinceVPN.apk           /srv/darkprince/site/downloads/
-sudo cp DarkPrinceVPN-windows.zip   /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN.apk        /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN-setup.exe  /srv/darkprince/site/downloads/
 ```
 
 Имена файлов должны быть именно такими — на них ссылаются кнопки. Версию и
 размер, которые показываются под кнопками, поправьте в
-`site/downloads.json`: это единственное место, где они записаны.
+`site/downloads.json`: это единственное место, где они записаны, и оно же
+перебивает адрес, зашитый в вёрстку.
+
+Клиент для Windows лежит в релизах своего репозитория — сервер забирает его
+оттуда сам:
+
+```bash
+REL=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
+
+sudo curl -fSL "$REL/v1.0.0/DarkPrinceVPN-1.0.0-setup.exe" \
+     -o /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
+
+sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
+```
+
+Имя файла на сайте намеренно без версии: ссылка тогда не меняется от релиза
+к релизу, а версия показывается из `downloads.json`. Последняя строка печатает
+контрольную сумму — её стоит сверить с указанной в описании релиза: так видно,
+что файл доехал целиком, а не оборвался на середине.
 
 ## Что проверить после запуска
 
