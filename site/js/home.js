@@ -38,10 +38,6 @@ if (platform) {
     const main = $("#mainDownload");
     main.textContent = text;
     main.href = href;
-    const others = Object.keys(titles).filter((key) => key !== platform);
-    $("#altLinks").innerHTML = others
-        .map((key) => `<a href="${titles[key][1]}">${titles[key][0]}</a>`)
-        .join(" · ");
 
     // и инструкцию сразу открываем на нужной вкладке
     $$(".tabs button").find((b) => b.dataset.tab === platform)?.click();

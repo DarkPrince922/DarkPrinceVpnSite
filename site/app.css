@@ -410,9 +410,8 @@ hr.divider {
     padding: 15px 30px;
 }
 
-.dl-alt {
-    justify-content: center;
-    margin-top: 16px;
+.dl-hint {
+    margin-top: 14px;
 }
 
 .platform {
@@ -429,6 +428,8 @@ hr.divider {
 .platform .size {
     color: var(--muted);
     font-size: 12px;
+    /* подпись не должна липнуть к кнопке */
+    margin: 12px 0 0;
 }
 
 .features {

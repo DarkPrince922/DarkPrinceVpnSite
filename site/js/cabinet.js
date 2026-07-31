@@ -956,8 +956,14 @@ async function renderMore(force = false) {
             el("span", { class: "k", text: "Telegram" }),
             el("span", { text: user?.username ? `@${user.username}` : (user?.telegram_id ? String(user.telegram_id) : "—") }),
         ]),
-        el("div", { class: "row", style: "margin-top:14px" }, [
+        el("div", { class: "row wrap-row", style: "margin-top:14px" }, [
             el("a", { class: "btn btn-sm", href: "/" }, "Скачать приложения"),
+            el("a", {
+                class: "btn btn-sm",
+                href: "https://t.me/skzfeee",
+                target: "_blank",
+                rel: "noopener",
+            }, "Поддержка"),
             el("button", {
                 class: "btn-sm",
                 onclick: () => $("#logoutButton").click(),
