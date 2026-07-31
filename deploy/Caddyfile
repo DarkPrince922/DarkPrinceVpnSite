@@ -4,7 +4,7 @@
 # Замените домен на свой и, если API кабинета слушает другой адрес,
 # поправьте reverse_proxy.
 
-darkprince.space, www.darkprince.space {
+dprince.online, www.dprince.online {
 	encode zstd gzip
 	root * /srv/darkprince/site
 

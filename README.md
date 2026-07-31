@@ -22,51 +22,42 @@
 Ставится на тот сервер, где работает бот с кабинетом: тогда API доступен
 по `127.0.0.1` и наружу вообще не выходит.
 
-### 1. Положить файлы
+### 1. Направить домен
+
+A-запись `dprince.online` — на IP сервера. Сертификат выпустится только после
+того, как DNS разойдётся; проверить: `getent hosts dprince.online`.
+
+### 2. Положить файлы
 
 ```bash
 sudo mkdir -p /srv/darkprince
-sudo git clone <адрес-репозитория> /srv/darkprince
+sudo git clone https://github.com/DarkPrince922/DarkPrinceVpnSite.git /srv/darkprince
 ```
 
 Обновлять потом: `sudo git -C /srv/darkprince pull`.
 
-### 2. Узнать, на каком порту слушает кабинет
+### 3. Подключить к nginx
 
-Кабинет — это веб-часть бота Bedolaga. Посмотреть можно так:
-
-```bash
-sudo ss -tlnp | grep -i python
-```
-
-Обычно это `8080`. Если у вас другой порт — поправьте его в конфиге из
-следующего шага (строка `reverse_proxy` в Caddyfile или `proxy_pass` в nginx).
-
-### 3. Поднять веб-сервер
-
-**Если 80 и 443 порты свободны** — проще всего Caddy, он сам получит
-сертификат:
+На сервере уже есть nginx — им отдаётся кабинет. Добавляем ещё один сайт:
 
 ```bash
-sudo docker compose -f /srv/darkprince/deploy/docker-compose.yml up -d
-```
-
-Перед этим замените в `deploy/Caddyfile` домен `darkprince.space` на свой.
-
-**Если на сервере уже есть nginx** (например, им отдаётся кабинет) — возьмите
-готовый файл:
-
-```bash
-sudo cp /srv/darkprince/deploy/nginx.conf /etc/nginx/sites-available/darkprince.space
-sudo ln -s /etc/nginx/sites-available/darkprince.space /etc/nginx/sites-enabled/
-sudo certbot --nginx -d darkprince.space -d www.darkprince.space
+sudo cp /srv/darkprince/deploy/nginx.conf /etc/nginx/sites-available/dprince.online
+sudo ln -s /etc/nginx/sites-available/dprince.online /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-### 4. Направить домен
+### 4. Выпустить сертификат
 
-A-запись домена (и `www`) — на IP сервера. Сертификат выпускается только
-после того, как DNS обновится.
+```bash
+sudo certbot --nginx -d dprince.online
+```
+
+Certbot сам допишет в конфиг 443-й порт, пути к сертификату и переадресацию
+с http. Конфиг из репозитория специально начинается только с 80-го порта:
+с `listen 443` до выпуска сертификата nginx бы не запустился.
+
+Если API кабинета когда-нибудь переедет с 8080 — поправить нужно строку
+`proxy_pass` в том же файле.
 
 ### 5. Положить приложения
 
