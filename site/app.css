@@ -240,6 +240,11 @@ a {
     }
 }
 
+/* платформ четыре, и их число ещё может измениться — раскладку считает браузер */
+.grid.auto {
+    grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+}
+
 button,
 .btn {
     display: inline-flex;

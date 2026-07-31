@@ -14,16 +14,22 @@ $$(".tabs button").forEach((button) => {
 
 // какая система у гостя — ту кнопку и показываем главной
 const ua = navigator.userAgent;
+// iPadOS 13+ представляется маком, отличаем по сенсорному экрану
+const isIos = /iphone|ipad|ipod/i.test(ua)
+    || (/macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
 const platform = /android/i.test(ua)
     ? "android"
-    : /windows/i.test(ua)
-        ? "windows"
-        : /linux|x11/i.test(ua) && !/android/i.test(ua)
-            ? "linux"
-            : null;
+    : isIos
+        ? "ios"
+        : /windows/i.test(ua)
+            ? "windows"
+            : /linux|x11/i.test(ua)
+                ? "linux"
+                : null;
 
 const titles = {
     android: ["Скачать для Android", "downloads/DarkPrinceVPN.apk"],
+    ios: ["Установить для iPhone", "https://apps.apple.com/app/id6756943388"],
     windows: ["Скачать для Windows", "downloads/DarkPrinceVPN-windows.zip"],
     linux: ["Как подключить на Linux", "#install"],
 };
@@ -36,6 +42,9 @@ if (platform) {
     $("#altLinks").innerHTML = others
         .map((key) => `<a href="${titles[key][1]}">${titles[key][0]}</a>`)
         .join(" · ");
+
+    // и инструкцию сразу открываем на нужной вкладке
+    $$(".tabs button").find((b) => b.dataset.tab === platform)?.click();
 }
 
 // версии и размеры файлов лежат в отдельном файле: обновить сборку —

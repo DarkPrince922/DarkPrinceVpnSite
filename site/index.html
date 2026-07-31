@@ -4,14 +4,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DarkPrince VPN — быстрый VPN для Android, Windows и Linux</title>
+    <title>DarkPrince VPN — быстрый VPN для Android, iPhone, Windows и Linux</title>
     <meta name="description"
-        content="Приложения DarkPrince VPN для Android, Windows и Linux. Скачайте, войдите и подключайтесь — без настроек и ограничений скорости.">
+        content="Приложения DarkPrince VPN для Android, iPhone, Windows и Linux. Скачайте, войдите и подключайтесь — без настроек и ограничений скорости.">
     <meta name="theme-color" content="#0a0e17">
     <link rel="icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="app.css">
     <meta property="og:title" content="DarkPrince VPN">
-    <meta property="og:description" content="Приложения для Android, Windows и Linux. Без настроек и ограничений скорости.">
+    <meta property="og:description" content="Приложения для Android, iPhone, Windows и Linux. Без настроек и ограничений скорости.">
     <meta property="og:image" content="assets/logo.png">
     <meta property="og:type" content="website">
 </head>
@@ -49,7 +49,7 @@
 
         <section class="wrap" id="downloads">
             <h2 class="section-title">Приложения</h2>
-            <div class="grid cols-3">
+            <div class="grid auto">
                 <div class="card platform">
                     <span class="icon">🤖</span>
                     <h3>Android</h3>
@@ -67,6 +67,17 @@
                     <a class="btn btn-primary btn-block" id="dlWindows"
                         href="downloads/DarkPrinceVPN-windows.zip">Скачать для Windows</a>
                     <p class="size" id="verWindows">&nbsp;</p>
+                </div>
+
+                <div class="card platform">
+                    <span class="icon">🍏</span>
+                    <h3>iPhone и iPad</h3>
+                    <p class="small muted">Своего приложения в App Store пока нет — подключение
+                        через INCY, бесплатный клиент из App Store. Ссылку возьмёте в кабинете.</p>
+                    <a class="btn btn-primary btn-block" id="dlIos"
+                        href="https://apps.apple.com/app/id6756943388" target="_blank"
+                        rel="noopener">Установить INCY</a>
+                    <p class="size">App Store · iOS 15 и новее</p>
                 </div>
 
                 <div class="card platform">
@@ -108,6 +119,7 @@
             <div class="card">
                 <div class="tabs" role="tablist">
                     <button role="tab" aria-selected="true" data-tab="android">Android</button>
+                    <button role="tab" aria-selected="false" data-tab="ios">iPhone</button>
                     <button role="tab" aria-selected="false" data-tab="windows">Windows</button>
                     <button role="tab" aria-selected="false" data-tab="linux">Linux</button>
                 </div>
@@ -120,6 +132,20 @@
                         покупали подписку у бота, всё подтянется само.</li>
                     <li><b>Нажмите кнопку подключения</b> и разрешите создание VPN-профиля. Это
                         системный запрос Android, он появится один раз.</li>
+                </ol>
+
+                <ol class="steps hidden" data-panel="ios">
+                    <li><b>Установите INCY</b> из <a href="https://apps.apple.com/app/id6756943388"
+                            target="_blank" rel="noopener">App Store</a>. Приложение бесплатное. Если
+                        в вашем App Store его не видно, переключите страну аккаунта — приложение
+                        доступно не во всех регионах.</li>
+                    <li><b>Скопируйте ссылку подписки</b> в <a href="/cabinet.html">личном
+                            кабинете</a>, раздел «Подключение». Там же есть QR-код — его можно
+                        отсканировать с другого устройства.</li>
+                    <li><b>В INCY откройте подписки</b> и добавьте новую по ссылке: приложение
+                        принимает ссылку из буфера обмена и QR-код. Список серверов подтянется сам.</li>
+                    <li><b>Выберите сервер и подключитесь.</b> iOS один раз спросит разрешение на
+                        добавление VPN-конфигурации — его нужно дать.</li>
                 </ol>
 
                 <ol class="steps hidden" data-panel="windows">
@@ -153,10 +179,12 @@
 
         <section class="wrap" id="linux" style="padding-bottom:40px">
             <div class="card">
-                <h3>Почему для Linux нет своего приложения</h3>
-                <p class="small muted">Честно: мы его пока не написали. Но подписка — обычный
-                    стандартный формат, поэтому подойдёт любой популярный клиент, и работать он
-                    будет ровно так же. Инструкция — на вкладке «Linux» выше.</p>
+                <h3>Почему для iPhone и Linux нет своих приложений</h3>
+                <p class="small muted">Честно: под Linux мы его пока не написали, а для App Store
+                    нужен платный аккаунт разработчика Apple — мы этим занимаемся. Но подписка у
+                    нас в обычном стандартном формате, поэтому подойдёт любой популярный клиент, и
+                    работать он будет ровно так же: те же серверы, та же скорость, тот же лимит
+                    устройств. Инструкции — на вкладках выше.</p>
             </div>
         </section>
     </main>
