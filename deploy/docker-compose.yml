@@ -1,0 +1,24 @@
+# Запуск сайта одной командой, если на сервере нет своего веб-сервера:
+#
+#   docker compose -f deploy/docker-compose.yml up -d
+#
+# network_mode: host нужен, чтобы Caddy достучался до API кабинета на
+# 127.0.0.1 самого сервера — из обычной сети контейнера этот адрес указывал бы
+# на сам контейнер.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: darkprince-site
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../site:/srv/darkprince/site:ro
+      - caddy-data:/data
+      - caddy-config:/config
+      - /var/log/caddy:/var/log/caddy
+
+volumes:
+  caddy-data:
+  caddy-config:

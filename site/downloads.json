@@ -1,0 +1,14 @@
+{
+  "android": {
+    "file": "downloads/DarkPrinceVPN.apk",
+    "version": "1.2.1",
+    "size": "26 МБ",
+    "date": "31.07.2026"
+  },
+  "windows": {
+    "file": "downloads/DarkPrinceVPN-windows.zip",
+    "version": "1.0.0",
+    "size": "90 МБ",
+    "date": "31.07.2026"
+  }
+}

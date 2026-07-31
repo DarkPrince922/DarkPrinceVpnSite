@@ -1,0 +1,53 @@
+# Вариант для сервера, где 80 и 443 порты свободны. Caddy сам получает и
+# продлевает сертификат Let's Encrypt — ничего настраивать не нужно.
+#
+# Замените домен на свой и, если API кабинета слушает другой адрес,
+# поправьте reverse_proxy.
+
+darkprince.space, www.darkprince.space {
+	encode zstd gzip
+	root * /srv/darkprince/site
+
+	# API кабинета. Наружу торчит только этот домен: браузер ходит на
+	# /api/cabinet/..., а сервер переносит запрос боту. Поэтому не нужен CORS,
+	# адрес кабинета не виден в исходниках страницы и не блокируется отдельно.
+	handle /api/* {
+		uri strip_prefix /api
+		reverse_proxy 127.0.0.1:8080 {
+			header_up X-Forwarded-For {remote_host}
+		}
+	}
+
+	# Файлы приложений — большие, отдаём с докачкой и просим не кэшировать долго
+	@downloads path /downloads/*
+	header @downloads {
+		Cache-Control "public, max-age=300"
+		Content-Disposition attachment
+	}
+
+	handle {
+		try_files {path} {path}/ {path}.html =404
+		file_server
+	}
+
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		Strict-Transport-Security "max-age=31536000"
+		# скрипты только свои: страница не подгружает ничего со стороны
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+	}
+
+	log {
+		output file /var/log/caddy/darkprince.log
+		# без IP и user-agent: это VPN-сервис, лишние следы ни к чему
+		format filter {
+			wrap console
+			fields {
+				request>remote_ip delete
+				request>headers>User-Agent delete
+			}
+		}
+	}
+}

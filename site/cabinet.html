@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Личный кабинет — DarkPrince VPN</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#0a0e17">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body>
+    <div class="blobs">
+        <div class="blob a"></div>
+        <div class="blob b"></div>
+        <div class="blob c"></div>
+    </div>
+
+    <header class="top">
+        <div class="wrap">
+            <a class="brand" href="/">
+                <img src="assets/logo.png" alt="">
+                <span>DarkPrince <i>VPN</i></span>
+            </a>
+            <div class="spacer"></div>
+            <span class="chip gold hidden" id="balanceChip">—</span>
+            <button class="btn-sm btn-ghost hidden" id="logoutButton">Выйти</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ================= ВХОД ================= -->
+        <section class="auth-wrap" id="authView">
+            <div class="card">
+                <h2 id="authTitle" style="text-align:center">Вход в кабинет</h2>
+                <p class="small muted" style="text-align:center">
+                    Если вы покупали подписку у бота — входите через Telegram,
+                    всё подтянется само.
+                </p>
+
+                <div id="authMessage" class="msg hidden"></div>
+
+                <button class="primary btn-block" id="telegramButton">Войти через Telegram</button>
+
+                <hr class="divider">
+                <p class="section-title" style="text-align:center">или по почте</p>
+
+                <form id="emailForm">
+                    <label class="field">
+                        <span>E-mail</span>
+                        <input type="email" id="emailInput" autocomplete="email" required>
+                    </label>
+                    <label class="field">
+                        <span>Пароль</span>
+                        <input type="password" id="passwordInput" autocomplete="current-password"
+                            minlength="6" required>
+                    </label>
+                    <label class="field hidden" id="referralField">
+                        <span>Реферальный код (необязательно)</span>
+                        <input type="text" id="referralInput" autocomplete="off">
+                    </label>
+                    <button class="btn-block" id="emailSubmit" type="submit">Войти</button>
+                </form>
+
+                <div class="row" style="margin-top:12px;justify-content:space-between">
+                    <button class="btn-sm btn-ghost" id="toggleRegister">Нет аккаунта? Регистрация</button>
+                    <button class="btn-sm btn-ghost" id="forgotButton">Забыли пароль?</button>
+                </div>
+            </div>
+
+            <p class="tiny muted" style="text-align:center;margin-top:16px">
+                <a href="/">← На главную</a>
+            </p>
+        </section>
+
+        <!-- ================= КАБИНЕТ ================= -->
+        <section class="wrap hidden" id="appView" style="padding-top:22px;padding-bottom:48px">
+            <div class="tab-bar" role="tablist">
+                <button role="tab" data-tab="sub" aria-selected="true">Подписка</button>
+                <button role="tab" data-tab="plans" aria-selected="false">Тарифы</button>
+                <button role="tab" data-tab="balance" aria-selected="false">Баланс</button>
+                <button role="tab" data-tab="devices" aria-selected="false">Устройства</button>
+                <button role="tab" data-tab="more" aria-selected="false">Ещё</button>
+            </div>
+
+            <div id="panelSub" data-tabpanel="sub"></div>
+            <div id="panelPlans" data-tabpanel="plans" class="hidden"></div>
+            <div id="panelBalance" data-tabpanel="balance" class="hidden"></div>
+            <div id="panelDevices" data-tabpanel="devices" class="hidden"></div>
+            <div id="panelMore" data-tabpanel="more" class="hidden"></div>
+        </section>
+    </main>
+
+    <script src="js/qrcode.js"></script>
+    <script type="module" src="js/cabinet.js"></script>
+</body>
+
+</html>

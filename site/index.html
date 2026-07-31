@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DarkPrince VPN — быстрый VPN для Android, Windows и Linux</title>
+    <meta name="description"
+        content="Приложения DarkPrince VPN для Android, Windows и Linux. Скачайте, войдите и подключайтесь — без настроек и ограничений скорости.">
+    <meta name="theme-color" content="#0a0e17">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="app.css">
+    <meta property="og:title" content="DarkPrince VPN">
+    <meta property="og:description" content="Приложения для Android, Windows и Linux. Без настроек и ограничений скорости.">
+    <meta property="og:image" content="assets/logo.png">
+    <meta property="og:type" content="website">
+</head>
+
+<body>
+    <div class="blobs">
+        <div class="blob a"></div>
+        <div class="blob b"></div>
+        <div class="blob c"></div>
+    </div>
+
+    <header class="top">
+        <div class="wrap">
+            <a class="brand" href="/">
+                <img src="assets/logo.png" alt="">
+                <span>DarkPrince <i>VPN</i></span>
+            </a>
+            <div class="spacer"></div>
+            <a class="btn btn-sm" href="/cabinet.html">Личный кабинет</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero wrap">
+            <img class="hero-logo" src="assets/logo.png" alt="DarkPrince VPN">
+            <h1>Интернет без границ<br>на всех ваших устройствах</h1>
+            <p class="lead">
+                Своё приложение для телефона и компьютера: скачали, вошли, нажали одну кнопку.
+                Без ручной настройки конфигов, без ограничений скорости и без счётчика трафика
+                там, где он не нужен.
+            </p>
+            <a class="btn btn-primary dl-main" id="mainDownload" href="#downloads">Скачать приложение</a>
+            <div class="row dl-alt small muted" id="altLinks"></div>
+        </section>
+
+        <section class="wrap" id="downloads">
+            <h2 class="section-title">Приложения</h2>
+            <div class="grid cols-3">
+                <div class="card platform">
+                    <span class="icon">🤖</span>
+                    <h3>Android</h3>
+                    <p class="small muted">Телефоны и планшеты, Android 8 и новее. Есть выбор
+                        приложений для VPN и кнопка в шторке.</p>
+                    <a class="btn btn-primary btn-block" id="dlAndroid" href="downloads/DarkPrinceVPN.apk">Скачать APK</a>
+                    <p class="size" id="verAndroid">&nbsp;</p>
+                </div>
+
+                <div class="card platform">
+                    <span class="icon">🪟</span>
+                    <h3>Windows</h3>
+                    <p class="small muted">Windows 10 и 11. Два режима: системный прокси без прав
+                        администратора и полный туннель для всех программ.</p>
+                    <a class="btn btn-primary btn-block" id="dlWindows"
+                        href="downloads/DarkPrinceVPN-windows.zip">Скачать для Windows</a>
+                    <p class="size" id="verWindows">&nbsp;</p>
+                </div>
+
+                <div class="card platform">
+                    <span class="icon">🐧</span>
+                    <h3>Linux</h3>
+                    <p class="small muted">Своего приложения пока нет — подключение через любой
+                        клиент с поддержкой подписки. Ссылку возьмёте в кабинете.</p>
+                    <a class="btn btn-block" href="#linux">Как подключить</a>
+                    <p class="size">Nekoray, v2rayA, Hiddify</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="wrap features">
+            <div class="grid cols-3">
+                <div class="card feature">
+                    <span class="icon">⚡</span>
+                    <h3>Скорость без потолка</h3>
+                    <p class="small muted">Современные протоколы поверх обычного HTTPS-трафика:
+                        провайдер видит только защищённое соединение.</p>
+                </div>
+                <div class="card feature">
+                    <span class="icon">🧩</span>
+                    <h3>Выбор приложений</h3>
+                    <p class="small muted">На Android можно пустить через VPN только нужные
+                        приложения, а банки и доставку оставить напрямую.</p>
+                </div>
+                <div class="card feature">
+                    <span class="icon">👥</span>
+                    <h3>Одна подписка — несколько устройств</h3>
+                    <p class="small muted">Телефон, компьютер и ноутбук работают одновременно,
+                        устройствами можно управлять в кабинете.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="wrap" id="install">
+            <h2 class="section-title">Как начать</h2>
+            <div class="card">
+                <div class="tabs" role="tablist">
+                    <button role="tab" aria-selected="true" data-tab="android">Android</button>
+                    <button role="tab" aria-selected="false" data-tab="windows">Windows</button>
+                    <button role="tab" aria-selected="false" data-tab="linux">Linux</button>
+                </div>
+
+                <ol class="steps" data-panel="android">
+                    <li><b>Скачайте APK</b> кнопкой выше. Android спросит разрешение на установку
+                        из этого источника — его нужно дать: приложения нет в Google Play, и это
+                        нормально для VPN.</li>
+                    <li><b>Установите и откройте.</b> Войдите через Telegram — если вы уже
+                        покупали подписку у бота, всё подтянется само.</li>
+                    <li><b>Нажмите кнопку подключения</b> и разрешите создание VPN-профиля. Это
+                        системный запрос Android, он появится один раз.</li>
+                </ol>
+
+                <ol class="steps hidden" data-panel="windows">
+                    <li><b>Скачайте архив</b> и, прежде чем распаковывать, откройте его свойства —
+                        если внизу есть галочка «Разблокировать», поставьте её. Иначе Windows
+                        пометит все файлы как «из интернета».</li>
+                    <li><b>Распакуйте в отдельную папку</b> целиком: рядом с программой должна
+                        лежать папка <span class="mono">core</span>.</li>
+                    <li><b>Запустите от имени администратора</b>, если нужен режим полного
+                        туннеля. Для режима системного прокси прав администратора не требуется.</li>
+                    <li>При первом запуске Windows покажет предупреждение SmartScreen — программа
+                        не подписана сертификатом. Нажмите «Подробнее» → «Выполнить в любом
+                        случае».</li>
+                </ol>
+
+                <ol class="steps hidden" data-panel="linux">
+                    <li><b>Установите клиент</b> с поддержкой подписок: <a
+                            href="https://github.com/Mahdi-zarei/nekoray/releases" target="_blank"
+                            rel="noopener">Nekoray</a>, <a href="https://github.com/v2rayA/v2rayA"
+                            target="_blank" rel="noopener">v2rayA</a> или <a
+                            href="https://github.com/hiddify/hiddify-app/releases" target="_blank"
+                            rel="noopener">Hiddify</a>. Любой из них подойдёт.</li>
+                    <li><b>Скопируйте ссылку подписки</b> в личном кабинете — раздел «Подключение».</li>
+                    <li><b>Добавьте её в клиент</b> как подписку (Subscription / Профиль по URL) и
+                        обновите список серверов.</li>
+                    <li><b>Выберите сервер и подключитесь.</b> Список серверов обновляется сам,
+                        когда мы что-то меняем на нашей стороне.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="wrap" id="linux" style="padding-bottom:40px">
+            <div class="card">
+                <h3>Почему для Linux нет своего приложения</h3>
+                <p class="small muted">Честно: мы его пока не написали. Но подписка — обычный
+                    стандартный формат, поэтому подойдёт любой популярный клиент, и работать он
+                    будет ровно так же. Инструкция — на вкладке «Linux» выше.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bottom">
+        <div class="wrap">
+            <a href="/cabinet.html">Личный кабинет</a>
+            <a href="/privacy.html">Конфиденциальность</a>
+            <a href="/terms.html">Условия</a>
+            <p class="tiny" style="margin-top:12px">© <span id="year"></span> DarkPrince VPN</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/home.js"></script>
+</body>
+
+</html>
