@@ -1,0 +1,53 @@
+name: Site check
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: site-check-${{ github.ref }}
+  cancel-in-progress: true
+
+# Обычный commit status виден и в PR, и в GitHub-коннекторе.
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check JavaScript syntax
+        run: find site/js -name '*.js' -print0 | xargs -0 -n1 node --check
+
+      - name: Check site files and links
+        run: python3 scripts/check-site.py
+
+      - name: Publish site status
+        if: ${{ always() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_RESULT: ${{ job.status }}
+        run: |
+          if [ "$CHECK_RESULT" = "success" ]; then
+            STATE="success"
+            DESCRIPTION="Site files and JavaScript passed validation"
+          else
+            STATE="failure"
+            DESCRIPTION="Site validation failed"
+          fi
+          gh api --method POST \
+            "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state="$STATE" \
+            -f context="Site check" \
+            -f description="$DESCRIPTION" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"

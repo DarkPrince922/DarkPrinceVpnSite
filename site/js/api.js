@@ -146,12 +146,13 @@ export async function request(path, { method = "GET", body, query, raw = false }
 
     const send = async (token) => {
         const headers = {};
-        if (body !== undefined) headers["Content-Type"] = "application/json";
+        const isForm = typeof FormData !== "undefined" && body instanceof FormData;
+        if (body !== undefined && !isForm) headers["Content-Type"] = "application/json";
         if (token) headers.Authorization = `Bearer ${token}`;
         return fetch(url, {
             method,
             headers,
-            body: body === undefined ? undefined : JSON.stringify(body),
+            body: body === undefined ? undefined : (isForm ? body : JSON.stringify(body)),
         });
     };
 
@@ -255,6 +256,37 @@ export const api = {
     transactions: (page = 1) => get("cabinet/balance/transactions", { page, per_page: 20 }),
     checkPending: (method, paymentId) =>
         post(`cabinet/balance/pending-payments/${encodeURIComponent(method)}/${encodeURIComponent(paymentId)}/check`, {}),
+
+    // --- техподдержка ---
+    supportConfig: () => get("cabinet/info/support-config"),
+    supportTickets: (page = 1) =>
+        get("cabinet/tickets", { page, per_page: 100 }),
+    createSupportTicket: (title, message, media) =>
+        post("cabinet/tickets", {
+            title,
+            message,
+            media_type: media?.media_type,
+            media_file_id: media?.file_id,
+            media_caption: media && message ? message : undefined,
+        }),
+    supportTicket: (ticketId) =>
+        get(`cabinet/tickets/${encodeURIComponent(ticketId)}`),
+    replySupportTicket: (ticketId, message, media) =>
+        post(`cabinet/tickets/${encodeURIComponent(ticketId)}/messages`, {
+            message,
+            media_type: media?.media_type,
+            media_file_id: media?.file_id,
+            media_caption: media && message ? message : undefined,
+        }),
+    supportUnreadCount: () => get("cabinet/tickets/notifications/unread-count"),
+    markSupportTicketRead: (ticketId) =>
+        post(`cabinet/tickets/notifications/ticket/${encodeURIComponent(ticketId)}/read`, {}),
+    uploadSupportMedia: (file, mediaType) => {
+        const form = new FormData();
+        form.append("file", file, file.name || "attachment");
+        form.append("media_type", mediaType);
+        return request("cabinet/media/upload", { method: "POST", body: form });
+    },
 
     // --- прочее ---
     referral: () => get("cabinet/referral"),
