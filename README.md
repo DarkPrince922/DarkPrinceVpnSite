@@ -79,7 +79,7 @@ sudo cp DarkPrinceVPN.pkg.tar.zst  /srv/darkprince/site/downloads/
 WIN=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
 LIN=https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases/download
 
-sudo curl -fSL "$WIN/v1.0.0/DarkPrinceVPN-1.0.0-setup.exe" \
+sudo curl -fSL "$WIN/v1.1.0/DarkPrinceVPN-1.1.0-setup.exe" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
 
 sudo curl -fSL "$LIN/v1.1.0/DarkPrinceVPN-1.1.0-x86_64.pkg.tar.zst" \
@@ -93,6 +93,10 @@ sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
 учёт системы, в отличие от AppImage, который просто лежал файлом. AppImage и
 `.deb` для остальных дистрибутивов остаются в релизах — на них ведёт ссылка в
 инструкции на главной.
+
+Версии в командах — те, что лежат в релизах на момент правки; подставляйте
+свежие. Пакет `.pkg.tar.zst` собирается начиная с первого релиза Linux-клиента
+после этого изменения: в v1.1.0 его ещё нет, там только AppImage и `.deb`.
 
 Имя файла на сайте намеренно без версии: ссылка тогда не меняется от релиза
 к релизу, а версия показывается из `downloads.json`. Последняя строка печатает
