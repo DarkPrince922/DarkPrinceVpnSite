@@ -31,7 +31,7 @@ const titles = {
     android: ["Скачать для Android", "downloads/DarkPrinceVPN.apk"],
     ios: ["Установить для iPhone", "https://apps.apple.com/app/id6756943388"],
     windows: ["Скачать для Windows", "downloads/DarkPrinceVPN-setup.exe"],
-    linux: ["Как подключить на Linux", "#install"],
+    linux: ["Скачать для Linux", "downloads/DarkPrinceVPN.AppImage"],
 };
 if (platform) {
     const [text, href] = titles[platform];
@@ -52,6 +52,7 @@ try {
         for (const [key, node, link] of [
             ["android", $("#verAndroid"), $("#dlAndroid")],
             ["windows", $("#verWindows"), $("#dlWindows")],
+            ["linux", $("#verLinux"), $("#dlLinux")],
         ]) {
             const item = data[key];
             if (!item) continue;

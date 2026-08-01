@@ -83,10 +83,11 @@
                 <div class="card platform">
                     <span class="icon">🐧</span>
                     <h3>Linux</h3>
-                    <p class="small muted">Своего приложения пока нет — подключение через любой
-                        клиент с поддержкой подписки. Ссылку возьмёте в кабинете.</p>
-                    <a class="btn btn-block" href="#linux">Как подключить</a>
-                    <p class="size">Nekoray, v2rayA, Hiddify</p>
+                    <p class="small muted">Своё приложение: те же два режима, что в Windows.
+                        AppImage запускается без установки, для Arch есть сборка пакета.</p>
+                    <a class="btn btn-primary btn-block" id="dlLinux"
+                        href="downloads/DarkPrinceVPN.AppImage">Скачать для Linux</a>
+                    <p class="size" id="verLinux">&nbsp;</p>
                 </div>
             </div>
         </section>
@@ -164,12 +165,22 @@
                 </ol>
 
                 <ol class="steps hidden" data-panel="linux">
-                    <li><b>Установите клиент</b> с поддержкой подписок: <a
+                    <li><b>Запустите AppImage.</b> Скачали — сделайте файл исполняемым
+                        (<span class="mono">chmod +x</span> или свойства файла → «Разрешить
+                        выполнение») и запускайте. Ставить ничего не нужно.</li>
+                    <li><b>Или соберите пакет на Arch</b>, тогда файлы попадут под учёт pacman:
+                        <span class="mono">git clone</span> репозитория, затем
+                        <span class="mono">cd packaging &amp;&amp; makepkg -si</span>.</li>
+                    <li><b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте.</li>
+                    <li><b>Выберите режим.</b> «Прокси» работает без пароля и настраивает прокси
+                        рабочего стола. «Весь трафик» перехватывает всё, включая консольные
+                        программы, — система один раз спросит пароль.</li>
+                    <li><b>Не хотите наше приложение?</b> Подписка в обычном формате, подойдёт <a
                             href="https://github.com/Mahdi-zarei/nekoray/releases" target="_blank"
                             rel="noopener">Nekoray</a>, <a href="https://github.com/v2rayA/v2rayA"
                             target="_blank" rel="noopener">v2rayA</a> или <a
                             href="https://github.com/hiddify/hiddify-app/releases" target="_blank"
-                            rel="noopener">Hiddify</a>. Любой из них подойдёт.</li>
+                            rel="noopener">Hiddify</a>. Ссылку возьмёте в кабинете.</li>
                     <li><b>Скопируйте ссылку подписки</b> в личном кабинете — раздел «Подключение».</li>
                     <li><b>Добавьте её в клиент</b> как подписку (Subscription / Профиль по URL) и
                         обновите список серверов.</li>
@@ -181,12 +192,12 @@
 
         <section class="wrap" id="linux" style="padding-bottom:40px">
             <div class="card">
-                <h3>Почему для iPhone и Linux нет своих приложений</h3>
-                <p class="small muted">Честно: под Linux мы его пока не написали, а для App Store
-                    нужен платный аккаунт разработчика Apple — мы этим занимаемся. Но подписка у
-                    нас в обычном стандартном формате, поэтому подойдёт любой популярный клиент, и
-                    работать он будет ровно так же: те же серверы, та же скорость, тот же лимит
-                    устройств. Инструкции — на вкладках выше.</p>
+                <h3>Почему для iPhone нет своего приложения</h3>
+                <p class="small muted">Честно: для App Store нужен платный аккаунт разработчика
+                    Apple — мы этим занимаемся. Но подписка у нас в обычном стандартном формате,
+                    поэтому подойдёт любой популярный клиент, и работать он будет ровно так же:
+                    те же серверы, та же скорость, тот же лимит устройств. Инструкция — на вкладке
+                    выше.</p>
             </div>
         </section>
     </main>

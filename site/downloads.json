@@ -7,8 +7,14 @@
   },
   "windows": {
     "file": "downloads/DarkPrinceVPN-setup.exe",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "size": "19 МБ",
-    "date": "31.07.2026"
+    "date": "01.08.2026"
+  },
+  "linux": {
+    "file": "downloads/DarkPrinceVPN.AppImage",
+    "version": "1.1.0",
+    "size": "95 МБ",
+    "date": "01.08.2026"
   }
 }
