@@ -93,18 +93,23 @@ sudo cp DarkPrinceVPN.AppImage     /srv/darkprince/site/downloads/
 ```bash
 WIN=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
 LIN=https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases/download
+AND=https://github.com/DarkPrince922/Androidvpnapp/releases/download
 
-sudo curl -fSL "$WIN/v1.1.0/DarkPrinceVPN-1.1.0-setup.exe" \
+sudo curl -fSL "$AND/v1.2.3/DarkPrinceVPN-1.2.3.apk" \
+     -o /srv/darkprince/site/downloads/DarkPrinceVPN.apk
+
+sudo curl -fSL "$WIN/v1.1.1/DarkPrinceVPN-1.1.1-setup.exe" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
 
-sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-x86_64.pkg.tar.zst" \
+sudo curl -fSL "$LIN/v1.1.2/DarkPrinceVPN-1.1.2-x86_64.pkg.tar.zst" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
-sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-amd64.deb" \
+sudo curl -fSL "$LIN/v1.1.2/DarkPrinceVPN-1.1.2-amd64.deb" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.deb
-sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-x86_64.AppImage" \
+sudo curl -fSL "$LIN/v1.1.2/DarkPrinceVPN-1.1.2-x86_64.AppImage" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.AppImage
 
-sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
+sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN.apk \
+          /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
           /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst \
           /srv/darkprince/site/downloads/DarkPrinceVPN.deb \
           /srv/darkprince/site/downloads/DarkPrinceVPN.AppImage
@@ -116,15 +121,13 @@ sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
 собираются в релизах и лежат там же, где сборки:
 
 ```bash
-AND=https://github.com/DarkPrince922/Androidvpnapp/releases/download
-
 sudo mkdir -p /srv/darkprince/site/updates
 
 sudo curl -fSL "$WIN/v1.1.1/windows-x86_64.json" \
      -o /srv/darkprince/site/updates/windows-x86_64.json
 sudo curl -fSL "$LIN/v1.1.2/linux-x86_64.json" \
      -o /srv/darkprince/site/updates/linux-x86_64.json
-sudo curl -fSL "$AND/v1.2.2/android.json" \
+sudo curl -fSL "$AND/v1.2.3/android.json" \
      -o /srv/darkprince/site/updates/android.json
 ```
 
