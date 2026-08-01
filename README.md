@@ -82,7 +82,7 @@ LIN=https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases/download
 sudo curl -fSL "$WIN/v1.1.0/DarkPrinceVPN-1.1.0-setup.exe" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
 
-sudo curl -fSL "$LIN/v1.1.0/DarkPrinceVPN-1.1.0-x86_64.pkg.tar.zst" \
+sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-x86_64.pkg.tar.zst" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
 
 sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
@@ -95,8 +95,8 @@ sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
 инструкции на главной.
 
 Версии в командах — те, что лежат в релизах на момент правки; подставляйте
-свежие. Пакет `.pkg.tar.zst` собирается начиная с первого релиза Linux-клиента
-после этого изменения: в v1.1.0 его ещё нет, там только AppImage и `.deb`.
+свежие. Пакет `.pkg.tar.zst` появился в релизе Linux-клиента v1.1.1: в более
+старых лежат только AppImage и `.deb`.
 
 Имя файла на сайте намеренно без версии: ссылка тогда не меняется от релиза
 к релизу, а версия показывается из `downloads.json`. Последняя строка печатает
