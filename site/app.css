@@ -205,7 +205,9 @@ a {
 /* ---------- элементы ---------- */
 
 .card {
-    background: var(--surface);
+    background:
+        linear-gradient(165deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 45%),
+        var(--surface);
     border: 1px solid var(--outline);
     border-radius: var(--radius);
     padding: 18px;
@@ -213,6 +215,12 @@ a {
 
 .card + .card {
     margin-top: 14px;
+}
+
+/* в сетке расстояние задаёт gap: без этого каждая карточка, кроме первой,
+   съезжала вниз на высоту отступа и ряд переставал быть рядом */
+.grid > .card + .card {
+    margin-top: 0;
 }
 
 .row {
@@ -260,7 +268,8 @@ button,
     padding: 11px 18px;
     cursor: pointer;
     text-decoration: none;
-    transition: border-color 0.15s, background 0.15s, opacity 0.15s;
+    transition: border-color 0.15s, background 0.15s, opacity 0.15s,
+        box-shadow 0.2s, transform 0.12s;
 }
 
 button:hover,
@@ -276,16 +285,30 @@ button:disabled {
 
 .btn-primary,
 button.primary {
-    background: var(--gold);
+    background: linear-gradient(180deg, #ddb972, var(--gold));
     border-color: var(--gold);
     color: #17130a;
     font-weight: 600;
+    box-shadow: 0 6px 18px -10px rgba(207, 170, 98, 0.9);
 }
 
 .btn-primary:hover,
 button.primary:hover {
-    background: #dfbb72;
+    background: linear-gradient(180deg, #ecc885, #dfbb72);
     border-color: #dfbb72;
+    box-shadow: 0 10px 24px -10px rgba(207, 170, 98, 0.95);
+}
+
+button:active,
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* обводка только для клавиатуры: мышью её никто видеть не хочет */
+:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 10px;
 }
 
 .btn-ghost {
@@ -403,6 +426,8 @@ hr.divider {
     height: 96px;
     border-radius: 24px;
     margin-bottom: 22px;
+    /* мягкое золотое свечение вместо жёсткого края на тёмном фоне */
+    filter: drop-shadow(0 12px 28px rgba(207, 170, 98, 0.28));
 }
 
 .dl-main {
@@ -419,10 +444,19 @@ hr.divider {
     text-align: left;
 }
 
-.platform .icon {
-    font-size: 26px;
-    margin-bottom: 10px;
-    display: block;
+/* эмодзи в плитке: на тёмном фоне голый значок висел в пустоте */
+.platform .icon,
+.feature .icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    line-height: 1;
+    border-radius: 12px;
+    border: 1px solid var(--outline);
+    background: linear-gradient(160deg, rgba(207, 170, 98, 0.16), rgba(94, 139, 255, 0.08));
+    margin-bottom: 12px;
 }
 
 .platform .size {
@@ -436,11 +470,6 @@ hr.divider {
     padding: 20px 0 48px;
 }
 
-.feature .icon {
-    font-size: 22px;
-    display: block;
-    margin-bottom: 8px;
-}
 
 .steps {
     counter-reset: step;
@@ -790,4 +819,137 @@ footer.bottom a {
 .picker .mono {
     word-break: normal;
     overflow-wrap: anywhere;
+}
+
+/* ---------- движение ---------- */
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Появление блоков при прокрутке. Класс вешает JS; без него всё видно сразу,
+   поэтому страница не пропадает ни без скриптов, ни при ошибке загрузки. */
+.reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+
+.reveal.shown {
+    opacity: 1;
+    transform: none;
+}
+
+/* карточки ряда выходят по очереди, а не все разом */
+.reveal:nth-child(2) {
+    transition-delay: 0.07s;
+}
+
+.reveal:nth-child(3) {
+    transition-delay: 0.14s;
+}
+
+.reveal:nth-child(4) {
+    transition-delay: 0.21s;
+}
+
+/* приподнимаются только карточки главной: в кабинете это списки,
+   и там подпрыгивание при наведении только мешает */
+.platform,
+.feature {
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.platform:hover,
+.feature:hover {
+    border-color: var(--gold-dim);
+    transform: translateY(-3px);
+    box-shadow: 0 18px 34px -24px rgba(0, 0, 0, 0.95);
+}
+
+header.top {
+    transition: box-shadow 0.25s, background 0.25s;
+}
+
+header.top.scrolled {
+    background: rgba(10, 14, 23, 0.9);
+    box-shadow: 0 10px 30px -22px rgba(0, 0, 0, 1);
+}
+
+/* вкладки инструкций: подмена содержимого без рывка */
+.steps:not(.hidden) {
+    animation: panel-in 0.28s ease both;
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.picker[open] {
+    animation: picker-in 0.22s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+.picker[open]::backdrop {
+    animation: fade-in 0.22s ease both;
+}
+
+@keyframes picker-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+/* Уважаем системную настройку: выключаем всё, что двигается, включая плавную
+   прокрутку — от неё у части людей кружится голова. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .reveal,
+    .reveal.shown {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .platform:hover,
+    .feature:hover {
+        transform: none;
+    }
+
+    .steps:not(.hidden),
+    .picker[open],
+    .picker[open]::backdrop {
+        animation: none;
+    }
+
+    button:active,
+    .btn:active {
+        transform: none;
+    }
+}
+
+/* ---------- мелочи ---------- */
+
+::selection {
+    background: rgba(207, 170, 98, 0.3);
+}
+
+footer.bottom a {
+    transition: color 0.15s;
+}
+
+footer.bottom a:hover {
+    color: var(--gold);
 }

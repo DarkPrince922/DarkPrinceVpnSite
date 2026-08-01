@@ -2,6 +2,35 @@ import { $, $$ } from "./ui.js";
 
 $("#year").textContent = new Date().getFullYear();
 
+const calmly = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Шапка отделяется от страницы только когда под ней что-то проехало.
+const header = $("header.top");
+const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 8);
+addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+// Появление блоков при прокрутке.
+//
+// Класс .reveal прячет элемент, поэтому вешаем его из скрипта и только на то,
+// что сейчас ниже экрана: иначе первый экран успел бы отрисоваться и моргнуть,
+// а без JS страница осталась бы пустой.
+if (!calmly && "IntersectionObserver" in window) {
+    const watcher = new IntersectionObserver((entries, self) => {
+        for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("shown");
+            self.unobserve(entry.target);
+        }
+    }, { rootMargin: "0px 0px -10% 0px" });
+
+    for (const node of $$(".platform, .feature, #install .card, #linux .card")) {
+        if (node.getBoundingClientRect().top < innerHeight) continue;
+        node.classList.add("reveal");
+        watcher.observe(node);
+    }
+}
+
 // вкладки инструкций
 $$(".tabs button").forEach((button) => {
     button.addEventListener("click", () => {
