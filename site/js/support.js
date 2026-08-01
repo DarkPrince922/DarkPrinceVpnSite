@@ -2,8 +2,8 @@
 // Браузерный WebSocket не умеет передать обязательный Authorization-заголовок,
 // поэтому открытый диалог обновляется коротким REST-опросом.
 
-import { api, session, ApiError } from "./api.js";
-import { $, el, clear, message, busy } from "./ui.js";
+import { api, session, ApiError } from "./api.js?v=20260801-2";
+import { $, el, clear, message, busy } from "./ui.js?v=20260801-2";
 
 const DEFAULT_SUPPORT_URL = "https://t.me/skzfeee";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
