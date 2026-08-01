@@ -12,9 +12,21 @@
     "date": "01.08.2026"
   },
   "linux": {
-    "file": "downloads/DarkPrinceVPN.pkg.tar.zst",
     "version": "1.1.1",
-    "size": "27 МБ",
-    "date": "01.08.2026"
+    "date": "01.08.2026",
+    "builds": {
+      "arch": {
+        "file": "downloads/DarkPrinceVPN.pkg.tar.zst",
+        "size": "27 МБ"
+      },
+      "deb": {
+        "file": "downloads/DarkPrinceVPN.deb",
+        "size": "29 МБ"
+      },
+      "appimage": {
+        "file": "downloads/DarkPrinceVPN.AppImage",
+        "size": "101 МБ"
+      }
+    }
   }
 }

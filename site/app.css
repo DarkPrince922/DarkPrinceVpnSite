@@ -705,3 +705,89 @@ footer.bottom a {
         background-position: -200% 0;
     }
 }
+
+/* ---------- выбор сборки для Linux ---------- */
+
+.picker {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--outline);
+    border-radius: var(--radius);
+    padding: 18px;
+    width: min(94vw, 480px);
+    /* у dialog свои поля по умолчанию, центрируем сами */
+    margin: auto;
+}
+
+.picker::backdrop {
+    background: rgba(6, 9, 16, 0.72);
+    backdrop-filter: blur(3px);
+}
+
+.picker-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.picker-head h3 {
+    margin: 0;
+    flex: 1;
+}
+
+.picker-close {
+    padding: 4px 10px;
+    line-height: 1.2;
+}
+
+.picker-list {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+}
+
+.picker-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--outline);
+}
+
+.picker-list li > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.picker-list b {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.picker-list p {
+    margin: 0;
+}
+
+/* кнопка не должна ужиматься под длинным названием дистрибутива */
+.picker-list .btn {
+    flex: none;
+    white-space: nowrap;
+}
+
+.picker-foot {
+    margin: 14px 0 0;
+}
+
+@media (max-width: 460px) {
+    .picker-list li {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* .mono режет слова в любом месте ради длинных ссылок в кабинете; внутри
+   фразы это читается как опечатка, поэтому здесь переносим по-обычному */
+.picker .mono {
+    word-break: normal;
+    overflow-wrap: anywhere;
+}

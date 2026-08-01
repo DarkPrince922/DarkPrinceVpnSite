@@ -65,6 +65,8 @@ Certbot сам допишет в конфиг 443-й порт, пути к се�
 sudo cp DarkPrinceVPN.apk          /srv/darkprince/site/downloads/
 sudo cp DarkPrinceVPN-setup.exe    /srv/darkprince/site/downloads/
 sudo cp DarkPrinceVPN.pkg.tar.zst  /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN.deb          /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN.AppImage     /srv/darkprince/site/downloads/
 ```
 
 Имена файлов должны быть именно такими — на них ссылаются кнопки. Версию и
@@ -84,15 +86,21 @@ sudo curl -fSL "$WIN/v1.1.0/DarkPrinceVPN-1.1.0-setup.exe" \
 
 sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-x86_64.pkg.tar.zst" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
+sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-amd64.deb" \
+     -o /srv/darkprince/site/downloads/DarkPrinceVPN.deb
+sudo curl -fSL "$LIN/v1.1.1/DarkPrinceVPN-1.1.1-x86_64.AppImage" \
+     -o /srv/darkprince/site/downloads/DarkPrinceVPN.AppImage
 
 sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
-          /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
+          /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst \
+          /srv/darkprince/site/downloads/DarkPrinceVPN.deb \
+          /srv/darkprince/site/downloads/DarkPrinceVPN.AppImage
 ```
 
-Для Linux сайт отдаёт пакет Arch: он ставится через `pacman -U` и попадает под
-учёт системы, в отличие от AppImage, который просто лежал файлом. AppImage и
-`.deb` для остальных дистрибутивов остаются в релизах — на них ведёт ссылка в
-инструкции на главной.
+Для Linux сайт отдаёт три сборки: кнопка открывает окно с выбором
+дистрибутива. Нужны все три файла — если какой-то не положить, соответствующая
+строчка в окне даст 404. Размеры у сборок разные, поэтому в `downloads.json`
+у Linux общая версия и свой размер у каждой сборки.
 
 Версии в командах — те, что лежат в релизах на момент правки; подставляйте
 свежие. Пакет `.pkg.tar.zst` появился в релизе Linux-клиента v1.1.1: в более
