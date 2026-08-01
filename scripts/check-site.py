@@ -66,7 +66,10 @@ for html in sorted(SITE.glob("*.html")):
 for script in sorted((SITE / "js").glob("*.js")):
     source = script.read_text(encoding="utf-8")
     for match in finditer(r'(?:from\s+|import\s*)["\'](\.[^"\']+)["\']', source):
-        target = (script.parent / match.group(1)).resolve()
+        # Query-параметр меняется при выкладке, чтобы мобильный браузер не
+        # смешивал новую HTML-страницу со старым модулем из кеша.
+        import_path = urlsplit(match.group(1)).path
+        target = (script.parent / import_path).resolve()
         if not target.exists():
             errors.append(f"{script}: не найден импорт {match.group(1)!r}")
 

@@ -1,13 +1,13 @@
 // Личный кабинет: вход, подписка, тарифы, баланс, устройства, поддержка.
 
-import { api, session, ApiError, asArray, parseTariffs, parsePaymentMethods } from "./api.js";
+import { api, session, ApiError, asArray, parseTariffs, parsePaymentMethods } from "./api.js?v=20260801-2";
 import {
     $, $$, el, clear, rubles, plural, daysWord, daysUntil, dateText, periodText, gb,
     copy, message, busy, qrNode,
-} from "./ui.js";
+} from "./ui.js?v=20260801-2";
 import {
     renderSupport, deactivateSupport, startSupportUnreadPolling,
-} from "./support.js";
+} from "./support.js?v=20260801-2";
 
 const state = {
     subscriptions: [],
