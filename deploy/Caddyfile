@@ -25,6 +25,19 @@ dprince.online, www.dprince.online {
 		Content-Disposition attachment
 	}
 
+	# Манифест обновлений спрашивают сами приложения. Закешированный манифест
+	# означает молчащее обновление при полностью рабочем коде.
+	@manifest path /updates.json
+	header @manifest Cache-Control "no-store"
+
+	# Всё остальное — разметка, стили, скрипты. Они меняются вместе и без
+	# версий в именах, поэтому браузеру нельзя давать решать самому: без
+	# заголовка обновление сайта доезжает до людей когда попало. no-cache не
+	# запрещает хранить файл, а требует переспросить — не изменился, значит
+	# прилетит пустой 304.
+	@nocache not path /downloads/* /updates.json /api/*
+	header @nocache Cache-Control "no-cache"
+
 	handle {
 		try_files {path} {path}/ {path}.html =404
 		file_server
