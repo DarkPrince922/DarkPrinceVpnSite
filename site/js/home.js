@@ -31,7 +31,7 @@ const titles = {
     android: ["Скачать для Android", "downloads/DarkPrinceVPN.apk"],
     ios: ["Установить для iPhone", "https://apps.apple.com/app/id6756943388"],
     windows: ["Скачать для Windows", "downloads/DarkPrinceVPN-setup.exe"],
-    linux: ["Скачать для Linux", "downloads/DarkPrinceVPN.AppImage"],
+    linux: ["Скачать для Arch Linux", "downloads/DarkPrinceVPN.pkg.tar.zst"],
 };
 if (platform) {
     const [text, href] = titles[platform];

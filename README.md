@@ -62,8 +62,9 @@ Certbot сам допишет в конфиг 443-й порт, пути к се�
 ### 5. Положить приложения
 
 ```bash
-sudo cp DarkPrinceVPN.apk        /srv/darkprince/site/downloads/
-sudo cp DarkPrinceVPN-setup.exe  /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN.apk          /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN-setup.exe    /srv/darkprince/site/downloads/
+sudo cp DarkPrinceVPN.pkg.tar.zst  /srv/darkprince/site/downloads/
 ```
 
 Имена файлов должны быть именно такими — на них ссылаются кнопки. Версию и
@@ -71,17 +72,27 @@ sudo cp DarkPrinceVPN-setup.exe  /srv/darkprince/site/downloads/
 `site/downloads.json`: это единственное место, где они записаны, и оно же
 перебивает адрес, зашитый в вёрстку.
 
-Клиент для Windows лежит в релизах своего репозитория — сервер забирает его
-оттуда сам:
+Клиенты для Windows и Linux лежат в релизах своих репозиториев — сервер
+забирает их оттуда сам:
 
 ```bash
-REL=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
+WIN=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
+LIN=https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases/download
 
-sudo curl -fSL "$REL/v1.0.0/DarkPrinceVPN-1.0.0-setup.exe" \
+sudo curl -fSL "$WIN/v1.0.0/DarkPrinceVPN-1.0.0-setup.exe" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
 
-sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
+sudo curl -fSL "$LIN/v1.1.0/DarkPrinceVPN-1.1.0-x86_64.pkg.tar.zst" \
+     -o /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
+
+sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe \
+          /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
 ```
+
+Для Linux сайт отдаёт пакет Arch: он ставится через `pacman -U` и попадает под
+учёт системы, в отличие от AppImage, который просто лежал файлом. AppImage и
+`.deb` для остальных дистрибутивов остаются в релизах — на них ведёт ссылка в
+инструкции на главной.
 
 Имя файла на сайте намеренно без версии: ссылка тогда не меняется от релиза
 к релизу, а версия показывается из `downloads.json`. Последняя строка печатает

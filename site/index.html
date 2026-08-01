@@ -84,9 +84,10 @@
                     <span class="icon">🐧</span>
                     <h3>Linux</h3>
                     <p class="small muted">Своё приложение: те же два режима, что в Windows.
-                        AppImage запускается без установки, для Arch есть сборка пакета.</p>
+                        Пакет для Arch и производных — ставится через pacman, ярлык появляется
+                        в меню.</p>
                     <a class="btn btn-primary btn-block" id="dlLinux"
-                        href="downloads/DarkPrinceVPN.AppImage">Скачать для Linux</a>
+                        href="downloads/DarkPrinceVPN.pkg.tar.zst">Скачать для Arch Linux</a>
                     <p class="size" id="verLinux">&nbsp;</p>
                 </div>
             </div>
@@ -165,14 +166,16 @@
                 </ol>
 
                 <ol class="steps hidden" data-panel="linux">
-                    <li><b>Запустите AppImage.</b> Скачали — сделайте файл исполняемым
-                        (<span class="mono">chmod +x</span> или свойства файла → «Разрешить
-                        выполнение») и запускайте. Ставить ничего не нужно.</li>
-                    <li><b>Или соберите пакет на Arch</b>, тогда файлы попадут под учёт pacman.
-                        Склонируйте <a href="https://github.com/DarkPrince922/DarkPrinceVpnLinux"
-                            target="_blank" rel="noopener">репозиторий приложения</a> и выполните
-                        <span class="mono">cd packaging &amp;&amp; makepkg -si</span> — ядро
-                        скачается само, ярлык появится в меню.</li>
+                    <li><b>Поставьте пакет.</b> Кнопка выше даёт обычный пакет Arch — в папке,
+                        куда он скачался, выполните
+                        <span class="mono">sudo pacman -U DarkPrinceVPN.pkg.tar.zst</span>.
+                        Зависимости pacman подтянет сам, ярлык появится в меню, а удаляется всё
+                        через <span class="mono">sudo pacman -R darkprince-vpn</span>.</li>
+                    <li><b>Другой дистрибутив или не x86_64?</b> В <a
+                            href="https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases"
+                            target="_blank" rel="noopener">релизах приложения</a> лежат AppImage и
+                        .deb, а собрать пакет под свой процессор можно из исходников:
+                        <span class="mono">cd packaging &amp;&amp; makepkg -si</span>.</li>
                     <li><b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте.</li>
                     <li><b>Выберите режим.</b> «Прокси» работает без пароля и настраивает прокси
                         рабочего стола. «Весь трафик» перехватывает всё, включая консольные
