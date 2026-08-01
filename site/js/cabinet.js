@@ -1,10 +1,13 @@
-// Личный кабинет: вход, подписка, тарифы, баланс, устройства.
+// Личный кабинет: вход, подписка, тарифы, баланс, устройства, поддержка.
 
 import { api, session, ApiError, asArray, parseTariffs, parsePaymentMethods } from "./api.js";
 import {
     $, $$, el, clear, rubles, plural, daysWord, daysUntil, dateText, periodText, gb,
     copy, message, busy, qrNode,
 } from "./ui.js";
+import {
+    renderSupport, deactivateSupport, startSupportUnreadPolling,
+} from "./support.js";
 
 const state = {
     subscriptions: [],
@@ -169,6 +172,10 @@ $("#logoutButton").addEventListener("click", async () => {
 
 $$(".tab-bar button").forEach((button) => {
     button.addEventListener("click", () => {
+        if (button.dataset.tab !== "support") deactivateSupport();
+        const url = new URL(location.href);
+        url.hash = button.dataset.tab === "support" ? "support" : "";
+        history.replaceState(null, "", url);
         $$(".tab-bar button").forEach((b) => b.setAttribute("aria-selected", String(b === button)));
         $$("[data-tabpanel]").forEach((panel) => {
             panel.classList.toggle("hidden", panel.dataset.tabpanel !== button.dataset.tab);
@@ -177,6 +184,7 @@ $$(".tab-bar button").forEach((button) => {
             plans: renderPlans,
             balance: renderBalance,
             devices: renderDevices,
+            support: renderSupport,
             more: renderMore,
         };
         loaders[button.dataset.tab]?.();
@@ -200,7 +208,9 @@ function errorCard(text, retry) {
 
 async function enterCabinet() {
     showApp();
+    startSupportUnreadPolling();
     await Promise.all([loadBalance(), renderSubscription()]);
+    if (location.hash === "#support") $("#supportTab")?.click();
 }
 
 async function loadBalance() {
@@ -958,12 +968,10 @@ async function renderMore(force = false) {
         ]),
         el("div", { class: "row wrap-row", style: "margin-top:14px" }, [
             el("a", { class: "btn btn-sm", href: "/" }, "Скачать приложения"),
-            el("a", {
-                class: "btn btn-sm",
-                href: "https://t.me/skzfeee",
-                target: "_blank",
-                rel: "noopener",
-            }, "Поддержка"),
+            el("button", {
+                class: "btn-sm",
+                onclick: () => $("#supportTab")?.click(),
+            }, "Техподдержка"),
             el("button", {
                 class: "btn-sm",
                 onclick: () => $("#logoutButton").click(),
