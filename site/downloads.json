@@ -1,31 +1,31 @@
 {
   "android": {
     "file": "downloads/DarkPrinceVPN.apk",
-    "version": "1.2.6",
-    "size": "44 МБ",
-    "date": "04.08.2026"
+    "version": "1.2.8",
+    "size": "44.5 МБ",
+    "date": "06.08.2026"
   },
   "windows": {
     "file": "downloads/DarkPrinceVPN-setup.exe",
-    "version": "1.2.1",
-    "size": "20 МБ",
-    "date": "04.08.2026"
+    "version": "1.2.2",
+    "size": "19.7 МБ",
+    "date": "06.08.2026"
   },
   "linux": {
-    "version": "1.2.1",
-    "date": "04.08.2026",
+    "version": "1.2.2",
+    "date": "06.08.2026",
     "builds": {
       "arch": {
         "file": "downloads/DarkPrinceVPN.pkg.tar.zst",
-        "size": "28 МБ"
+        "size": "28.1 МБ"
       },
       "deb": {
         "file": "downloads/DarkPrinceVPN.deb",
-        "size": "30 МБ"
+        "size": "29.5 МБ"
       },
       "appimage": {
         "file": "downloads/DarkPrinceVPN.AppImage",
-        "size": "102 МБ"
+        "size": "101.9 МБ"
       }
     }
   }
