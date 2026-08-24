@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="ru"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Провайдер блокирует сам VPN — DarkPrince VPN</title><meta name="description" content="Что происходит, когда подключение не устанавливается вовсе, и какие узлы пробовать в такой сети."><meta name="theme-color" content="#070a12"><link rel="icon" href="/assets/favicon.ico"><link rel="preload" href="/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/golos-text-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin><meta property="og:title" content="Провайдер блокирует сам VPN — DarkPrince VPN"><meta property="og:description" content="Что происходит, когда подключение не устанавливается вовсе, и какие узлы пробовать в такой сети."><meta property="og:image" content="/assets/logo.png"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/reset-password.6_mjC07m.css"></head> <body>  <div class="scene" aria-hidden="true"> <span class="glow a"></span> <span class="glow b"></span> </div> <header class="top"> <div class="wrap"> <a class="brand" href="/"> <img src="/assets/logo.png" alt="" width="32" height="32"> <span>
+DarkPrince <i>VPN</i> </span> </a> <div class="spacer"></div> <a class="btn btn-sm" href="/cabinet.html">
+Личный кабинет
+</a> </div> </header> <main>  <article class="wrap legal article"> <p class="eyebrow"> <a href="/help.html">← Справка</a> </p> <h1>🧱 Провайдер блокирует сам VPN</h1> <p>Что происходит, когда подключение не устанавливается вовсе, и какие узлы пробовать в такой сети.</p> <div class="card prose"> <h2 id="как-это-выглядит">Как это выглядит</h2>
+<p>Приложение долго висит на «Подключение…», а потом срывается. Или
+подключается и тут же отваливается. Причём <strong>на другом интернете тот же
+сервер работает</strong> — например, дома всё хорошо, а на мобильном нет.</p>
+<p>Это отличается от <a href="/help/no-internet.html">«подключился, а интернета нет»</a>:
+там туннель поднимается, здесь — нет.</p>
+<h2 id="почему-так">Почему так</h2>
+<p>Некоторые сети анализируют не адрес, куда вы идёте, а <strong>как выглядит сам
+трафик</strong>, и обрывают соединения, похожие на VPN. Такое встречается у
+мобильных операторов, в корпоративных сетях, в отелях и в публичном Wi-Fi.</p>
+<p>Никакой один протокол не проходит везде и всегда: то, что сегодня работает
+у одного оператора, завтра может перестать у другого. Поэтому в подписке
+несколько узлов с разными способами подключения — это не разнообразие ради
+разнообразия, а запасные пути.</p>
+<h2 id="что-делать">Что делать</h2>
+<p><strong>Пробуйте узлы с разными метками, а не разные страны.</strong> Это главное.
+Переключение с Германии на Нидерланды ничего не даст, если у обоих узлов
+одинаковый транспорт. Меняйте именно метки:</p>
+<ol>
+<li>Начните с <strong>Reality</strong> — он маскируется под обращение к постороннему сайту
+и проходит там, где обычный TLS уже режут.</li>
+<li>Затем <strong>xHTTP</strong> — выглядит как обычный обмен веб-страницами.</li>
+<li>Затем <strong>WebSocket</strong> — выглядит как веб-приложение с постоянным
+соединением.</li>
+<li><strong>Hysteria2</strong> работает поверх UDP: иногда проходит там, где всё
+остальное режут, но в сетях, где UDP закрыт совсем, наоборот не
+поднимется.</li>
+</ol>
+<p>Что означают метки — <a href="/help/protocols.html">подробнее здесь</a>.</p>
+<p><strong>Проверьте на другой сети.</strong> Включите мобильный интернет вместо Wi-Fi или
+наоборот. Если на одной сети работает, а на другой нет — вы нашли причину, и
+дальше вопрос в подборе узла.</p>
+<p><strong>Обновите список серверов.</strong> Кнопка с круглой стрелкой в карточке подписки.
+Мы добавляем новые узлы и способы подключения, и у вас может не быть свежих.</p>
+<h2 id="честно-про-пределы">Честно про пределы</h2>
+<p>Мы не можем обещать, что подключение будет работать в любой сети. Способы
+фильтрации меняются, и это гонка, в которой не бывает окончательной победы.
+Что мы можем — держать несколько разных путей и добавлять новые, когда
+старые перестают проходить.</p>
+<p>Если ни один узел не идёт — напишите в поддержку и укажите <strong>оператора и
+город</strong>. Это не формальность: проблема почти всегда привязана к конкретной
+сети, и по этим двум словам мы понимаем, что пробовать дальше.</p> </div> </article>  </main> <footer class="bottom"> <div class="wrap"> <nav> <a href="/help.html">Справка</a> <a href="/cabinet.html">Личный кабинет</a> <a href="/cabinet.html#support">Поддержка</a> <a href="/privacy.html">Конфиденциальность</a> <a href="/terms.html">Условия</a> </nav> <p class="tiny">
+Вопросы и помощь с подключением —  <a href="https://t.me/skzfeee" target="_blank" rel="noopener">
+@skzfeee
+</a> 
+в Telegram
+</p> <p class="tiny" style="margin-top:6px">
+© 2026 DarkPrince VPN
+</p> </div> </footer> <script type="module" src="/_astro/Base.astro_astro_type_script_index_0_lang.B5PkE5bS.js"></script> </body> </html>

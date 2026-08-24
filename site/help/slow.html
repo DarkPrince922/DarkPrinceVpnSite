@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="ru"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>VPN работает медленно — DarkPrince VPN</title><meta name="description" content="Почему через туннель скорость ниже, сколько теряется в норме и что реально помогает её вернуть."><meta name="theme-color" content="#070a12"><link rel="icon" href="/assets/favicon.ico"><link rel="preload" href="/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/golos-text-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin><meta property="og:title" content="VPN работает медленно — DarkPrince VPN"><meta property="og:description" content="Почему через туннель скорость ниже, сколько теряется в норме и что реально помогает её вернуть."><meta property="og:image" content="/assets/logo.png"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/reset-password.6_mjC07m.css"></head> <body>  <div class="scene" aria-hidden="true"> <span class="glow a"></span> <span class="glow b"></span> </div> <header class="top"> <div class="wrap"> <a class="brand" href="/"> <img src="/assets/logo.png" alt="" width="32" height="32"> <span>
+DarkPrince <i>VPN</i> </span> </a> <div class="spacer"></div> <a class="btn btn-sm" href="/cabinet.html">
+Личный кабинет
+</a> </div> </header> <main>  <article class="wrap legal article"> <p class="eyebrow"> <a href="/help.html">← Справка</a> </p> <h1>🐌 VPN работает медленно</h1> <p>Почему через туннель скорость ниже, сколько теряется в норме и что реально помогает её вернуть.</p> <div class="card prose"> <h2 id="сколько-теряется-в-норме">Сколько теряется в норме</h2>
+<p>Через VPN скорость всегда ниже, чем без него, — это физика, а не поломка.
+Трафик идёт не напрямую, а через сервер в другой стране, и к каждому пакету
+добавляется шифрование.</p>
+<p>В норме потеря составляет <strong>10–30 %</strong>. Если у вас 100 Мбит без VPN и 70–90 с
+ним — всё в порядке. Если 100 превращаются в 5 — есть что чинить.</p>
+<h2 id="что-помогает-по-убыванию-отдачи">Что помогает, по убыванию отдачи</h2>
+<h3 id="1-сменить-сервер">1. Сменить сервер</h3>
+<p>Самое действенное. Нажмите кнопку со спидометром и возьмите узел с
+наименьшим пингом. Узел, популярный вечером, к ночи разгружается — и
+наоборот.</p>
+<h3 id="2-попробовать-другой-транспорт">2. Попробовать другой транспорт</h3>
+<p>Если на вашем провайдере всё тормозит одинаково на всех серверах — дело не в
+серверах, а в том, как трафик через него проходит. Возьмите узел <strong>с другими
+метками</strong>: не соседнюю страну, а другой способ подключения. Что означают
+метки, разобрано <a href="/help/protocols.html">здесь</a>.</p>
+<p>По опыту: прямой <strong>TCP</strong> быстрее всего там, где никто не мешает; <strong>xHTTP</strong> и
+<strong>WebSocket</strong> медленнее, но проходят там, где TCP режут.</p>
+<h3 id="3-пустить-лишнее-мимо-туннеля">3. Пустить лишнее мимо туннеля</h3>
+<p>На Android в <strong>«Ещё» → «Приложения»</strong> можно оставить вне VPN всё, чему он не
+нужен: музыку, карты, доставку. Меньше трафика через туннель — больше
+скорости тому, ради чего он включён.</p>
+<h3 id="4-на-компьютере--сменить-режим">4. На компьютере — сменить режим</h3>
+<p><strong>«Весь трафик»</strong> перехватывает всё через виртуальный сетевой адаптер, и это
+чуть дороже по ресурсам, чем <strong>«Прокси»</strong>. Если VPN нужен только браузеру,
+«Прокси» будет ощутимо легче.</p>
+<h2 id="что-скорость-не-улучшит">Что скорость не улучшит</h2>
+<p><strong>Переподключение по кругу.</strong> Если узел загружен, повторное подключение к
+нему ничего не изменит — меняйте узел.</p>
+<p><strong>Перезапуск приложения.</strong> Помогает от зависаний, но не от медленного канала.</p>
+<p><strong>Самый близкий географически сервер.</strong> Расстояние по карте и длина
+сетевого маршрута — разные вещи. Ориентируйтесь на пинг, а не на карту.</p>
+<h2 id="когда-дело-не-в-нас">Когда дело не в нас</h2>
+<p>Проверьте скорость <strong>без</strong> VPN на том же устройстве и в той же сети. Если и
+без туннеля медленно — причина в провайдере, Wi-Fi или загруженности сети.</p>
+<p>Мобильный интернет вечером в людном месте, слабый сигнал, старый роутер на
+2,4 ГГц — всё это режет скорость сильнее любого VPN.</p>
+<h2 id="отдельно-про-игры">Отдельно про игры</h2>
+<p>Для игр важна не скорость, а пинг и стабильность. Берите узел с наименьшей
+задержкой и по возможности проводной интернет: Wi-Fi добавляет
+непредсказуемые задержки, которые в бою заметнее, чем лишние мегабиты.</p> </div> </article>  </main> <footer class="bottom"> <div class="wrap"> <nav> <a href="/help.html">Справка</a> <a href="/cabinet.html">Личный кабинет</a> <a href="/cabinet.html#support">Поддержка</a> <a href="/privacy.html">Конфиденциальность</a> <a href="/terms.html">Условия</a> </nav> <p class="tiny">
+Вопросы и помощь с подключением —  <a href="https://t.me/skzfeee" target="_blank" rel="noopener">
+@skzfeee
+</a> 
+в Telegram
+</p> <p class="tiny" style="margin-top:6px">
+© 2026 DarkPrince VPN
+</p> </div> </footer> <script type="module" src="/_astro/Base.astro_astro_type_script_index_0_lang.B5PkE5bS.js"></script> </body> </html>
