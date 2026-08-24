@@ -1,0 +1,22 @@
+# Индексируем только в Google. Остальным поисковикам сайт не показываем.
+#
+# Это просьба, а не запрет: robots.txt соблюдают воспитанные роботы — Google,
+# Bing, Яндекс. Тот, кто ищет сайт целенаправленно, его и так найдёт: домен
+# виден в публичных журналах выданных TLS-сертификатов, и никакой robots.txt
+# этого не меняет.
+
+User-agent: Googlebot
+Allow: /$
+Allow: /help.html
+Allow: /help/
+Allow: /privacy.html
+Allow: /terms.html
+Disallow: /cabinet.html
+Disallow: /verify-email.html
+Disallow: /reset-password.html
+Disallow: /downloads/
+Disallow: /updates/
+
+# Всем прочим — ничего.
+User-agent: *
+Disallow: /
