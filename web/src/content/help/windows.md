@@ -2,6 +2,7 @@
 title: Установка на Windows
 summary: Установщик, предупреждение SmartScreen, два режима работы и трей.
 icon: 🪟
+group: install
 order: 3
 ---
 

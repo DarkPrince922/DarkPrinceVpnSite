@@ -15,7 +15,9 @@ const help = defineCollection({
         title: z.string(),
         summary: z.string(),
         icon: z.string(),
-        /** Порядок в списке: от самой ходовой платформы к редкой. */
+        /** Раздел на странице справки. */
+        group: z.enum(["install", "problems", "howto"]),
+        /** Порядок внутри раздела. */
         order: z.number(),
     }),
 });

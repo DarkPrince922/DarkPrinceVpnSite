@@ -2,37 +2,74 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 
-// от самой ходовой платформы к редкой — так задан order в самих статьях
-const guides = (await getCollection("help")).sort((a, b) => a.data.order - b.data.order);
+const all = await getCollection("help");
+
+/**
+ * Разделы справки.
+ *
+ * Одной сеткой одиннадцать статей уже не читаются: человек приходит либо
+ * ставить, либо чинить, и смешивать эти два состояния в одном списке значит
+ * заставлять его читать всё подряд.
+ */
+const sections = [
+    {
+        id: "install" as const,
+        title: "Установка",
+        note: "С чего начать на каждой платформе.",
+    },
+    {
+        id: "problems" as const,
+        title: "Если что-то не работает",
+        note: "Частые заминки и что с ними делать.",
+    },
+    {
+        id: "howto" as const,
+        title: "Как это устроено",
+        note: "Чтобы пользоваться осознанно, а не наугад.",
+    },
+];
+
+const grouped = sections.map((section) => ({
+    ...section,
+    guides: all
+        .filter((guide) => guide.data.group === section.id)
+        .sort((a, b) => a.data.order - b.data.order),
+}));
 ---
 
 <Base
     title="Справка — DarkPrince VPN"
-    description="Как установить и настроить DarkPrince VPN на Android, iPhone, Windows и Linux."
+    description="Установка, настройка и решение проблем с DarkPrince VPN на Android, iPhone, Windows и Linux."
 >
     <section class="wrap legal">
         <p class="eyebrow">Справка</p>
-        <h1>Установка и подключение</h1>
+        <h1>Установка и решение проблем</h1>
         <p>
-            Подробные инструкции по платформам: установка, вход, режимы работы и что делать,
-            если что-то пошло не так. Коротко то же самое есть
-            <a href="/#install">на главной</a>.
+            Инструкции по платформам и разбор того, что чаще всего идёт не так. Коротко про
+            установку есть и <a href="/#install">на главной</a>.
         </p>
 
-        <div class="grid cols-2 guide-grid">
-            {
-                guides.map((guide) => (
-                    <a class="card guide" href={`/help/${guide.id}.html`}>
-                        <span class="icon">{guide.data.icon}</span>
-                        <h3>{guide.data.title}</h3>
-                        <p class="small muted">{guide.data.summary}</p>
-                        <span class="guide-more">Читать →</span>
-                    </a>
-                ))
-            }
-        </div>
+        {
+            grouped.map((section) => (
+                <div class="help-section">
+                    <h2>{section.title}</h2>
+                    <p class="small muted">{section.note}</p>
 
-        <div class="card" style="margin-top:22px">
+                    <div class="grid guide-grid">
+                        {section.guides.map((guide) => (
+                            <a class="card guide" href={`/help/${guide.id}.html`}>
+                                <span class="icon">{guide.data.icon}</span>
+                                <h3>{guide.data.title}</h3>
+                                <p class="small muted">{guide.data.summary}</p>
+                                <span class="guide-more">Читать →</span>
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            ))
+        }
+
+        <div class="card" style="margin-top:26px">
             <h3>Не нашли ответ</h3>
             <p class="small muted" style="margin-top:8px">
                 Напишите в поддержку — она есть в приложении и в

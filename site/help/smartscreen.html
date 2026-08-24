@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="ru"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Windows блокирует установщик — DarkPrince VPN</title><meta name="description" content="Что такое предупреждение SmartScreen, почему оно появляется и как проверить, что файл настоящий."><meta name="theme-color" content="#070a12"><link rel="icon" href="/assets/favicon.ico"><link rel="preload" href="/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/golos-text-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin><meta property="og:title" content="Windows блокирует установщик — DarkPrince VPN"><meta property="og:description" content="Что такое предупреждение SmartScreen, почему оно появляется и как проверить, что файл настоящий."><meta property="og:image" content="/assets/logo.png"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/reset-password.6_mjC07m.css"></head> <body>  <div class="scene" aria-hidden="true"> <span class="glow a"></span> <span class="glow b"></span> </div> <header class="top"> <div class="wrap"> <a class="brand" href="/"> <img src="/assets/logo.png" alt="" width="32" height="32"> <span>
+DarkPrince <i>VPN</i> </span> </a> <div class="spacer"></div> <a class="btn btn-sm" href="/cabinet.html">
+Личный кабинет
+</a> </div> </header> <main>  <article class="wrap legal article"> <p class="eyebrow"> <a href="/help.html">← Справка</a> </p> <h1>🛡️ Windows блокирует установщик</h1> <p>Что такое предупреждение SmartScreen, почему оно появляется и как проверить, что файл настоящий.</p> <div class="card prose"> <h2 id="что-вы-видите">Что вы видите</h2>
+<p>При запуске установщика Windows показывает синее окно:</p>
+<blockquote>
+<p>Система Windows защитила ваш компьютер.
+Фильтр SmartScreen предотвратил запуск неопознанного приложения.</p>
+</blockquote>
+<p>Кнопка «Не выполнять» — единственная заметная. Нужная спрятана:</p>
+<ol>
+<li>Нажмите <strong>«Подробнее»</strong>.</li>
+<li>Появится кнопка <strong>«Выполнить в любом случае»</strong> — нажмите её.</li>
+</ol>
+<h2 id="почему-это-происходит">Почему это происходит</h2>
+<p>Программа не подписана сертификатом издателя. Такой сертификат покупается у
+удостоверяющего центра, стоит десятки тысяч рублей в год и выдаётся
+организации с подтверждёнными документами.</p>
+<p>На безопасность самой программы он не влияет никак — он отвечает только на
+вопрос «знает ли Microsoft, кто это выпустил». Сертификат можно купить и
+подписать им что угодно, включая вредоносное; и наоборот, отсутствие
+сертификата ничего плохого о файле не говорит.</p>
+<p>Второй фактор — репутация. SmartScreen тише относится к файлам, которые
+скачали много раз. У каждой новой версии счётчик начинается заново, поэтому
+предупреждение может вернуться после обновления.</p>
+<h2 id="как-проверить-что-файл-настоящий">Как проверить, что файл настоящий</h2>
+<p>Не верьте на слово — сверьте контрольную сумму.</p>
+<ol>
+<li>Откройте описание выпуска в
+<a href="https://github.com/DarkPrince922/DarkprincevpnWindows/releases">репозитории</a> —
+там указана строка SHA-256.</li>
+<li>В PowerShell выполните:</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Get-FileHash "$env:USERPROFILE\Downloads\DarkPrinceVPN-setup.exe"</span></span></code></pre>
+<ol start="3">
+<li>Сравните: строки должны совпасть до символа.</li>
+</ol>
+<p>Если совпали — файл доехал целиком и это ровно тот файл, который собрал наш
+сервер сборки. Если нет — не запускайте и скачайте заново.</p>
+<h2 id="антивирус-удалил-файл">Антивирус удалил файл</h2>
+<p>Некоторые антивирусы относят к подозрительным любые программы, работающие с
+сетевыми адаптерами, — а VPN-клиент именно этим и занимается. Если файл
+пропал из папки загрузок, найдите его в карантине антивируса и добавьте в
+исключения.</p>
+<p>Здесь тоже стоит сверить контрольную сумму: она отличает ложное срабатывание
+от настоящей подмены.</p>
+<h2 id="что-внутри-установщика">Что внутри установщика</h2>
+<p>Всё нужное для работы, включая сетевое ядро. Установщик ничего не докачивает
+из интернета — поэтому он и весит около двадцати мегабайт.</p> </div> </article>  </main> <footer class="bottom"> <div class="wrap"> <nav> <a href="/help.html">Справка</a> <a href="/cabinet.html">Личный кабинет</a> <a href="/cabinet.html#support">Поддержка</a> <a href="/privacy.html">Конфиденциальность</a> <a href="/terms.html">Условия</a> </nav> <p class="tiny">
+Вопросы и помощь с подключением —  <a href="https://t.me/skzfeee" target="_blank" rel="noopener">
+@skzfeee
+</a> 
+в Telegram
+</p> <p class="tiny" style="margin-top:6px">
+© 2026 DarkPrince VPN
+</p> </div> </footer> <script type="module" src="/_astro/Base.astro_astro_type_script_index_0_lang.B5PkE5bS.js"></script> </body> </html>

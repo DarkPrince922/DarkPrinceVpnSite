@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="ru"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>VLESS, Reality, xHTTP — что это значит — DarkPrince VPN</title><meta name="description" content="Разбор цветных меток под названием сервера: что там протокол, что шифрование, а что транспорт."><meta name="theme-color" content="#070a12"><link rel="icon" href="/assets/favicon.ico"><link rel="preload" href="/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/golos-text-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin><meta property="og:title" content="VLESS, Reality, xHTTP — что это значит — DarkPrince VPN"><meta property="og:description" content="Разбор цветных меток под названием сервера: что там протокол, что шифрование, а что транспорт."><meta property="og:image" content="/assets/logo.png"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/reset-password.6_mjC07m.css"></head> <body>  <div class="scene" aria-hidden="true"> <span class="glow a"></span> <span class="glow b"></span> </div> <header class="top"> <div class="wrap"> <a class="brand" href="/"> <img src="/assets/logo.png" alt="" width="32" height="32"> <span>
+DarkPrince <i>VPN</i> </span> </a> <div class="spacer"></div> <a class="btn btn-sm" href="/cabinet.html">
+Личный кабинет
+</a> </div> </header> <main>  <article class="wrap legal article"> <p class="eyebrow"> <a href="/help.html">← Справка</a> </p> <h1>🔤 VLESS, Reality, xHTTP — что это значит</h1> <p>Разбор цветных меток под названием сервера: что там протокол, что шифрование, а что транспорт.</p> <div class="card prose"> <p>Под названием каждого узла стоят две-три цветные метки. Знать их
+необязательно — приложение работает и без этого. Но если один сервер у вас
+тормозит, а другой летает, разница обычно как раз в них.</p>
+<p>Метки читаются слева направо: <strong>протокол → шифрование → транспорт</strong>.</p>
+<h2 id="протокол-по-каким-правилам-говорят">Протокол: по каким правилам говорят</h2>
+<p><strong>VLESS</strong> — основной у нас. Лёгкий, без лишней обвязки: почти всё полезное
+место в пакете занимают ваши данные, а не служебная информация.</p>
+<p><strong>VMess</strong> — предшественник VLESS, встречается реже.</p>
+<p><strong>Trojan</strong> — притворяется обычным веб-сервером: тому, кто смотрит со стороны,
+трафик выглядит как посещение сайта.</p>
+<p><strong>Hysteria2</strong> — работает поверх UDP и хорошо держится на плохих каналах с
+потерями пакетов. У этого протокола нет отдельного транспорта: он сам себе
+транспорт, поэтому третьей метки рядом не будет.</p>
+<h2 id="шифрование-как-прячется-содержимое">Шифрование: как прячется содержимое</h2>
+<p><strong>TLS</strong> — тот же замок, что в браузере на любом сайте с <code>https</code>. Провайдер
+видит, что вы установили защищённое соединение, и не видит с чем именно.</p>
+<p><strong>Reality</strong> — развитие TLS. При проверке подключение выглядит как обращение к
+настоящему постороннему сайту, причём с его настоящим сертификатом. Тому, кто
+проверяет со стороны, отличить сложнее, чем обычный TLS.</p>
+<p>Если метки шифрования нет вовсе — значит его берёт на себя сам протокол, как
+у Hysteria2.</p>
+<h2 id="транспорт-во-что-всё-завёрнуто">Транспорт: во что всё завёрнуто</h2>
+<p><strong>TCP</strong> — самый простой способ, без обёртки. Быстрый там, где никто не мешает.</p>
+<p><strong>WebSocket</strong> — трафик выглядит как постоянное соединение веб-приложения:
+чат, онлайн-редактор, биржевой терминал. Хорошо проходит там, где пропускают
+только веб.</p>
+<p><strong>xHTTP</strong> — маскировка под обычный обмен веб-страницами. Устойчив к
+фильтрации, немного медленнее прямого TCP.</p>
+<p><strong>gRPC</strong> — формат, на котором общаются между собой серверы крупных сервисов.
+Со стороны выглядит как служебный трафик приложения.</p>
+<h2 id="что-с-этим-делать-на-практике">Что с этим делать на практике</h2>
+<p>Не выбирайте по названиям — выбирайте по результату:</p>
+<ul>
+<li><strong>Обычная домашняя сеть.</strong> Берите узел с наименьшим пингом, метки неважны.</li>
+<li><strong>Мобильный интернет, где всё тормозит.</strong> Пробуйте <strong>xHTTP</strong> или
+<strong>WebSocket</strong>: они лучше проходят через операторские фильтры.</li>
+<li><strong>Плохая связь, рвётся видеозвонок.</strong> Ищите <strong>Hysteria2</strong> — он для этого и
+сделан.</li>
+<li><strong>Строгая сеть на работе или в отеле.</strong> Пробуйте <strong>Reality</strong>.</li>
+</ul>
+<p>Если узел плохо работает, следующим пробуйте узел <strong>с другими метками</strong>, а не
+соседний с такими же — иначе вы меняете страну, а не способ пройти.</p>
+<h2 id="метка-json">Метка JSON</h2>
+<p>Иногда рядом стоит <strong>JSON</strong>. Она означает, что панель прислала полный
+конфиг сервера, а не короткую ссылку, — и приложение использует его как есть,
+вместе с правилами маршрутизации. На скорость это не влияет.</p> </div> </article>  </main> <footer class="bottom"> <div class="wrap"> <nav> <a href="/help.html">Справка</a> <a href="/cabinet.html">Личный кабинет</a> <a href="/cabinet.html#support">Поддержка</a> <a href="/privacy.html">Конфиденциальность</a> <a href="/terms.html">Условия</a> </nav> <p class="tiny">
+Вопросы и помощь с подключением —  <a href="https://t.me/skzfeee" target="_blank" rel="noopener">
+@skzfeee
+</a> 
+в Telegram
+</p> <p class="tiny" style="margin-top:6px">
+© 2026 DarkPrince VPN
+</p> </div> </footer> <script type="module" src="/_astro/Base.astro_astro_type_script_index_0_lang.B5PkE5bS.js"></script> </body> </html>

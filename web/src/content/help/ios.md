@@ -2,6 +2,7 @@
 title: Подключение на iPhone и iPad
 summary: Своего приложения в App Store пока нет — подключаемся через INCY по ссылке подписки.
 icon: 🍏
+group: install
 order: 2
 ---
 

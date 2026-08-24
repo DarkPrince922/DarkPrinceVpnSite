@@ -2,6 +2,7 @@
 title: Установка на Android
 summary: Установка APK, вход, первое подключение и что делать, если система ругается.
 icon: 🤖
+group: install
 order: 1
 ---
 
