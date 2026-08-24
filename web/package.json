@@ -1,0 +1,18 @@
+{
+  "name": "darkprince-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/tidy.mjs",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "astro": "^5.14.1",
+    "sharp": "^0.34.2"
+  },
+  "dependencies": {
+    "@fontsource/golos-text": "^5.3.0",
+    "@fontsource/unbounded": "^5.3.0"
+  }
+}

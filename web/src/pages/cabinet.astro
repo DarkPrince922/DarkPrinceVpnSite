@@ -1,0 +1,110 @@
+---
+import Base from "../layouts/Base.astro";
+import "../styles/cabinet.css";
+---
+
+{/*
+  Оболочка кабинета. Панели — подписка, тарифы, баланс, устройства,
+  поддержка — рисует cabinet.js: он собирает их из данных кабинета, и здесь
+  для них только контейнеры.
+
+  Своя шапка вместо общей: в кабинете в ней живут остаток баланса и выход,
+  а «Личный кабинет» ссылкой на самого себя не нужен.
+*/}
+<Base
+    title="Личный кабинет — DarkPrince VPN"
+    description="Подписка, тарифы, баланс, устройства и поддержка DarkPrince VPN."
+    chrome={false}
+    noindex
+>
+    <header class="top">
+        <div class="wrap">
+            <a class="brand" href="/">
+                <img src="/assets/logo.png" alt="" width="32" height="32" />
+                <span>DarkPrince <i>VPN</i></span>
+            </a>
+            <div class="spacer"></div>
+            <span class="chip gold hidden" id="balanceChip">—</span>
+            <button class="btn btn-sm btn-ghost hidden" id="logoutButton">Выйти</button>
+        </div>
+    </header>
+
+    <section class="auth-wrap" id="authView">
+        <div class="card">
+            <h2 id="authTitle" style="text-align:center">Вход в кабинет</h2>
+            <p class="small muted" style="text-align:center">
+                Если вы покупали подписку у бота — входите через Telegram, всё подтянется само.
+            </p>
+
+            <div id="authMessage" class="msg hidden"></div>
+
+            <button class="btn btn-primary btn-block" id="telegramButton">
+                Войти через Telegram
+            </button>
+
+            <hr class="divider" />
+            <p class="section-title" style="text-align:center">или по почте</p>
+
+            <form id="emailForm">
+                <label class="field">
+                    <span>E-mail</span>
+                    <input type="email" id="emailInput" autocomplete="email" required />
+                </label>
+                <label class="field">
+                    <span>Пароль</span>
+                    <input
+                        type="password"
+                        id="passwordInput"
+                        autocomplete="current-password"
+                        minlength="6"
+                        required
+                    />
+                </label>
+                <label class="field hidden" id="referralField">
+                    <span>Реферальный код (необязательно)</span>
+                    <input type="text" id="referralInput" autocomplete="off" />
+                </label>
+                <button class="btn btn-block" id="emailSubmit" type="submit">Войти</button>
+            </form>
+
+            <div class="row" style="margin-top:12px;justify-content:space-between">
+                <button class="btn btn-sm btn-ghost" id="toggleRegister">
+                    Нет аккаунта? Регистрация
+                </button>
+                <button class="btn btn-sm btn-ghost" id="forgotButton">Забыли пароль?</button>
+            </div>
+        </div>
+
+        <p class="tiny muted" style="text-align:center;margin-top:16px">
+            <a href="/">← На главную</a>
+        </p>
+    </section>
+
+    <section class="wrap app-wrap hidden" id="appView" style="padding-top:22px;padding-bottom:48px">
+        <div class="tab-bar" role="tablist">
+            <button role="tab" data-tab="sub" aria-selected="true">Подписка</button>
+            <button role="tab" data-tab="plans" aria-selected="false">Тарифы</button>
+            <button role="tab" data-tab="balance" aria-selected="false">Баланс</button>
+            <button role="tab" data-tab="devices" aria-selected="false">Устройства</button>
+            <button role="tab" id="supportTab" data-tab="support" aria-selected="false">
+                Поддержка <span id="supportBadge" class="support-badge hidden">0</span>
+            </button>
+            <button role="tab" data-tab="more" aria-selected="false">Ещё</button>
+        </div>
+
+        <div id="panelSub" data-tabpanel="sub"></div>
+        <div id="panelPlans" data-tabpanel="plans" class="hidden"></div>
+        <div id="panelBalance" data-tabpanel="balance" class="hidden"></div>
+        <div id="panelDevices" data-tabpanel="devices" class="hidden"></div>
+        <div id="panelSupport" data-tabpanel="support" class="hidden"></div>
+        <div id="panelMore" data-tabpanel="more" class="hidden"></div>
+    </section>
+
+    {/*
+      QR-код рисует сторонняя библиотека: она объявляет глобальную функцию
+      qrcode и модулем не является, поэтому подключается отдельным файлом, а
+      не сборкой. Файл наш, так что script-src 'self' её пропускает.
+    */}
+    <script is:inline src="/js/qrcode.js"></script>
+    <script src="../scripts/cabinet.js"></script>
+</Base>

@@ -1,0 +1,126 @@
+/*
+ * Оформление сайта DarkPrince VPN.
+ *
+ * Шрифты лежат рядом, а не тянутся с Google Fonts: политика безопасности
+ * (CSP) в nginx разрешает только собственный домен, и внешняя гарнитура молча
+ * не загрузилась бы. Подключены только кириллица и латиница — остальные
+ * подмножества нам не нужны, а весят они больше самих букв.
+ */
+
+@font-face {
+    font-family: "Unbounded";
+    src: url("/fonts/unbounded-cyrillic-700-normal.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+    font-family: "Unbounded";
+    src: url("/fonts/unbounded-latin-700-normal.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Unbounded";
+    src: url("/fonts/unbounded-cyrillic-600-normal.woff2") format("woff2");
+    font-weight: 600;
+    font-display: swap;
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+    font-family: "Unbounded";
+    src: url("/fonts/unbounded-latin-600-normal.woff2") format("woff2");
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Golos Text";
+    src: url("/fonts/golos-text-cyrillic-400-normal.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+    font-family: "Golos Text";
+    src: url("/fonts/golos-text-latin-400-normal.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Golos Text";
+    src: url("/fonts/golos-text-cyrillic-500-normal.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+    font-family: "Golos Text";
+    src: url("/fonts/golos-text-latin-500-normal.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Golos Text";
+    src: url("/fonts/golos-text-cyrillic-600-normal.woff2") format("woff2");
+    font-weight: 600;
+    font-display: swap;
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+    font-family: "Golos Text";
+    src: url("/fonts/golos-text-latin-600-normal.woff2") format("woff2");
+    font-weight: 600;
+    font-display: swap;
+}
+
+/* ---------------------------------------------------------------- токены -- */
+
+:root {
+    /* Фирменные: то же золото по той же тёмной сини, что в приложении.
+       Человек, скачавший клиент, должен узнать сайт — и наоборот. */
+    --gold: #cfaa62;
+    --gold-soft: #e2c489;
+    --gold-deep: #8a6a2c;
+    --blue: #5e8bff;
+
+    /* Нейтральные уведены в синь: чистый серый рядом с золотом выглядит
+       грязным, а подкрашенный читается как выбранный, а не взятый по умолчанию. */
+    --bg: #070a12;
+    --bg-2: #0a0e17;
+    --panel: #101725;
+    --panel-2: #141c2c;
+    --line: #1f2a3f;
+    --line-soft: #182033;
+    --text: #eef1f8;
+    --muted: #97a3bb;
+    --muted-2: #6d7b95;
+
+    --ok: #3fb68b;
+    --danger: #e05b5b;
+
+    --radius: 18px;
+    --radius-sm: 12px;
+    --wrap: 1120px;
+
+    --display: "Unbounded", ui-sans-serif, system-ui, sans-serif;
+    --body: "Golos Text", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+}
+
+
+/* ------------------------------------------------------- старые имена -- */
+
+/*
+ * Кабинет и поддержка написаны под прежние имена переменных. Перекрашивать
+ * их поштучно значило бы трогать восемьсот строк рабочего оформления ради
+ * переименования — вместо этого старые имена указывают на новые цвета.
+ * Кабинет получает новый вид, не зная об этом.
+ */
+:root {
+    --surface: var(--panel);
+    --surface-2: var(--panel-2);
+    --outline: var(--line);
+    --gold-dim: rgba(207, 170, 98, 0.42);
+    --max: var(--wrap);
+}

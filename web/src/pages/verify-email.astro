@@ -1,0 +1,14 @@
+---
+import Auth from "../layouts/Auth.astro";
+---
+
+<Auth title="Подтверждение почты">
+    <div class="card" style="text-align:center">
+        <h2 id="title">Подтверждаю почту…</h2>
+        <p class="small muted" id="text"><span class="spinner"></span></p>
+        <div id="actions" class="hidden" style="margin-top:14px">
+            <a class="btn btn-primary" href="/cabinet.html">Войти в кабинет</a>
+        </div>
+    </div>
+    <script src="../scripts/verify-email.js"></script>
+</Auth>

@@ -1,0 +1,55 @@
+name: Собрать сайт
+
+# Сервер отдаёт готовые файлы из site/ и обновляется обычным git pull —
+# ни Node, ни сборки на нём нет. Поэтому собираем здесь и кладём результат
+# в репозиторий: тогда выкладка остаётся одной командой.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Установить зависимости
+        working-directory: web
+        run: npm ci
+
+      - name: Собрать
+        working-directory: web
+        run: npm run build
+
+      - name: Положить сборку в репозиторий
+        run: |
+          # downloads/ и updates/*.json лежат только на сервере и в .gitignore —
+          # git их не видит, так что выкладка сборок ими не затрагивается.
+          if git diff --quiet -- site; then
+            echo "Сборка совпала с тем, что уже в репозитории — коммитить нечего."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site
+          git commit -m "Пересобрать сайт из web/
+
+          Собрано автоматически из ${GITHUB_SHA::7}."
+          git push

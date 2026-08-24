@@ -1,3 +1,8 @@
 site/downloads/*
 !site/downloads/.gitkeep
 site/updates/*.json
+
+# Исходники сайта: в репозиторий попадает только собранный site/
+web/node_modules/
+web/dist/
+web/.astro/

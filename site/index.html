@@ -1,275 +1,75 @@
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DarkPrince VPN — быстрый VPN для Android, iPhone, Windows и Linux</title>
-    <meta name="description"
-        content="Приложения DarkPrince VPN для Android, iPhone, Windows и Linux. Скачайте, войдите и подключайтесь — без настроек и ограничений скорости.">
-    <meta name="theme-color" content="#0a0e17">
-    <link rel="icon" href="assets/favicon.ico">
-    <link rel="stylesheet" href="app.css">
-    <meta property="og:title" content="DarkPrince VPN">
-    <meta property="og:description" content="Приложения для Android, iPhone, Windows и Linux. Без настроек и ограничений скорости.">
-    <meta property="og:image" content="assets/logo.png">
-    <meta property="og:type" content="website">
-</head>
-
-<body>
-    <div class="blobs">
-        <div class="blob a"></div>
-        <div class="blob b"></div>
-        <div class="blob c"></div>
-    </div>
-
-    <header class="top">
-        <div class="wrap">
-            <a class="brand" href="/">
-                <img src="assets/logo.png" alt="">
-                <span>DarkPrince <i>VPN</i></span>
-            </a>
-            <div class="spacer"></div>
-            <a class="btn btn-sm" href="/cabinet.html">Личный кабинет</a>
-        </div>
-    </header>
-
-    <main>
-        <section class="hero wrap">
-            <img class="hero-logo" src="assets/logo.png" alt="DarkPrince VPN">
-            <h1>Интернет без границ<br>на всех ваших устройствах</h1>
-            <p class="lead">
-                Своё приложение для телефона и компьютера: скачали, вошли, нажали одну кнопку.
-                Без ручной настройки конфигов, без ограничений скорости и без счётчика трафика
-                там, где он не нужен.
-            </p>
-            <a class="btn btn-primary dl-main" id="mainDownload" href="#downloads">Скачать приложение</a>
-            <p class="tiny muted dl-hint">Остальные платформы — ниже</p>
-        </section>
-
-        <section class="wrap" id="downloads">
-            <h2 class="section-title">Приложения</h2>
-            <div class="grid auto">
-                <div class="card platform">
-                    <span class="icon">🤖</span>
-                    <h3>Android</h3>
-                    <p class="small muted">Телефоны и планшеты, Android 8 и новее. Есть выбор
-                        приложений для VPN и кнопка в шторке.</p>
-                    <a class="btn btn-primary btn-block" id="dlAndroid" href="downloads/DarkPrinceVPN.apk">Скачать APK</a>
-                    <p class="size" id="verAndroid">&nbsp;</p>
-                </div>
-
-                <div class="card platform">
-                    <span class="icon">🪟</span>
-                    <h3>Windows</h3>
-                    <p class="small muted">Windows 10 и 11. Два режима: системный прокси без прав
-                        администратора и полный туннель для всех программ.</p>
-                    <a class="btn btn-primary btn-block" id="dlWindows"
-                        href="downloads/DarkPrinceVPN-setup.exe">Скачать для Windows</a>
-                    <p class="size" id="verWindows">&nbsp;</p>
-                </div>
-
-                <div class="card platform">
-                    <span class="icon">🍏</span>
-                    <h3>iPhone и iPad</h3>
-                    <p class="small muted">Своего приложения в App Store пока нет — подключение
-                        через INCY, бесплатный клиент из App Store. Ссылку возьмёте в кабинете.</p>
-                    <a class="btn btn-primary btn-block" id="dlIos"
-                        href="https://apps.apple.com/app/id6756943388" target="_blank"
-                        rel="noopener">Установить INCY</a>
-                    <p class="size">App Store · iOS 15 и новее</p>
-                </div>
-
-                <div class="card platform">
-                    <span class="icon">🐧</span>
-                    <h3>Linux</h3>
-                    <p class="small muted">Своё приложение: те же два режима, что в Windows.
-                        Пакет для вашего дистрибутива — ставится в систему, ярлык появляется
-                        в меню.</p>
-                    <a class="btn btn-primary btn-block" id="dlLinux"
-                        href="downloads/DarkPrinceVPN.AppImage">Скачать для Linux</a>
-                    <p class="size" id="verLinux">&nbsp;</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="wrap features">
-            <div class="grid cols-3">
-                <div class="card feature">
-                    <span class="icon">⚡</span>
-                    <h3>Скорость без потолка</h3>
-                    <p class="small muted">Современные протоколы поверх обычного HTTPS-трафика:
-                        провайдер видит только защищённое соединение.</p>
-                </div>
-                <div class="card feature">
-                    <span class="icon">🧩</span>
-                    <h3>Выбор приложений</h3>
-                    <p class="small muted">На Android можно пустить через VPN только нужные
-                        приложения, а банки и доставку оставить напрямую.</p>
-                </div>
-                <div class="card feature">
-                    <span class="icon">👥</span>
-                    <h3>Одна подписка — несколько устройств</h3>
-                    <p class="small muted">Телефон, компьютер и ноутбук работают одновременно,
-                        устройствами можно управлять в кабинете.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="wrap" id="install">
-            <h2 class="section-title">Как начать</h2>
-            <div class="card">
-                <div class="tabs" role="tablist">
-                    <button role="tab" aria-selected="true" data-tab="android">Android</button>
-                    <button role="tab" aria-selected="false" data-tab="ios">iPhone</button>
-                    <button role="tab" aria-selected="false" data-tab="windows">Windows</button>
-                    <button role="tab" aria-selected="false" data-tab="linux">Linux</button>
-                </div>
-
-                <ol class="steps" data-panel="android">
-                    <li><b>Скачайте APK</b> кнопкой выше. Android спросит разрешение на установку
-                        из этого источника — его нужно дать: приложения нет в Google Play, и это
-                        нормально для VPN.</li>
-                    <li><b>Установите и откройте.</b> Войдите через Telegram — если вы уже
-                        покупали подписку у бота, всё подтянется само.</li>
-                    <li><b>Нажмите кнопку подключения</b> и разрешите создание VPN-профиля. Это
-                        системный запрос Android, он появится один раз.</li>
-                </ol>
-
-                <ol class="steps hidden" data-panel="ios">
-                    <li><b>Установите INCY</b> из <a href="https://apps.apple.com/app/id6756943388"
-                            target="_blank" rel="noopener">App Store</a>. Приложение бесплатное. Если
-                        в вашем App Store его не видно, переключите страну аккаунта — приложение
-                        доступно не во всех регионах.</li>
-                    <li><b>Скопируйте ссылку подписки</b> в <a href="/cabinet.html">личном
-                            кабинете</a>, раздел «Подключение». Там же есть QR-код — его можно
-                        отсканировать с другого устройства.</li>
-                    <li><b>В INCY откройте подписки</b> и добавьте новую по ссылке: приложение
-                        принимает ссылку из буфера обмена и QR-код. Список серверов подтянется сам.</li>
-                    <li><b>Выберите сервер и подключитесь.</b> iOS один раз спросит разрешение на
-                        добавление VPN-конфигурации — его нужно дать.</li>
-                </ol>
-
-                <ol class="steps hidden" data-panel="windows">
-                    <li><b>Запустите установщик.</b> Windows покажет предупреждение SmartScreen —
-                        программа не подписана сертификатом. Нажмите «Подробнее» → «Выполнить в
-                        любом случае». Всё нужное, включая ядро, уже внутри — доскачивать ничего
-                        не надо.</li>
-                    <li><b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в
-                        боте. Список серверов и подписка подтянутся сами.</li>
-                    <li><b>Выберите режим.</b> «Прокси» работает без прав администратора и
-                        подходит браузерам. «Весь трафик» перехватывает всё, включая игры и
-                        торренты, — для него приложение попросит перезапуск от администратора.</li>
-                    <li><b>Закрытие окна не выключает VPN.</b> Крестик спросит: свернуть в трей
-                        (значок у часов) или выйти совсем. Подключиться и отключиться можно прямо
-                        из меню значка.</li>
-                </ol>
-
-                <ol class="steps hidden" data-panel="linux">
-                    <li><b>Выберите дистрибутив.</b> Кнопка выше открывает окно с тремя
-                        сборками: пакет для Arch, .deb для Ubuntu и Debian, AppImage для всего
-                        остального. Приложение во всех одно и то же — отличается только
-                        упаковка.</li>
-                    <li><b>Поставьте пакет.</b> На Arch —
-                        <span class="mono">sudo pacman -U DarkPrinceVPN.pkg.tar.zst</span>, на
-                        Ubuntu и Debian —
-                        <span class="mono">sudo apt install ./DarkPrinceVPN.deb</span>. И там, и
-                        там зависимости подтянутся сами, а ярлык появится в меню. AppImage ставить
-                        не нужно: сделайте файл исполняемым
-                        (<span class="mono">chmod +x</span> или свойства файла → «Разрешить
-                        выполнение») и запускайте.</li>
-                    <li><b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте.</li>
-                    <li><b>Выберите режим.</b> «Прокси» работает без пароля и настраивает прокси
-                        рабочего стола. «Весь трафик» перехватывает всё, включая консольные
-                        программы, — система один раз спросит пароль.</li>
-                    <li><b>Не хотите наше приложение?</b> Подписка в обычном формате, подойдёт <a
-                            href="https://github.com/Mahdi-zarei/nekoray/releases" target="_blank"
-                            rel="noopener">Nekoray</a>, <a href="https://github.com/v2rayA/v2rayA"
-                            target="_blank" rel="noopener">v2rayA</a> или <a
-                            href="https://github.com/hiddify/hiddify-app/releases" target="_blank"
-                            rel="noopener">Hiddify</a>. Ссылку возьмёте в кабинете.</li>
-                    <li><b>Скопируйте ссылку подписки</b> в личном кабинете — раздел «Подключение».</li>
-                    <li><b>Добавьте её в клиент</b> как подписку (Subscription / Профиль по URL) и
-                        обновите список серверов.</li>
-                    <li><b>Выберите сервер и подключитесь.</b> Список серверов обновляется сам,
-                        когда мы что-то меняем на нашей стороне.</li>
-                </ol>
-            </div>
-        </section>
-
-        <section class="wrap" id="linux" style="padding-bottom:40px">
-            <div class="card">
-                <h3>Почему для iPhone нет своего приложения</h3>
-                <p class="small muted">Честно: для App Store нужен платный аккаунт разработчика
-                    Apple — мы этим занимаемся. Но подписка у нас в обычном стандартном формате,
-                    поэтому подойдёт любой популярный клиент, и работать он будет ровно так же:
-                    те же серверы, та же скорость, тот же лимит устройств. Инструкция — на вкладке
-                    выше.</p>
-            </div>
-        </section>
-    </main>
-
-    <!-- Выбор сборки для Linux. Приложение одно, отличается только упаковка,
-         поэтому спрашиваем дистрибутив, а не «версию». -->
-    <dialog id="linuxPicker" class="picker" aria-labelledby="pickerTitle">
-        <div class="picker-head">
-            <h3 id="pickerTitle">Какой у вас дистрибутив?</h3>
-            <button class="btn btn-sm btn-ghost picker-close" id="pickerClose"
-                aria-label="Закрыть">✕</button>
-        </div>
-        <p class="small muted">Приложение одно и то же — отличается только формат пакета.</p>
-
-        <ul class="picker-list">
-            <li>
-                <div>
-                    <b>Arch, Manjaro, EndeavourOS</b>
-                    <p class="small muted">Пакет pacman: встаёт под учёт системы и так же
-                        удаляется.</p>
-                </div>
-                <a class="btn btn-primary btn-sm" data-pick="arch"
-                    href="downloads/DarkPrinceVPN.pkg.tar.zst">Скачать</a>
-            </li>
-            <li>
-                <div>
-                    <b>Ubuntu, Debian, Mint, Pop!_OS</b>
-                    <p class="small muted">Пакет .deb: открывается двойным щелчком или
-                        <span class="mono">sudo apt install ./файл</span>.</p>
-                </div>
-                <a class="btn btn-primary btn-sm" data-pick="deb"
-                    href="downloads/DarkPrinceVPN.deb">Скачать</a>
-            </li>
-            <li>
-                <div>
-                    <b>Fedora, openSUSE и любой другой</b>
-                    <p class="small muted">AppImage: ставить не нужно, но файл придётся сделать
-                        исполняемым и ярлык сам не появится.</p>
-                </div>
-                <a class="btn btn-primary btn-sm" data-pick="appimage"
-                    href="downloads/DarkPrinceVPN.AppImage">Скачать</a>
-            </li>
-        </ul>
-
-        <p class="tiny muted picker-foot">Всё собрано под x86_64. Для другого процессора
-            приложение собирается из исходников — как, написано в
-            <a href="https://github.com/DarkPrince922/DarkPrinceVpnLinux" target="_blank"
-                rel="noopener">репозитории</a>.</p>
-    </dialog>
-
-    <footer class="bottom">
-        <div class="wrap">
-            <a href="/cabinet.html">Личный кабинет</a>
-            <a href="/cabinet.html#support">Поддержка</a>
-            <a href="/privacy.html">Конфиденциальность</a>
-            <a href="/terms.html">Условия</a>
-            <p class="tiny" style="margin-top:12px">
-                Вопросы и помощь с подключением — <a href="https://t.me/skzfeee" target="_blank"
-                    rel="noopener">@skzfeee</a> в Telegram
-            </p>
-            <p class="tiny" style="margin-top:6px">© <span id="year"></span> DarkPrince VPN</p>
-        </div>
-    </footer>
-
-    <script type="module" src="js/home.js"></script>
-</body>
-
-</html>
+<!DOCTYPE html><html lang="ru"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DarkPrince VPN — быстрый VPN для Android, iPhone, Windows и Linux</title><meta name="description" content="Приложения DarkPrince VPN для Android, iPhone, Windows и Linux. Скачайте, войдите и подключайтесь — без настроек и ограничений скорости."><meta name="theme-color" content="#070a12"><link rel="icon" href="/assets/favicon.ico"><link rel="preload" href="/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/golos-text-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin><meta property="og:title" content="DarkPrince VPN — быстрый VPN для Android, iPhone, Windows и Linux"><meta property="og:description" content="Приложения DarkPrince VPN для Android, iPhone, Windows и Linux. Скачайте, войдите и подключайтесь — без настроек и ограничений скорости."><meta property="og:image" content="/assets/logo.png"><meta property="og:type" content="website"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/_astro/reset-password.BrDA0_K_.css"></head> <body>  <div class="scene" aria-hidden="true"> <span class="glow a"></span> <span class="glow b"></span> </div> <header class="top"> <div class="wrap"> <a class="brand" href="/"> <img src="/assets/logo.png" alt="" width="32" height="32"> <span>
+DarkPrince <i>VPN</i> </span> </a> <div class="spacer"></div> <a class="btn btn-sm" href="/cabinet.html">
+Личный кабинет
+</a> </div> </header> <main>  <section class="hero wrap"> <div class="hero-mark"> <img src="/assets/logo.png" alt="DarkPrince VPN" width="54" height="54"> </div> <h1>Интернет без границ <em>на всех ваших устройствах</em></h1> <p class="lead">
+Своё приложение для телефона и компьютера: скачали, вошли, нажали одну кнопку.
+            Без ручной настройки конфигов, без ограничений скорости и без счётчика трафика
+            там, где он не нужен.
+</p> <div class="hero-cta"> <a class="btn btn-primary" id="mainDownload" href="#downloads">Скачать приложение</a> <a class="btn" href="/cabinet.html">Личный кабинет</a> </div> <p class="tiny hero-note">Остальные платформы — ниже</p> <div class="trust"> <div><b>4</b><span>платформы</span></div> <div><b>Без логов</b><span>трафик не пишем</span></div> <div><b>1 кнопка</b><span>вместо конфигов</span></div> <div><b>Своё ядро</b><span>ничего доскачивать</span></div> </div> </section> <section class="wrap" id="downloads"> <div class="section-head"> <p class="eyebrow">Приложения</p> <h2>Скачайте под свою систему</h2> <p>Версия и размер подставляются автоматически — то, что лежит на сервере прямо сейчас.</p> </div> <div class="grid cols-4"> <article class="card platform"> <span class="icon">🤖</span> <h3>Android</h3> <p class="small muted">Телефоны и планшеты, Android 8 и новее. Есть выбор приложений для VPN и кнопка в шторке.</p> <a class="btn btn-primary btn-block" id="dlAndroid" href="/downloads/DarkPrinceVPN.apk"> Скачать APK </a> <p class="size" id="verAndroid">   </p> </article><article class="card platform"> <span class="icon">🪟</span> <h3>Windows</h3> <p class="small muted">Windows 10 и 11. Два режима: системный прокси без прав администратора и полный туннель для всех программ.</p> <a class="btn btn-primary btn-block" id="dlWindows" href="/downloads/DarkPrinceVPN-setup.exe"> Скачать для Windows </a> <p class="size" id="verWindows">   </p> </article><article class="card platform"> <span class="icon">🍏</span> <h3>iPhone и iPad</h3> <p class="small muted">Своего приложения в App Store пока нет — подключение через INCY, бесплатный клиент из App Store. Ссылку возьмёте в кабинете.</p> <a class="btn btn-primary btn-block" id="dlIos" href="https://apps.apple.com/app/id6756943388" target="_blank" rel="noopener"> Установить INCY </a> <p class="size"> App Store · iOS 15 и новее </p> </article><article class="card platform"> <span class="icon">🐧</span> <h3>Linux</h3> <p class="small muted">Своё приложение: те же два режима, что в Windows. Пакет для вашего дистрибутива — ставится в систему, ярлык появляется в меню.</p> <a class="btn btn-primary btn-block" id="dlLinux" href="/downloads/DarkPrinceVPN.AppImage"> Скачать для Linux </a> <p class="size" id="verLinux">   </p> </article> </div> </section> <section class="wrap"> <div class="grid cols-3"> <article class="card feature"> <span class="icon">⚡</span> <h3>Скорость без потолка</h3> <p class="small muted">Современные протоколы поверх обычного HTTPS-трафика: провайдер видит только защищённое соединение.</p> </article><article class="card feature"> <span class="icon">🧩</span> <h3>Выбор приложений</h3> <p class="small muted">На Android можно пустить через VPN только нужные приложения, а банки и доставку оставить напрямую.</p> </article><article class="card feature"> <span class="icon">👥</span> <h3>Одна подписка — несколько устройств</h3> <p class="small muted">Телефон, компьютер и ноутбук работают одновременно, устройствами можно управлять в кабинете.</p> </article> </div> </section> <section class="wrap" id="install"> <div class="section-head"> <p class="eyebrow">Как начать</p> <h2>Три шага до подключения</h2> <p>Вкладка откроется на вашей системе — её мы определяем сами.</p> </div> <div class="card"> <div class="tabs" role="tablist"> <button role="tab" aria-selected="true" data-tab="android">Android</button> <button role="tab" aria-selected="false" data-tab="ios">iPhone</button> <button role="tab" aria-selected="false" data-tab="windows">Windows</button> <button role="tab" aria-selected="false" data-tab="linux">Linux</button> </div> <ol class="steps" data-panel="android"> <li> <b>Скачайте APK</b> кнопкой выше. Android спросит разрешение на установку из
+                    этого источника — его нужно дать: приложения нет в Google Play, и это нормально
+                    для VPN.
+</li> <li> <b>Установите и откройте.</b> Войдите через Telegram — если вы уже покупали
+                    подписку у бота, всё подтянется само.
+</li> <li> <b>Нажмите кнопку подключения</b> и разрешите создание VPN-профиля. Это системный
+                    запрос Android, он появится один раз.
+</li> </ol> <ol class="steps hidden" data-panel="ios"> <li> <b>Установите INCY</b> из
+<a href="https://apps.apple.com/app/id6756943388" target="_blank" rel="noopener">App Store</a>. Приложение бесплатное. Если в вашем App Store его не видно, переключите страну
+                    аккаунта — приложение доступно не во всех регионах.
+</li> <li> <b>Скопируйте ссылку подписки</b> в
+<a href="/cabinet.html">личном кабинете</a>, раздел «Подключение». Там же есть
+                    QR-код — его можно отсканировать с другого устройства.
+</li> <li> <b>В INCY откройте подписки</b> и добавьте новую по ссылке: приложение принимает
+                    ссылку из буфера обмена и QR-код. Список серверов подтянется сам.
+</li> <li> <b>Выберите сервер и подключитесь.</b> iOS один раз спросит разрешение на добавление
+                    VPN-конфигурации — его нужно дать.
+</li> </ol> <ol class="steps hidden" data-panel="windows"> <li> <b>Запустите установщик.</b> Windows покажет предупреждение SmartScreen — программа
+                    не подписана сертификатом. Нажмите «Подробнее» → «Выполнить в любом случае». Всё
+                    нужное, включая ядро, уже внутри — доскачивать ничего не надо.
+</li> <li> <b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте. Список
+                    серверов и подписка подтянутся сами.
+</li> <li> <b>Выберите режим.</b> «Прокси» работает без прав администратора и подходит
+                    браузерам. «Весь трафик» перехватывает всё, включая игры и торренты, — для него
+                    приложение попросит перезапуск от администратора.
+</li> <li> <b>Закрытие окна не выключает VPN.</b> Крестик спросит: свернуть в трей (значок у
+                    часов) или выйти совсем. Подключиться и отключиться можно прямо из меню значка.
+</li> </ol> <ol class="steps hidden" data-panel="linux"> <li> <b>Выберите дистрибутив.</b> Кнопка выше открывает окно с тремя сборками: пакет для
+                    Arch, .deb для Ubuntu и Debian, AppImage для всего остального. Приложение во всех
+                    одно и то же — отличается только упаковка.
+</li> <li> <b>Поставьте пакет.</b> На Arch —
+<span class="mono">sudo pacman -U DarkPrinceVPN.pkg.tar.zst</span>, на Ubuntu и
+                    Debian — <span class="mono">sudo apt install ./DarkPrinceVPN.deb</span>. И там, и
+                    там зависимости подтянутся сами, а ярлык появится в меню. AppImage ставить не
+                    нужно: сделайте файл исполняемым (<span class="mono">chmod +x</span> или свойства
+                    файла → «Разрешить выполнение») и запускайте.
+</li> <li> <b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте.
+</li> <li> <b>Выберите режим.</b> «Прокси» работает без пароля и настраивает прокси рабочего
+                    стола. «Весь трафик» перехватывает всё, включая консольные программы, — система
+                    один раз спросит пароль.
+</li> <li> <b>Не хотите наше приложение?</b> Подписка в обычном формате, подойдёт
+<a href="https://github.com/Mahdi-zarei/nekoray/releases" target="_blank" rel="noopener">Nekoray</a>,
+<a href="https://github.com/v2rayA/v2rayA" target="_blank" rel="noopener">v2rayA</a>
+или
+<a href="https://github.com/hiddify/hiddify-app/releases" target="_blank" rel="noopener">Hiddify</a>. Ссылку возьмёте в кабинете.
+</li> </ol> </div> </section> <section class="wrap" id="ios-note"> <div class="card"> <h3>Почему для iPhone нет своего приложения</h3> <p class="small muted" style="margin-top:10px">
+Честно: для App Store нужен платный аккаунт разработчика Apple — мы этим занимаемся.
+                Но подписка у нас в обычном стандартном формате, поэтому подойдёт любой популярный
+                клиент, и работать он будет ровно так же: те же серверы, та же скорость, тот же лимит
+                устройств. Инструкция — на вкладке выше.
+</p> </div> </section> <dialog id="linuxPicker" class="picker" aria-labelledby="pickerTitle"> <div class="picker-head"> <h3 id="pickerTitle">Какой у вас дистрибутив?</h3> <button class="btn btn-sm btn-ghost" id="pickerClose" aria-label="Закрыть">✕</button> </div> <p class="small muted">Приложение одно и то же — отличается только формат пакета.</p> <ul class="picker-list"> <li> <div> <b>Arch, Manjaro, EndeavourOS</b> <p class="small muted">Пакет pacman: встаёт под учёт системы и так же удаляется.</p> </div> <a class="btn btn-primary btn-sm" data-pick="arch" href="/downloads/DarkPrinceVPN.pkg.tar.zst">
+Скачать
+</a> </li><li> <div> <b>Ubuntu, Debian, Mint, Pop!_OS</b> <p class="small muted">Пакет .deb: открывается двойным щелчком или sudo apt install ./файл.</p> </div> <a class="btn btn-primary btn-sm" data-pick="deb" href="/downloads/DarkPrinceVPN.deb">
+Скачать
+</a> </li><li> <div> <b>Fedora, openSUSE и любой другой</b> <p class="small muted">AppImage: ставить не нужно, но файл придётся сделать исполняемым и ярлык сам не появится.</p> </div> <a class="btn btn-primary btn-sm" data-pick="appimage" href="/downloads/DarkPrinceVPN.AppImage">
+Скачать
+</a> </li> </ul> <p class="tiny picker-foot">
+Всё собрано под x86_64. Для другого процессора приложение собирается из исходников — как,
+            написано в
+<a href="https://github.com/DarkPrince922/DarkPrinceVpnLinux" target="_blank" rel="noopener">репозитории</a>.
+</p> </dialog> <script type="module" src="/_astro/index.astro_astro_type_script_index_0_lang.Ban4LwkK.js"></script>  </main> <footer class="bottom"> <div class="wrap"> <nav> <a href="/cabinet.html">Личный кабинет</a> <a href="/cabinet.html#support">Поддержка</a> <a href="/privacy.html">Конфиденциальность</a> <a href="/terms.html">Условия</a> </nav> <p class="tiny">
+Вопросы и помощь с подключением —  <a href="https://t.me/skzfeee" target="_blank" rel="noopener">
+@skzfeee
+</a> 
+в Telegram
+</p> <p class="tiny" style="margin-top:6px">
+© 2026 DarkPrince VPN
+</p> </div> </footer> </body></html>
