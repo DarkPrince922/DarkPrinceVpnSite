@@ -1,22 +1,12 @@
-# Индексируем только в Google. Остальным поисковикам сайт не показываем.
-#
-# Это просьба, а не запрет: robots.txt соблюдают воспитанные роботы — Google,
-# Bing, Яндекс. Тот, кто ищет сайт целенаправленно, его и так найдёт: домен
-# виден в публичных журналах выданных TLS-сертификатов, и никакой robots.txt
-# этого не меняет.
+# Сайт открыт для всех поисковиков. Закрыто только то, чему в выдаче не место:
+# личный кабинет, страницы по одноразовым ссылкам из писем и папки с файлами.
 
-User-agent: Googlebot
-Allow: /$
-Allow: /help.html
-Allow: /help/
-Allow: /privacy.html
-Allow: /terms.html
+User-agent: *
+Allow: /
 Disallow: /cabinet.html
 Disallow: /verify-email.html
 Disallow: /reset-password.html
 Disallow: /downloads/
 Disallow: /updates/
 
-# Всем прочим — ничего.
-User-agent: *
-Disallow: /
+Sitemap: https://dprince.online/sitemap-index.xml

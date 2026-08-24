@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import sitemap from "@astrojs/sitemap";
 
 /**
  * Сайт собирается в статику и раскладывается в `site/`, откуда его отдаёт
@@ -24,6 +25,23 @@ export default defineConfig({
     inlineStylesheets: "auto",
     assets: "_astro",
   },
+  integrations: [
+    sitemap({
+      // Кабинет и страницы по одноразовым ссылкам из писем в выдаче не нужны:
+      // показывать там нечего, а адреса из писем живут считанные часы.
+      filter: (page) => !/\/(cabinet|verify-email|reset-password)\/?$/.test(page),
+
+      // Дополнение не знает про format: "file" и выдаёт адреса без .html —
+      // то есть ведущие в 404. Скармливать поисковикам несуществующие
+      // страницы — верный способ испортить себе выдачу, поэтому дописываем
+      // расширение сами.
+      serialize(item) {
+        const path = new URL(item.url).pathname.replace(/\/$/, "");
+        item.url = `https://dprince.online${path === "" ? "/" : `${path}.html`}`;
+        return item;
+      },
+    }),
+  ],
   devToolbar: { enabled: false },
   vite: {
     build: {
