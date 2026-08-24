@@ -102,7 +102,10 @@ img {
     border: 1px solid rgba(207, 170, 98, 0.22);
     border-radius: 6px;
     padding: 1px 6px;
-    white-space: nowrap;
+    /* Команды переносим по любому месту. С неразрывной строкой длинная
+       команда на телефоне уезжала за край карточки: страница не прокручивается
+       вбок, поэтому хвост просто пропадал. */
+    overflow-wrap: anywhere;
 }
 
 .eyebrow {
@@ -127,6 +130,9 @@ img {
     inset: 0;
     z-index: -1;
     pointer-events: none;
+    /* Пятна намеренно вылезают за края, чтобы свет заходил на экран сбоку.
+       Обрезаем их здесь, а не полагаемся на overflow-x у body. */
+    overflow: hidden;
     background: var(--bg);
 }
 
@@ -784,4 +790,157 @@ section {
 
 .legal a {
     color: var(--gold-soft);
+}
+
+/* ---------------------------------------------------------------- справка -- */
+
+.guide-grid {
+    margin-top: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.guide {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: inherit;
+    transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.guide:hover {
+    text-decoration: none;
+    transform: translateY(-3px);
+    border-color: rgba(207, 170, 98, 0.42);
+}
+
+.guide h3 {
+    font-size: 17px;
+}
+
+.guide p {
+    flex: 1;
+}
+
+.guide-more {
+    color: var(--gold-soft);
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.article .eyebrow a {
+    color: var(--gold);
+}
+
+/*
+ * Текст статьи приходит из Markdown, поэтому размечен обычными тегами без
+ * классов. Оформляем их по месту — иначе пришлось бы засорять сами тексты
+ * вёрсткой, а править их должно быть можно, не зная её.
+ */
+.prose {
+    margin-top: 20px;
+}
+
+.prose > :first-child {
+    margin-top: 0;
+}
+
+.prose h2 {
+    font-size: 20px;
+    margin-top: 30px;
+}
+
+.prose h3 {
+    font-size: 16.5px;
+    margin-top: 24px;
+}
+
+.prose p,
+.prose ul,
+.prose ol,
+.prose table {
+    margin-top: 12px;
+    color: var(--muted);
+}
+
+.prose ul,
+.prose ol {
+    padding-left: 20px;
+    display: grid;
+    gap: 8px;
+}
+
+.prose strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.prose a {
+    color: var(--gold-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Команды: длинные строки переносим по любому месту — на телефоне
+   неразрывная строка уезжала бы за край, а вбок страница не прокручивается. */
+.prose code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    background: rgba(207, 170, 98, 0.1);
+    border: 1px solid rgba(207, 170, 98, 0.22);
+    border-radius: 6px;
+    padding: 1px 6px;
+    overflow-wrap: anywhere;
+    color: var(--gold-soft);
+}
+
+.prose pre {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: rgba(7, 10, 18, 0.65);
+    border: 1px solid var(--line-soft);
+    overflow-x: auto;
+}
+
+.prose pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--text);
+    white-space: pre;
+}
+
+/* Таблица со сборками: на узком экране уезжает вбок внутри себя,
+   а не тянет за собой всю страницу. */
+.prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.prose th {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+    /*
+     * Команды на телефоне переносим, а не прокручиваем вбок. Внутри узкой
+     * коробки с боковой прокруткой команду не видно целиком, а её как раз
+     * нужно прочитать и повторить — перенос тут полезнее верности отступам.
+     */
+    .prose pre code {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
 }

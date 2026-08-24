@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+
+export async function getStaticPaths() {
+    const guides = await getCollection("help");
+    return guides.map((guide) => ({ params: { slug: guide.id }, props: { guide } }));
+}
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+---
+
+<Base title={`${guide.data.title} — DarkPrince VPN`} description={guide.data.summary}>
+    <article class="wrap legal article">
+        <p class="eyebrow">
+            <a href="/help.html">← Справка</a>
+        </p>
+        <h1>{guide.data.icon} {guide.data.title}</h1>
+        <p>{guide.data.summary}</p>
+
+        <div class="card prose">
+            <Content />
+        </div>
+    </article>
+</Base>

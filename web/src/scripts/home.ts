@@ -13,14 +13,6 @@ const $$ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = doc
 
 const calmly = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Шапка отделяется от страницы только когда под ней что-то проехало.
-const header = $(".top");
-if (header) {
-    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 8);
-    addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-}
-
 // Появление блоков при прокрутке.
 //
 // Класс .reveal прячет элемент, поэтому вешаем его из скрипта и только на то,

@@ -9,10 +9,13 @@ import { rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const out = new URL("../../site/", import.meta.url);
-const strays = ["content-assets.mjs", "content-modules.mjs"];
+// Служебные модули слоя контента и схема коллекций справки. Работать сайту
+// они не мешают, но отдаются наружу вместе со страницами, а к сайту
+// отношения не имеют.
+const strays = ["content-assets.mjs", "content-modules.mjs", "collections"];
 
 for (const name of strays) {
-    await rm(new URL(name, out), { force: true });
+    await rm(new URL(name, out), { force: true, recursive: true });
 }
 
-console.log(`убрано лишнего: ${strays.length} файла из ${fileURLToPath(out)}`);
+console.log(`прибрано в ${fileURLToPath(out)}: ${strays.join(", ")}`);

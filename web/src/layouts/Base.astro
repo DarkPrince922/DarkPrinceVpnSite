@@ -91,6 +91,7 @@ const { title, description, chrome = true, noindex = false } = Astro.props;
                 <footer class="bottom">
                     <div class="wrap">
                         <nav>
+                            <a href="/help.html">Справка</a>
                             <a href="/cabinet.html">Личный кабинет</a>
                             <a href="/cabinet.html#support">Поддержка</a>
                             <a href="/privacy.html">Конфиденциальность</a>
@@ -110,5 +111,6 @@ const { title, description, chrome = true, noindex = false } = Astro.props;
                 </footer>
             )
         }
+        <script src="../scripts/chrome.ts"></script>
     </body>
 </html>

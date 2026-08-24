@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+// от самой ходовой платформы к редкой — так задан order в самих статьях
+const guides = (await getCollection("help")).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+    title="Справка — DarkPrince VPN"
+    description="Как установить и настроить DarkPrince VPN на Android, iPhone, Windows и Linux."
+>
+    <section class="wrap legal">
+        <p class="eyebrow">Справка</p>
+        <h1>Установка и подключение</h1>
+        <p>
+            Подробные инструкции по платформам: установка, вход, режимы работы и что делать,
+            если что-то пошло не так. Коротко то же самое есть
+            <a href="/#install">на главной</a>.
+        </p>
+
+        <div class="grid cols-2 guide-grid">
+            {
+                guides.map((guide) => (
+                    <a class="card guide" href={`/help/${guide.id}.html`}>
+                        <span class="icon">{guide.data.icon}</span>
+                        <h3>{guide.data.title}</h3>
+                        <p class="small muted">{guide.data.summary}</p>
+                        <span class="guide-more">Читать →</span>
+                    </a>
+                ))
+            }
+        </div>
+
+        <div class="card" style="margin-top:22px">
+            <h3>Не нашли ответ</h3>
+            <p class="small muted" style="margin-top:8px">
+                Напишите в поддержку — она есть в приложении и в
+                <a href="/cabinet.html#support">личном кабинете</a>. Из приложения к обращению
+                прикладывается журнал: по нему видно причину, и разбираться получается быстрее.
+                Можно и просто написать
+                <a href="https://t.me/skzfeee" target="_blank" rel="noopener">@skzfeee</a> в
+                Telegram.
+            </p>
+        </div>
+    </section>
+</Base>
