@@ -100,7 +100,7 @@ WIN=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
 LIN=https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases/download
 AND=https://github.com/DarkPrince922/Androidvpnapp/releases/download
 
-sudo curl -fSL "$AND/v1.2.12/DarkPrinceVPN-1.2.12.apk" \
+sudo curl -fSL "$AND/v1.3.1/DarkPrinceVPN-1.3.1.apk" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.apk
 
 sudo curl -fSL "$WIN/v1.2.3/DarkPrinceVPN-1.2.3-setup.exe" \
@@ -132,7 +132,7 @@ sudo curl -fSL "$WIN/v1.2.3/windows-x86_64.json" \
      -o /srv/darkprince/site/updates/windows-x86_64.json
 sudo curl -fSL "$LIN/v1.2.3/linux-x86_64.json" \
      -o /srv/darkprince/site/updates/linux-x86_64.json
-sudo curl -fSL "$AND/v1.2.12/android.json" \
+sudo curl -fSL "$AND/v1.3.1/android.json" \
      -o /srv/darkprince/site/updates/android.json
 ```
 
