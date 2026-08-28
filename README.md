@@ -100,17 +100,17 @@ WIN=https://github.com/DarkPrince922/DarkprincevpnWindows/releases/download
 LIN=https://github.com/DarkPrince922/DarkPrinceVpnLinux/releases/download
 AND=https://github.com/DarkPrince922/Androidvpnapp/releases/download
 
-sudo curl -fSL "$AND/v1.3.1/DarkPrinceVPN-1.3.1.apk" \
+sudo curl -fSL "$AND/v1.3.2/DarkPrinceVPN-1.3.2.apk" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.apk
 
-sudo curl -fSL "$WIN/v1.2.3/DarkPrinceVPN-1.2.3-setup.exe" \
+sudo curl -fSL "$WIN/v1.3.0/DarkPrinceVPN-1.3.0-setup.exe" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN-setup.exe
 
-sudo curl -fSL "$LIN/v1.2.3/DarkPrinceVPN-1.2.3-x86_64.pkg.tar.zst" \
+sudo curl -fSL "$LIN/v1.3.0/DarkPrinceVPN-1.3.0-x86_64.pkg.tar.zst" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.pkg.tar.zst
-sudo curl -fSL "$LIN/v1.2.3/DarkPrinceVPN-1.2.3-amd64.deb" \
+sudo curl -fSL "$LIN/v1.3.0/DarkPrinceVPN-1.3.0-amd64.deb" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.deb
-sudo curl -fSL "$LIN/v1.2.3/DarkPrinceVPN-1.2.3-x86_64.AppImage" \
+sudo curl -fSL "$LIN/v1.3.0/DarkPrinceVPN-1.3.0-x86_64.AppImage" \
      -o /srv/darkprince/site/downloads/DarkPrinceVPN.AppImage
 
 sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN.apk \
@@ -128,11 +128,11 @@ sha256sum /srv/darkprince/site/downloads/DarkPrinceVPN.apk \
 ```bash
 sudo mkdir -p /srv/darkprince/site/updates
 
-sudo curl -fSL "$WIN/v1.2.3/windows-x86_64.json" \
+sudo curl -fSL "$WIN/v1.3.0/windows-x86_64.json" \
      -o /srv/darkprince/site/updates/windows-x86_64.json
-sudo curl -fSL "$LIN/v1.2.3/linux-x86_64.json" \
+sudo curl -fSL "$LIN/v1.3.0/linux-x86_64.json" \
      -o /srv/darkprince/site/updates/linux-x86_64.json
-sudo curl -fSL "$AND/v1.3.1/android.json" \
+sudo curl -fSL "$AND/v1.3.2/android.json" \
      -o /srv/darkprince/site/updates/android.json
 ```
 
