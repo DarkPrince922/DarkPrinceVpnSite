@@ -86,9 +86,9 @@ async function extractMessage(response) {
     return null;
 }
 
-// Bedolaga меняет refresh-токен при каждом обновлении, поэтому обновление
-// строго одиночное: параллельные запросы ждут один и тот же результат, иначе
-// они ротируют токен наперегонки и выбрасывают пользователя из аккаунта.
+// Обновление строго одиночное: несколько экранов, открывшихся разом, иначе
+// отправили бы столько же одинаковых запросов на обновление. Ротации при
+// этом нет — /cabinet/auth/refresh возвращает тот же refresh-токен обратно.
 let refreshing = null;
 
 async function refreshTokens() {
@@ -104,8 +104,12 @@ async function refreshTokens() {
                 body: JSON.stringify({ refresh_token: token }),
             });
             if (!response.ok) {
-                // 4xx означает, что refresh-токен больше не примут
-                if (response.status >= 400 && response.status < 500) session.clear();
+                // Выходим из аккаунта только когда сервер сказал именно это:
+                // токен не принят. Раньше сюда попадал любой ответ 4xx, и
+                // человек оказывался на экране входа из-за 429 «слишком
+                // часто» или 404 от случайной страницы провайдера — при
+                // живой сессии. Остальные коды считаем временными.
+                if (response.status === 401 || response.status === 403) session.clear();
                 return null;
             }
             const auth = await response.json();
