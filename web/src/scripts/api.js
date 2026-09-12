@@ -63,6 +63,7 @@ function messageForStatus(status, serverMessage) {
     if (serverMessage) return serverMessage;
     if (status === 400 || status === 422) return "Неверные данные. Проверьте введённые значения.";
     if (status === 401) return "Неверный логин или пароль.";
+    if (status === 402) return "Не хватает средств на балансе. Пополните счёт и повторите.";
     if (status === 403) return "Доступ запрещён.";
     if (status === 404) return "Сервис не найден.";
     if (status === 429) return "Слишком много попыток. Подождите немного.";
@@ -75,6 +76,15 @@ async function extractMessage(response) {
     try {
         const data = await response.clone().json();
         const raw = data.detail ?? data.message ?? data.error;
+        // У кабинета 402 значит ровно одно: не хватило денег на балансе.
+        // Подробности он кладёт объектом и по-английски, поэтому берём
+        // отсюда только сумму, а текст собираем свой.
+        if (response.status === 402) {
+            const missing = raw && typeof raw === "object" ? raw.missing_kopeks : null;
+            return typeof missing === "number" && missing > 0
+                ? `Не хватает ${(missing / 100).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ на балансе. Пополните счёт и повторите.`
+                : null;
+        }
         if (typeof raw === "string") return raw;
         // FastAPI отдаёт detail массивом объектов при ошибке валидации
         if (Array.isArray(raw) && raw.length && typeof raw[0]?.msg === "string") {
