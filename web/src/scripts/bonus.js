@@ -389,9 +389,10 @@ function referralSection() {
             rules.push(`${terms.first_payment_commission_percent}% с первого пополнения друга`);
             if (percent) rules.push(`${percent}% со всех следующих`);
         } else if (percent) rules.push(`${percent}% с каждого пополнения друга — на ваш баланс`);
-        if (terms?.inviter_bonus_kopeks > 0) rules.push(`${rubles(terms.inviter_bonus_kopeks)} вам, когда друг пополнит впервые`);
-        if (terms?.first_topup_bonus_kopeks > 0) rules.push(`${rubles(terms.first_topup_bonus_kopeks)} другу за первое пополнение`);
-        if (terms?.minimum_topup_kopeks > 0) rules.push(`Считаются пополнения от ${rubles(terms.minimum_topup_kopeks)}`);
+        // порог касается только бонусов за первое пополнение — процент бот начисляет с любой суммы
+        const from = terms?.minimum_topup_kopeks > 0 ? ` от ${rubles(terms.minimum_topup_kopeks)}` : "";
+        if (terms?.inviter_bonus_kopeks > 0) rules.push(`${rubles(terms.inviter_bonus_kopeks)} вам, когда друг впервые пополнит баланс${from}`);
+        if (terms?.first_topup_bonus_kopeks > 0) rules.push(`${rubles(terms.first_topup_bonus_kopeks)} другу при первом пополнении${from}`);
 
         wrap.append(el("div", { class: "card" }, [
             el("h3", { text: "Приглашайте друзей" }),
