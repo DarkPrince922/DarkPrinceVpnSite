@@ -21,7 +21,9 @@ const { title, description, chrome = true, noindex = false } = Astro.props;
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="theme-color" content="#070a12" />
-        <link rel="icon" href="/assets/favicon.ico" />
+        <link rel="icon" href="/assets/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png" />
+        <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
         {noindex && <meta name="robots" content="noindex" />}
 
         {/*
