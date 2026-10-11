@@ -86,18 +86,22 @@ import "../styles/cabinet.css";
             <button role="tab" data-tab="plans" aria-selected="false">Тарифы</button>
             <button role="tab" data-tab="balance" aria-selected="false">Баланс</button>
             <button role="tab" data-tab="devices" aria-selected="false">Устройства</button>
+            <button role="tab" data-tab="bonus" aria-selected="false">Бонусы</button>
             <button role="tab" id="supportTab" data-tab="support" aria-selected="false">
                 Поддержка <span id="supportBadge" class="support-badge hidden">0</span>
             </button>
             <button role="tab" data-tab="more" aria-selected="false">Ещё</button>
+            <button role="tab" id="adminTab" class="hidden" data-tab="admin" aria-selected="false">Панель</button>
         </div>
 
         <div id="panelSub" data-tabpanel="sub"></div>
         <div id="panelPlans" data-tabpanel="plans" class="hidden"></div>
         <div id="panelBalance" data-tabpanel="balance" class="hidden"></div>
         <div id="panelDevices" data-tabpanel="devices" class="hidden"></div>
+        <div id="panelBonus" data-tabpanel="bonus" class="hidden"></div>
         <div id="panelSupport" data-tabpanel="support" class="hidden"></div>
         <div id="panelMore" data-tabpanel="more" class="hidden"></div>
+        <div id="panelAdmin" data-tabpanel="admin" class="hidden"></div>
     </section>
 
     {/*

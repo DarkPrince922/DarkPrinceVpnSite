@@ -53,9 +53,24 @@ export const session = {
 };
 
 export class ApiError extends Error {
-    constructor(status, message) {
+    constructor(status, message, missingKopeks = null) {
         super(message);
         this.status = status;
+        /** Сколько не хватает на балансе — только у ответа 402. */
+        this.missingKopeks = missingKopeks;
+    }
+}
+
+/** Сумма недостачи из тела ответа 402: {"detail": {"missing_amount": копейки}}. */
+async function extractMissing(response) {
+    if (response.status !== 402) return null;
+    try {
+        const data = await response.clone().json();
+        const raw = data.detail;
+        const missing = raw && typeof raw === "object" ? (raw.missing_amount ?? raw.missing_kopeks) : null;
+        return typeof missing === "number" ? missing : null;
+    } catch {
+        return null;
     }
 }
 
@@ -80,7 +95,8 @@ async function extractMessage(response) {
         // Подробности он кладёт объектом и по-английски, поэтому берём
         // отсюда только сумму, а текст собираем свой.
         if (response.status === 402) {
-            const missing = raw && typeof raw === "object" ? raw.missing_kopeks : null;
+            // бот кладёт сумму в missing_amount (копейки); старое имя — на всякий случай
+            const missing = raw && typeof raw === "object" ? (raw.missing_amount ?? raw.missing_kopeks) : null;
             return typeof missing === "number" && missing > 0
                 ? `Не хватает ${(missing / 100).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ на балансе. Пополните счёт и повторите.`
                 : null;
@@ -199,7 +215,11 @@ export async function request(path, { method = "GET", body, query, raw = false }
     if (raw) return response;
 
     if (!response.ok) {
-        throw new ApiError(response.status, messageForStatus(response.status, await extractMessage(response)));
+        throw new ApiError(
+            response.status,
+            messageForStatus(response.status, await extractMessage(response)),
+            await extractMissing(response),
+        );
     }
     if (response.status === 204) return {};
     try {
@@ -211,6 +231,8 @@ export async function request(path, { method = "GET", body, query, raw = false }
 
 const get = (path, query) => request(path, { query });
 const post = (path, body, query) => request(path, { method: "POST", body, query });
+const patch = (path, body, query) => request(path, { method: "PATCH", body, query });
+const del = (path, query) => request(path, { method: "DELETE", query });
 
 export const api = {
     // --- вход ---
@@ -252,8 +274,36 @@ export const api = {
             tariff_id: tariffId,
             period_days: periodDays,
         }),
-    renewalOptions: () => get("cabinet/subscription/renewal-options"),
-    renew: (periodDays) => post("cabinet/subscription/renew", { period_days: periodDays }),
+    // номер подписки обязателен: без него кабинет продлевает ту, что считает
+    // текущей, а не ту, на которую нажали
+    renewalOptions: (subscriptionId) =>
+        get("cabinet/subscription/renewal-options", { subscription_id: subscriptionId }),
+    renew: (periodDays, subscriptionId) =>
+        post("cabinet/subscription/renew", { period_days: periodDays }, { subscription_id: subscriptionId }),
+
+    // автопродление
+    subscriptionDetails: (subscriptionId) => get("cabinet/subscription", { subscription_id: subscriptionId }),
+    setAutopay: (subscriptionId, enabled, daysBefore) =>
+        patch("cabinet/subscription/autopay", { enabled, days_before: daysBefore }, { subscription_id: subscriptionId }),
+    recurrentStatus: (subscriptionId) =>
+        get("cabinet/subscription/platega-recurrent", { subscription_id: subscriptionId }),
+    enableRecurrent: (subscriptionId) =>
+        post("cabinet/subscription/platega-recurrent/enable", {}, { subscription_id: subscriptionId }),
+    cancelRecurrent: (subscriptionId) =>
+        post("cabinet/subscription/platega-recurrent/cancel", {}, { subscription_id: subscriptionId }),
+
+    // смена тарифа и сброс ссылки
+    switchPreview: (subscriptionId, tariffId, periodDays) =>
+        post("cabinet/subscription/tariff/switch/preview", { tariff_id: tariffId, period_days: periodDays }, { subscription_id: subscriptionId }),
+    switchTariff: (subscriptionId, tariffId, periodDays) =>
+        post("cabinet/subscription/tariff/switch", { tariff_id: tariffId, period_days: periodDays }, { subscription_id: subscriptionId }),
+    revoke: (subscriptionId) => post("cabinet/subscription/revoke", {}, { subscription_id: subscriptionId }),
+
+    // трафик
+    trafficPackages: (subscriptionId) =>
+        get("cabinet/subscription/traffic-packages", { subscription_id: subscriptionId }),
+    buyTraffic: (gb, subscriptionId) =>
+        post("cabinet/subscription/traffic", { gb }, { subscription_id: subscriptionId }),
 
     // --- устройства ---
     devices: (subscriptionId) =>
@@ -265,6 +315,10 @@ export const api = {
         }),
     purchaseDevices: (devices, subscriptionId) =>
         post("cabinet/subscription/devices/purchase", { devices }, { subscription_id: subscriptionId }),
+    deviceReductionInfo: (subscriptionId) =>
+        get("cabinet/subscription/devices/reduction-info", { subscription_id: subscriptionId }),
+    reduceDevices: (newLimit, subscriptionId) =>
+        post("cabinet/subscription/devices/reduce", { new_device_limit: newLimit }, { subscription_id: subscriptionId }),
     deleteDevice: (hwid, subscriptionId) =>
         request(`cabinet/subscription/devices/${encodeURIComponent(hwid)}`, {
             method: "DELETE",
@@ -319,6 +373,68 @@ export const api = {
     // --- прочее ---
     referral: () => get("cabinet/referral"),
     activatePromo: (code) => post("cabinet/promocode/activate", { code }),
+
+    // рефералка целиком
+    referralTerms: () => get("cabinet/referral/terms"),
+    referralList: () => get("cabinet/referral/list", { page: 1, per_page: 100 }),
+    referralEarnings: () => get("cabinet/referral/earnings", { page: 1, per_page: 100 }),
+    withdrawalBalance: () => get("cabinet/referral/withdrawal/balance"),
+    withdrawalHistory: () => get("cabinet/referral/withdrawal/history"),
+    createWithdrawal: (amountKopeks, details) =>
+        post("cabinet/referral/withdrawal/create", { amount_kopeks: amountKopeks, payment_details: details }),
+    cancelWithdrawal: (id) => post(`cabinet/referral/withdrawal/${encodeURIComponent(id)}/cancel`, {}),
+
+    // подарки
+    giftConfig: () => get("cabinet/gift/config"),
+    giftPurchase: (body) => post("cabinet/gift/purchase", body),
+    giftStatus: (token) => get(`cabinet/gift/purchase/${encodeURIComponent(token)}`),
+    giftsSent: () => get("cabinet/gift/sent"),
+    giftsReceived: () => get("cabinet/gift/received"),
+    giftActivate: (code) => post("cabinet/gift/activate", { code }),
+
+    // скидки и уровни
+    promoOffers: () => get("cabinet/promo/offers"),
+    activeDiscount: () => get("cabinet/promo/active-discount"),
+    claimOffer: (offerId) => post("cabinet/promo/claim", { offer_id: offerId }),
+    groupDiscounts: () => get("cabinet/promo/group-discounts"),
+    loyaltyTiers: () => get("cabinet/promo/loyalty-tiers"),
+
+    // вопросы и документы
+    infoVisibility: () => get("cabinet/info/visibility"),
+    faq: () => get("cabinet/info/faq", { language: "ru" }),
+    infoDoc: (kind) => get(`cabinet/info/${kind}`, { language: "ru" }),
+
+    // --- админка ---
+    isAdmin: () => get("cabinet/auth/me/is-admin"),
+    permissions: () => get("cabinet/auth/me/permissions"),
+    adminDashboard: () => get("cabinet/admin/stats/dashboard"),
+    adminTickets: (status) => get("cabinet/admin/tickets", { page: 1, per_page: 50, status }),
+    adminTicket: (id) => get(`cabinet/admin/tickets/${encodeURIComponent(id)}`),
+    adminReply: (id, message) => post(`cabinet/admin/tickets/${encodeURIComponent(id)}/reply`, { message }),
+    adminTicketStatus: (id, status) => post(`cabinet/admin/tickets/${encodeURIComponent(id)}/status`, { status }),
+    adminUsers: (search, offset = 0) =>
+        get("cabinet/admin/users", { search, limit: 30, offset, sort_by: "created_at" }),
+    adminUser: (id) => get(`cabinet/admin/users/${encodeURIComponent(id)}`),
+    adminBalance: (id, amountKopeks, description) =>
+        post(`cabinet/admin/users/${encodeURIComponent(id)}/balance`, { amount_kopeks: amountKopeks, description }),
+    adminSubscriptionAction: (id, body) => post(`cabinet/admin/users/${encodeURIComponent(id)}/subscription`, body),
+    adminBlock: (id) => post(`cabinet/admin/users/${encodeURIComponent(id)}/block`, {}),
+    adminUnblock: (id) => post(`cabinet/admin/users/${encodeURIComponent(id)}/unblock`, {}),
+    adminSendMessage: (id, text) => post(`cabinet/admin/users/${encodeURIComponent(id)}/send-message`, { text }),
+    adminWithdrawals: (status) => get("cabinet/admin/withdrawals", { status, limit: 50 }),
+    adminWithdrawal: (id) => get(`cabinet/admin/withdrawals/${encodeURIComponent(id)}`),
+    adminWithdrawalAction: (id, action, comment) =>
+        post(`cabinet/admin/withdrawals/${encodeURIComponent(id)}/${action}`, action === "complete" ? undefined : { comment: comment || null }),
+    adminPayments: (search, statusFilter, period) =>
+        get("cabinet/admin/payments/search", { search, status_filter: statusFilter, period, per_page: 50 }),
+    adminCheckPayment: (method, id) =>
+        post(`cabinet/admin/payments/${encodeURIComponent(method)}/${encodeURIComponent(id)}/check`, {}),
+    adminBroadcastFilters: () => get("cabinet/admin/broadcasts/filters"),
+    adminBroadcastButtons: () => get("cabinet/admin/broadcasts/buttons"),
+    adminEmailFilters: () => get("cabinet/admin/broadcasts/email-filters"),
+    adminBroadcasts: () => get("cabinet/admin/broadcasts", { limit: 20 }),
+    adminSendBroadcast: (body) => post("cabinet/admin/broadcasts/send", body),
+    adminStopBroadcast: (id) => post(`cabinet/admin/broadcasts/${encodeURIComponent(id)}/stop`, {}),
 };
 
 // ---------- разбор ответов переменной формы ----------
@@ -387,14 +503,37 @@ export function parseTariffs(root) {
     return offers;
 }
 
+/**
+ * Способы оплаты — по варианту на строку. У части касс внутри одного способа
+ * несколько вариантов (у Platega — СБП и карта): бот присылает их в options,
+ * и выбранный нужно передать в payment_option. Раньше варианты не читались,
+ * и оплатить можно было только первым — по СБП.
+ */
 export function parsePaymentMethods(root) {
-    return asArray(root, ["methods", "items", "payment_methods"])
-        .map((m) => ({
-            id: m.method || m.id || "",
+    const out = [];
+    for (const m of asArray(root, ["methods", "items", "payment_methods"])) {
+        const id = m.method || m.id || "";
+        const enabled = m.enabled ?? m.is_enabled ?? true;
+        if (!id || !enabled) continue;
+        const base = {
+            id,
             name: m.title || m.name || m.method || m.id || "",
-            enabled: m.enabled ?? m.is_enabled ?? true,
             min: m.min_amount_kopeks ?? null,
             max: m.max_amount_kopeks ?? null,
-        }))
-        .filter((m) => m.enabled && m.id);
+        };
+        const options = Array.isArray(m.options) ? m.options.filter((o) => o && o.id) : [];
+        if (!options.length) {
+            out.push({ ...base, option: null, key: id });
+            continue;
+        }
+        for (const option of options) {
+            out.push({
+                ...base,
+                option: String(option.id),
+                key: `${id}/${option.id}`,
+                name: option.name || option.description || `${base.name} ${option.id}`,
+            });
+        }
+    }
+    return out;
 }

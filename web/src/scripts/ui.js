@@ -149,3 +149,22 @@ export function qrNode(text, size = 176) {
     }
     return el("div", { class: "small muted", text: "Ссылка слишком длинная для QR" });
 }
+
+// ---------- всплывающее сообщение ----------
+
+/** Короткое сообщение в углу экрана: о событиях, которые пришли сами. */
+export function toast(text, type = "info") {
+    let box = document.getElementById("toastBox");
+    if (!box) {
+        box = el("div", { id: "toastBox", class: "toast-box" });
+        document.body.append(box);
+    }
+    const item = el("div", { class: `toast ${type}`, text });
+    box.append(item);
+    setTimeout(() => item.remove(), 6000);
+}
+
+/** Перейти на вкладку кабинета по её имени: sub, plans, balance… */
+export function openTab(name) {
+    $$(".tab-bar button").find((b) => b.dataset.tab === name)?.click();
+}

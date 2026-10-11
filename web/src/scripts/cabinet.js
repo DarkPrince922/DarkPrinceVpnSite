@@ -6,9 +6,18 @@ import {
     copy, message, busy, qrNode,
 } from "./ui.js";
 import {
-    renderSupport, deactivateSupport, startSupportUnreadPolling,
+    renderSupport, deactivateSupport, startSupportUnreadPolling, refreshSupportUnread,
 } from "./support.js";
 import { emailLinkCard } from "./email-link.js";
+import {
+    autopayCard, autopayAllowed, switchCard, revokeButton, trafficCard, goTopUp, isNotEnough,
+} from "./subscription-tools.js";
+import { loadPending, clearPending, completePending } from "./pending.js";
+import { toast } from "./ui.js";
+import { renderBonus, invalidateBonus, promoStrip } from "./bonus.js";
+import { docsCard } from "./docs.js";
+import { startEvents, stopEvents } from "./events.js";
+import { checkAdmin, renderAdmin } from "./admin.js";
 
 const state = {
     subscriptions: [],
@@ -159,6 +168,7 @@ $("#telegramButton").addEventListener("click", async () => {
 });
 
 $("#logoutButton").addEventListener("click", async () => {
+    stopEvents();
     const refresh = session.refresh;
     try {
         if (refresh) await api.logout(refresh);
@@ -185,6 +195,8 @@ $$(".tab-bar button").forEach((button) => {
             plans: renderPlans,
             balance: renderBalance,
             devices: renderDevices,
+            bonus: renderBonus,
+            admin: renderAdmin,
             support: renderSupport,
             more: renderMore,
         };
@@ -210,6 +222,8 @@ function errorCard(text, retry) {
 async function enterCabinet() {
     showApp();
     startSupportUnreadPolling();
+    startEvents();
+    checkAdmin();
     await Promise.all([loadBalance(), renderSubscription()]);
     if (location.hash === "#support") $("#supportTab")?.click();
 }
@@ -223,8 +237,31 @@ async function loadBalance() {
         chip.classList.remove("hidden");
     } catch {
         // баланс не критичен для остального кабинета
+        return;
+    }
+    // денег стало достаточно — оплачиваем то, ради чего пополняли
+    const pending = loadPending();
+    if (pending && state.balanceKopeks >= pending.price && !completing) {
+        completing = true;
+        try {
+            const result = await completePending(state.balanceKopeks);
+            if (result.text) toast(result.text, result.status === "failed" ? "err" : "info");
+            if (result.status !== "wait") {
+                const data = await api.balance().catch(() => null);
+                if (data) {
+                    state.balanceKopeks = Number(data.balance_kopeks ?? 0);
+                    $("#balanceChip").textContent = rubles(state.balanceKopeks);
+                }
+                renderSubscription();
+                if (balanceLoaded) renderBalance(true);
+            }
+        } finally {
+            completing = false;
+        }
     }
 }
+
+let completing = false;
 
 const current = () => state.subscriptions.find((s) => s.id === state.currentId) || null;
 
@@ -265,8 +302,17 @@ async function renderSubscription() {
     }
 
     if (list.length > 1) panel.append(subscriptionPicker(list));
-    panel.append(subscriptionCard(current()));
-    panel.append(connectionCard(current()));
+    const sub = current();
+    panel.append(subscriptionCard(sub));
+    panel.append(connectionCard(sub));
+    if (isActive(sub) && autopayAllowed(sub)) panel.append(autopayCard(sub));
+    if (isActive(sub) && !sub.is_trial && sub.tariff_id != null) {
+        panel.append(switchCard(sub, () => Promise.all([loadBalance(), renderSubscription()])));
+    }
+    const limitGb = Number(sub.traffic_limit_gb ?? 0);
+    if (isActive(sub) && limitGb > 0) {
+        panel.append(trafficCard(sub, () => Promise.all([loadBalance(), renderSubscription()])));
+    }
 }
 
 const isActive = (sub) =>
@@ -291,6 +337,8 @@ function subscriptionPicker(list) {
     const select = el("select", {
         onchange: (event) => {
             state.currentId = Number(event.target.value);
+            // устройства у каждой подписки свои — перечитать при следующем открытии
+            devicesLoaded = false;
             renderSubscription();
         },
     });
@@ -350,17 +398,17 @@ function subscriptionCard(sub) {
     renewBox.append(
         el("button", {
             class: "primary",
-            onclick: (event) => loadRenewal(renewBox, event.currentTarget),
+            onclick: (event) => loadRenewal(renewBox, event.currentTarget, sub),
         }, "Продлить подписку")
     );
     return card;
 }
 
-async function loadRenewal(box, button) {
+async function loadRenewal(box, button, sub) {
     await busy(button, async () => {
         let options = [];
         try {
-            const data = await api.renewalOptions();
+            const data = await api.renewalOptions(sub.id);
             options = asArray(data, ["options", "items"])
                 .map((item) => ({
                     days: Number(item.period_days ?? item.days),
@@ -392,11 +440,18 @@ async function loadRenewal(box, button) {
                     if (!confirm(`Продлить на ${periodText(option.days)} за ${rubles(option.price)}? Сумма спишется с баланса.`)) return;
                     await busy(event.currentTarget, async () => {
                         try {
-                            await api.renew(option.days);
+                            await api.renew(option.days, sub.id);
                             note.className = "small ok";
                             note.textContent = "Подписка продлена.";
                             await Promise.all([loadBalance(), renderSubscription()]);
                         } catch (error) {
+                            if (isNotEnough(error)) {
+                                await goTopUp(error, {
+                                    kind: "renew", subscriptionId: sub.id, periodDays: option.days, price: option.price,
+                                    title: `${sub.tariff_name || "Подписка"} · продление на ${periodText(option.days)}`,
+                                }, () => (balanceLoaded = false));
+                                return;
+                            }
                             note.className = "small danger";
                             note.textContent = error.message;
                         }
@@ -405,12 +460,6 @@ async function loadRenewal(box, button) {
             }, `${periodText(option.days)} — ${rubles(option.price)}`));
         }
         box.append(row, note);
-        if (state.subscriptions.length > 1) {
-            box.append(el("p", {
-                class: "tiny muted",
-                text: "Продление применяется к активной подписке аккаунта.",
-            }));
-        }
     });
 }
 
@@ -427,6 +476,7 @@ function connectionCard(sub) {
     card.append(body);
 
     const url = sub.subscription_url;
+    if (isActive(sub)) card.append(revokeButton(sub, () => renderSubscription()));
     if (url) fillConnection(body, url);
     else {
         const button = el("button", {
@@ -450,7 +500,7 @@ function connectionCard(sub) {
 }
 
 function fillConnection(box, url) {
-    clear(box).append(
+    clear(box).append(...[
         el("p", { class: "mono", text: url }),
         el("div", { class: "row wrap-row", style: "margin-bottom:14px" }, [
             el("button", {
@@ -464,8 +514,7 @@ function fillConnection(box, url) {
                 el("p", { class: "section-title", text: "или отсканируйте телефоном" }),
                 qrNode(url),
             ])
-            : null
-    );
+            : null].filter(Boolean));
 }
 
 // ================= тарифы =================
@@ -493,6 +542,7 @@ async function renderPlans(force = false) {
     }
 
     clear(panel);
+    promoStrip().then((strip) => strip && panel.prepend(strip)).catch(() => { });
 
     const trialAvailable = trial && (trial.available ?? trial.is_available);
     if (trialAvailable) {
@@ -530,7 +580,7 @@ async function renderPlans(force = false) {
 
     panel.append(el("p", {
         class: "small muted after-card",
-        text: "Оплата списывается с баланса кабинета. Если денег не хватает — пополните баланс на соседней вкладке.",
+        text: "Оплата списывается с баланса кабинета. Не хватит — переведём на пополнение, и подписка оплатится сама, как только деньги придут.",
     }));
 
     const grid = el("div", { class: "grid cols-2" });
@@ -580,6 +630,13 @@ function tariffCard(offer) {
                         note.textContent = "Готово! Подписка активна.";
                         await Promise.all([loadBalance(), renderSubscription()]);
                     } catch (error) {
+                        if (isNotEnough(error)) {
+                            await goTopUp(error, {
+                                kind: "buy", tariffId: offer.id, periodDays: selected.days, price: selected.price,
+                                title: `${offer.name} · ${periodText(selected.days)}`,
+                            }, () => (balanceLoaded = false));
+                            return;
+                        }
                         note.className = "small danger";
                         note.textContent = error.message;
                     }
@@ -593,6 +650,7 @@ function tariffCard(offer) {
 // ================= баланс =================
 
 let balanceLoaded = false;
+window.addEventListener("dp-pending", () => (balanceLoaded = false));
 
 async function renderBalance(force = false) {
     const panel = $("#panelBalance");
@@ -608,6 +666,18 @@ async function renderBalance(force = false) {
     }
 
     clear(panel);
+    const pending = loadPending();
+    if (pending) {
+        panel.append(el("div", { class: "msg info" }, [
+            el("strong", { text: `Ждёт оплаты: ${pending.title}` }),
+            el("br"),
+            `Не хватает ${rubles(pending.missing)}. Пополните — и оплатим сами, как только деньги придут. `,
+            el("a", {
+                href: "#",
+                onclick: (e) => { e.preventDefault(); clearPending(); renderBalance(true); },
+            }, "Отменить"),
+        ]));
+    }
     panel.append(el("div", { class: "card" }, [
         el("p", { class: "section-title", text: "На счету" }),
         el("div", { class: "days", text: rubles(state.balanceKopeks ?? 0) }),
@@ -618,11 +688,13 @@ async function renderBalance(force = false) {
         }),
     ]));
 
-    panel.append(topupCard(methods));
+    // пришли за недостающей суммой — подставляем её, округлив до рубля
+    const prefill = pending ? Math.max(10, Math.ceil(pending.missing / 100)) : 300;
+    panel.append(topupCard(methods, prefill));
     panel.append(transactionsCard());
 }
 
-function topupCard(methods) {
+function topupCard(methods, prefill = 300) {
     const note = el("p", { class: "small" });
 
     if (!methods.length) {
@@ -635,9 +707,9 @@ function topupCard(methods) {
         ]);
     }
 
-    const amount = el("input", { type: "number", min: "1", step: "1", value: "300" });
+    const amount = el("input", { type: "number", min: "1", step: "1", value: String(prefill) });
     const method = el("select");
-    for (const item of methods) method.append(el("option", { value: item.id }, item.name));
+    for (const item of methods) method.append(el("option", { value: item.key }, item.name));
 
     const quick = el("div", { class: "amounts" });
     for (const value of [100, 300, 500, 1000]) {
@@ -663,11 +735,16 @@ function topupCard(methods) {
                     note.textContent = "Введите сумму.";
                     return;
                 }
-                const chosen = methods.find((m) => m.id === method.value);
+                const chosen = methods.find((m) => m.key === method.value);
                 const kopeks = Math.round(rublesAmount * 100);
                 if (chosen?.min && kopeks < chosen.min) {
                     note.className = "small danger";
                     note.textContent = `Минимальная сумма для этого способа — ${rubles(chosen.min)}.`;
+                    return;
+                }
+                if (chosen?.max && kopeks > chosen.max) {
+                    note.className = "small danger";
+                    note.textContent = `Максимальная сумма для этого способа — ${rubles(chosen.max)}.`;
                     return;
                 }
 
@@ -676,13 +753,14 @@ function topupCard(methods) {
                 const tab = window.open("", "_blank");
                 await busy(event.currentTarget, async () => {
                     try {
-                        const payment = await api.topup(kopeks, method.value);
+                        const payment = await api.topup(kopeks, chosen.id, chosen.option);
                         if (payment.payment_url) {
                             if (tab) tab.location = payment.payment_url;
                             else window.open(payment.payment_url, "_blank");
                             note.className = "small muted";
                             note.textContent = "Счёт открыт в новой вкладке. После оплаты вернитесь сюда.";
-                            clear(pending).append(pendingBlock(method.value, payment.payment_id));
+                            clear(pending).append(pendingBlock(chosen.id, payment.payment_id));
+                            watchPayment(chosen.id, payment.payment_id);
                         } else {
                             tab?.close();
                             note.className = "small muted";
@@ -699,6 +777,35 @@ function topupCard(methods) {
         note,
         pending,
     ]);
+}
+
+/**
+ * Пока висит счёт, сами спрашиваем, дошли ли деньги, — сначала часто, потом
+ * реже. Без этого после оплаты приходилось жать «проверить».
+ */
+let paymentWatch = null;
+
+function watchPayment(method, paymentId) {
+    if (!paymentId) return;
+    clearTimeout(paymentWatch);
+    const start = state.balanceKopeks;
+    let attempt = 0;
+    const tick = async () => {
+        attempt += 1;
+        try {
+            await api.checkPending(method, paymentId);
+        } catch {
+            // не дошёл ещё — спросим позже
+        }
+        await loadBalance();
+        if (state.balanceKopeks !== start) {
+            toast(`Баланс пополнен: ${rubles(state.balanceKopeks)}`);
+            if (balanceLoaded) renderBalance(true);
+            return;
+        }
+        if (attempt < 40) paymentWatch = setTimeout(tick, attempt < 12 ? 5000 : 15000);
+    };
+    paymentWatch = setTimeout(tick, 5000);
 }
 
 function pendingBlock(method, paymentId) {
@@ -833,6 +940,42 @@ async function renderDevices(force = false) {
 
     panel.append(card);
     panel.append(devicePurchaseCard(price, subId));
+
+    // уменьшить лимит — если бот разрешает
+    try {
+        const reduction = await api.deviceReductionInfo(subId);
+        const current = Number(reduction.current_device_limit ?? limit ?? 0);
+        const min = Number(reduction.min_device_limit ?? 1);
+        if (reduction.available && current > min) {
+            const target = el("input", { type: "number", min: String(min), max: String(current - 1), value: String(current - 1) });
+            const note = el("p", { class: "small" });
+            panel.append(el("div", { class: "card" }, [
+                el("h3", { text: "Уменьшить лимит устройств" }),
+                el("p", { class: "small muted", text: `Сейчас ${current}. Лишние устройства придётся сначала отключить.` }),
+                el("label", { class: "field" }, [el("span", {}, "Новый лимит"), target]),
+                el("button", {
+                    class: "btn-sm",
+                    onclick: async (event) => {
+                        const n = Math.max(min, Math.min(current - 1, Number(target.value) || min));
+                        if (!confirm(`Уменьшить лимит до ${n}?`)) return;
+                        await busy(event.currentTarget, async () => {
+                            try {
+                                await api.reduceDevices(n, subId);
+                                await renderSubscription();
+                                renderDevices(true);
+                            } catch (error) {
+                                note.className = "small danger";
+                                note.textContent = error.message;
+                            }
+                        });
+                    },
+                }, "Уменьшить"),
+                note,
+            ]));
+        }
+    } catch {
+        // уменьшение недоступно — просто не показываем
+    }
 }
 
 function devicePurchaseCard(price, subId) {
@@ -924,36 +1067,13 @@ async function renderMore(force = false) {
         promoNote,
     ]));
 
-    // рефералка
-    const referralCard = el("div", { class: "card" }, [el("h3", { text: "Приглашайте друзей" })]);
-    panel.append(referralCard);
-    try {
-        const referral = await api.referral();
-        const link = referral.bot_referral_link || referral.referral_link;
-        referralCard.append(
-            el("p", {
-                class: "small muted",
-                text: referral.commission_percent
-                    ? `Вы получаете ${referral.commission_percent}% с платежей приглашённых.`
-                    : "Друг подключается по вашей ссылке — вы получаете вознаграждение.",
-            }),
-            link ? el("p", { class: "mono", text: link }) : null,
-            link ? el("button", {
-                class: "btn-sm",
-                onclick: (event) => copy(link, event.currentTarget),
-            }, "Скопировать ссылку") : null,
-            el("div", { class: "kv", style: "margin-top:12px" }, [
-                el("span", { class: "k", text: "Приглашено" }),
-                el("span", { text: String(referral.total_referrals ?? 0) }),
-            ]),
-            el("div", { class: "kv" }, [
-                el("span", { class: "k", text: "Заработано" }),
-                el("span", { text: rubles(referral.total_earnings_kopeks ?? 0) }),
-            ])
-        );
-    } catch {
-        referralCard.append(el("p", { class: "small muted", text: "Реферальная программа недоступна." }));
-    }
+    // приглашения, подарки и скидки — на вкладке «Бонусы»
+    panel.append(el("div", { class: "card" }, [
+        el("h3", { text: "Бонусы" }),
+        el("p", { class: "small muted", text: "Приглашения и вывод денег, подарки, скидки и уровни лояльности." }),
+        el("button", { class: "btn-sm", onclick: () => $$(".tab-bar button").find((b) => b.dataset.tab === "bonus")?.click() }, "Открыть"),
+    ]));
+    panel.append(docsCard());
 
     // аккаунт
     const user = session.user;
@@ -991,6 +1111,40 @@ async function renderMore(force = false) {
         ]),
     ]));
 }
+
+// ================= живые события =================
+
+const EVENT_TEXT = {
+    "balance.topup": (e) => `Баланс пополнен${e.amount_kopeks ? ` на ${rubles(e.amount_kopeks)}` : ""}`,
+    "autopay.success": (e) => `Подписка продлена автоматически${e.amount_kopeks ? `, списано ${rubles(e.amount_kopeks)}` : ""}`,
+    "autopay.insufficient_funds": (e) => `Автопродление не прошло: на балансе не хватает${e.required_kopeks ? ` ${rubles(Math.max(0, e.required_kopeks - (e.balance_kopeks || 0)))}` : " денег"}`,
+    "autopay.failed": (e) => `Автопродление не прошло${e.reason ? `: ${e.reason}` : ""}`,
+    "subscription.expired": () => "Подписка закончилась",
+    "ticket.admin_reply": () => "Поддержка ответила на ваше обращение",
+    "referral.bonus": (e) => `Бонус за приглашённого${e.bonus_kopeks ? `: ${rubles(e.bonus_kopeks)}` : ""}`,
+};
+
+window.addEventListener("cabinet-event", (event) => {
+    const data = event.detail || {};
+    const type = String(data.type || "");
+    const text = EVENT_TEXT[type]?.(data);
+    if (text) toast(text, type.startsWith("autopay.") && type !== "autopay.success" ? "err" : "info");
+    if (type.startsWith("balance.") || type === "payment.received" || type.startsWith("autopay.")) {
+        loadBalance();
+        if (balanceLoaded) renderBalance(true);
+    }
+    if (type.startsWith("subscription.") || type.startsWith("autopay.")) {
+        renderSubscription();
+        devicesLoaded = false;
+    }
+    if (type.startsWith("referral.")) invalidateBonus();
+    if (type.startsWith("ticket.")) refreshSupportUnread();
+    // админу — новое обращение или ответ клиента: открытая панель обновится сама
+    if ((type === "ticket.new" || type === "ticket.user_reply") && !$("#panelAdmin").classList.contains("hidden")) renderAdmin();
+});
+
+window.addEventListener("dp-subscription-changed", () => renderSubscription());
+window.addEventListener("dp-balance-changed", () => loadBalance());
 
 // ================= старт =================
 
