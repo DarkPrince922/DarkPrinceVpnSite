@@ -13,7 +13,7 @@ import {
     autopayCard, autopayAllowed, switchCard, revokeButton, trafficCard, goTopUp, isNotEnough,
 } from "./subscription-tools.js";
 import { loadPending, clearPending, completePending } from "./pending.js";
-import { toast } from "./ui.js";
+import { toast, openTab } from "./ui.js";
 import { renderBonus, invalidateBonus, promoStrip } from "./bonus.js";
 import { docsCard } from "./docs.js";
 import { startEvents, stopEvents } from "./events.js";
@@ -296,6 +296,10 @@ async function renderSubscription() {
     }
 
     clear(panel);
+    // напоминания из кабинета — первыми: это то, что админ просит сделать сейчас
+    const remindersBox = el("div", { class: "reminders" });
+    panel.append(remindersBox);
+    renderReminders(remindersBox);
     if (!list.length) {
         panel.append(noSubscriptionCard());
         return;
@@ -303,8 +307,12 @@ async function renderSubscription() {
 
     if (list.length > 1) panel.append(subscriptionPicker(list));
     const sub = current();
+    // Подписка без тарифа: продлить её нельзя, докупки не продаются —
+    // только переход на тариф. Карточки, которые кончились бы отказом, не рисуем.
+    const legacy = sub.requires_tariff_selection === true;
     panel.append(subscriptionCard(sub));
     panel.append(connectionCard(sub));
+    if (legacy) return;
     if (isActive(sub) && autopayAllowed(sub)) panel.append(autopayCard(sub));
     if (isActive(sub) && !sub.is_trial && sub.tariff_id != null) {
         panel.append(switchCard(sub, () => Promise.all([loadBalance(), renderSubscription()])));
@@ -312,6 +320,59 @@ async function renderSubscription() {
     const limitGb = Number(sub.traffic_limit_gb ?? 0);
     if (isActive(sub) && limitGb > 0) {
         panel.append(trafficCard(sub, () => Promise.all([loadBalance(), renderSubscription()])));
+    }
+}
+
+/** Путь веб-кабинета из кнопки напоминания → вкладка этого кабинета. */
+function reminderTab(target) {
+    const path = String(target || "").toLowerCase();
+    if (/balance|topup/.test(path)) return "balance";
+    if (/referral|partner|gift|promo|loyalty|discount/.test(path)) return "bonus";
+    if (/support|ticket/.test(path)) return "support";
+    if (/device/.test(path)) return "devices";
+    if (/subscription|tariff|purchase|renew/.test(path)) return "plans";
+    if (/faq|info|rules|news/.test(path)) return "more";
+    return null;
+}
+
+async function renderReminders(box) {
+    let cards = [];
+    try {
+        cards = asArray(await api.reminders(), ["items"]);
+    } catch {
+        return; // напоминания — не главное, без них страница работает
+    }
+    for (const card of cards) {
+        const node = el("div", { class: "card" });
+        const button = card.button && card.button.text && card.button.target ? card.button : null;
+        node.append(...[
+            el("div", { class: "sub-head" }, [
+                el("h3", { style: "margin:0", text: card.title || "" }),
+                el("button", {
+                    class: "btn-sm",
+                    "aria-label": "Закрыть",
+                    onclick: () => {
+                        node.remove();
+                        api.dismissReminder(card.id).catch(() => {});
+                    },
+                }, "✕"),
+            ]),
+            card.body ? el("p", { class: "small muted", style: "white-space:pre-line;margin:8px 0 0", text: card.body }) : null,
+            button ? el("button", {
+                class: "primary",
+                style: "margin-top:12px",
+                onclick: () => {
+                    if (button.kind === "cabinet") {
+                        const tab = reminderTab(button.target);
+                        if (tab) openTab(tab);
+                        else window.open(`https://cabinet.darkprincepanel.ru/${button.target.replace(/^\//, "")}`, "_blank", "noopener");
+                    } else {
+                        window.open(button.target, "_blank", "noopener");
+                    }
+                },
+            }, button.text) : null,
+        ].filter(Boolean));
+        box.append(node);
     }
 }
 
@@ -393,6 +454,25 @@ function subscriptionCard(sub) {
         ]),
     ]);
 
+    if (sub.grace_until) {
+        card.append(el("p", {
+            class: "small",
+            style: "color:var(--warn,#e0a63a);margin:10px 0 0",
+            text: `Временный доступ до ${dateText(sub.grace_until)}. Продлите подписку, чтобы VPN не отключился.`,
+        }));
+    }
+    if (sub.requires_tariff_selection === true) {
+        card.append(
+            el("p", {
+                class: "small muted",
+                style: "margin:14px 0 8px",
+                text: "Подписка оформлена до появления тарифов. Продлить её можно, перейдя на тариф.",
+            }),
+            el("button", { class: "primary", onclick: () => openTab("plans") }, "Выбрать тариф"),
+        );
+        return card;
+    }
+
     const renewBox = el("div", { style: "margin-top:14px" });
     card.append(renewBox);
     renewBox.append(
@@ -413,6 +493,7 @@ async function loadRenewal(box, button, sub) {
                 .map((item) => ({
                     days: Number(item.period_days ?? item.days),
                     price: Number(item.price_kopeks ?? item.price),
+                    highlighted: item.is_highlighted === true,
                 }))
                 .filter((item) => Number.isFinite(item.days) && Number.isFinite(item.price))
                 .sort((a, b) => a.days - b.days);
@@ -457,7 +538,7 @@ async function loadRenewal(box, button, sub) {
                         }
                     });
                 },
-            }, `${periodText(option.days)} — ${rubles(option.price)}`));
+            }, `${option.highlighted ? "★ " : ""}${periodText(option.days)} — ${rubles(option.price)}`));
         }
         box.append(row, note);
     });
@@ -589,7 +670,7 @@ async function renderPlans(force = false) {
 }
 
 function tariffCard(offer) {
-    let selected = offer.periods[0];
+    let selected = offer.periods.find((p) => p.highlighted) || offer.periods[0];
     const price = el("div", { class: "price", text: rubles(selected.price) });
     const note = el("p", { class: "small" });
     const periods = el("div", { class: "periods" });
@@ -605,11 +686,12 @@ function tariffCard(offer) {
                     child.setAttribute("aria-selected", String(offer.periods[index] === selected))
                 );
             },
-        }, periodText(period.days))
+        }, `${period.highlighted ? "★ " : ""}${periodText(period.days)}`)
     );
     periods.append(...buttons);
 
     return el("div", { class: "card tariff" }, [
+        offer.highlighted ? el("span", { class: "chip", style: "color:var(--gold,#d9ad52);margin-bottom:8px;display:inline-block;align-self:flex-start;width:auto" }, "★ Выгодно") : null,
         el("h3", { text: offer.name }),
         offer.description && el("p", { class: "small muted", text: offer.description }),
         el("div", { class: "row wrap-row", style: "margin-bottom:6px" }, [

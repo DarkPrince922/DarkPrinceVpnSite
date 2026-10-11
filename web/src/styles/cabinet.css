@@ -96,6 +96,11 @@ a {
     padding: 18px;
 }
 
+/* напоминания стоят своим блоком перед карточками — отступ как между карточками */
+.reminders:not(:empty) {
+    margin-bottom: 14px;
+}
+
 .card + .card {
     margin-top: 14px;
 }

@@ -385,6 +385,10 @@ export const api = {
     // --- прочее ---
     referral: () => get("cabinet/referral"),
     // код на дни при нескольких подписках: кабинет просит subscription_id
+    // карточки напоминаний на главной — их заводит админ в кабинете
+    reminders: () => get("cabinet/reminders/active", { lang: "ru" }),
+    dismissReminder: (id) => post(`cabinet/reminders/${id}/dismiss`),
+
     activatePromo: (code, subscriptionId = null) =>
         post("cabinet/promocode/activate", subscriptionId ? { code, subscription_id: subscriptionId } : { code }),
 
@@ -472,6 +476,8 @@ export function parsePeriods(item) {
         .map((p) => ({
             days: Number(p.days ?? p.period_days),
             price: Number(p.price_kopeks ?? p.price),
+            // самый выгодный срок — по отметке админа
+            highlighted: p.is_highlighted === true,
         }))
         .filter((p) => Number.isFinite(p.days) && Number.isFinite(p.price))
         .sort((a, b) => a.days - b.days);
@@ -510,6 +516,7 @@ export function parseTariffs(root) {
                 description: item.description || null,
                 trafficLimitGb: item.traffic_limit_gb ?? null,
                 deviceLimit: item.device_limit ?? null,
+                highlighted: item.is_highlighted === true,
                 periods,
             });
         }
