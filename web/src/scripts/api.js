@@ -53,11 +53,22 @@ export const session = {
 };
 
 export class ApiError extends Error {
-    constructor(status, message, missingKopeks = null) {
+    constructor(status, message, missingKopeks = null, code = null) {
         super(message);
         this.status = status;
         /** Сколько не хватает на балансе — только у ответа 402. */
         this.missingKopeks = missingKopeks;
+        /** Машинный код отказа из {"detail": {"code": …}} — у новых разделов кабинета. */
+        this.code = code;
+    }
+}
+
+async function extractCode(response) {
+    try {
+        const raw = (await response.clone().json()).detail;
+        return raw && typeof raw === "object" && typeof raw.code === "string" ? raw.code : null;
+    } catch {
+        return null;
     }
 }
 
@@ -219,6 +230,7 @@ export async function request(path, { method = "GET", body, query, raw = false }
             response.status,
             messageForStatus(response.status, await extractMessage(response)),
             await extractMissing(response),
+            await extractCode(response),
         );
     }
     if (response.status === 204) return {};
@@ -372,7 +384,9 @@ export const api = {
 
     // --- прочее ---
     referral: () => get("cabinet/referral"),
-    activatePromo: (code) => post("cabinet/promocode/activate", { code }),
+    // код на дни при нескольких подписках: кабинет просит subscription_id
+    activatePromo: (code, subscriptionId = null) =>
+        post("cabinet/promocode/activate", subscriptionId ? { code, subscription_id: subscriptionId } : { code }),
 
     // рефералка целиком
     referralTerms: () => get("cabinet/referral/terms"),

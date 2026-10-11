@@ -1033,6 +1033,53 @@ function devicePurchaseCard(price, subId) {
 
 let moreLoaded = false;
 
+/** Отказы кабинета по промокоду: код в detail.code, текст там английский. */
+const PROMO_ERRORS = {
+    not_found: "Такого промокода нет. Проверьте, правильно ли он введён.",
+    expired: "Срок действия промокода закончился.",
+    inactive: "Промокод отключён.",
+    not_yet_valid: "Промокод ещё не начал действовать.",
+    used: "Промокод уже использовали максимальное число раз.",
+    already_used_by_user: "Вы уже активировали этот промокод.",
+    active_discount_exists: "У вас уже есть активная скидка — сначала используйте её.",
+    no_subscription_for_days: "Этот промокод продлевает подписку, а у вас её пока нет. Сначала оформите подписку или пробный период.",
+    subscription_not_found: "Подписка не найдена. Обновите страницу.",
+    not_first_purchase: "Промокод действует только на первую покупку.",
+    daily_limit: "Слишком много промокодов за сегодня. Попробуйте завтра.",
+    trial_subscription_exists: "Пробный промокод не подходит: у вас уже есть подписка.",
+    traffic_not_applicable: "Промокод добавляет трафик, а у вашей подписки он и так безлимитный.",
+};
+
+/**
+ * Активация промокода. Код на дни при нескольких подписках кабинет сам не
+ * применяет — присылает список, и человек выбирает, куда добавить дни.
+ */
+async function applyPromo(code, subscriptionId, note) {
+    try {
+        const result = await api.activatePromo(code, subscriptionId);
+        if (result.error === "select_subscription" && result.eligible_subscriptions?.length) {
+            note.className = "small";
+            note.replaceChildren(
+                el("span", { text: "К какой подписке добавить дни?" }),
+                ...result.eligible_subscriptions.map((sub) => el("button", {
+                    class: "btn-sm",
+                    style: "display:block;margin-top:8px",
+                    onclick: (event) => busy(event.currentTarget, () => applyPromo(code, sub.id, note)),
+                }, `${sub.tariff_name || `Подписка #${sub.id}`}${sub.days_left > 0 ? ` · осталось ${sub.days_left} дн.` : " · истекла"}`)),
+            );
+            return;
+        }
+        const ok = result.success ?? true;
+        note.className = ok ? "small ok" : "small danger";
+        // message у кабинета английский — показываем, что именно дал код
+        note.textContent = ok ? (result.bonus_description || "Промокод активирован!") : "Не удалось активировать промокод.";
+        if (ok) await Promise.all([loadBalance(), renderSubscription()]);
+    } catch (error) {
+        note.className = "small danger";
+        note.textContent = PROMO_ERRORS[error.code] || error.message;
+    }
+}
+
 async function renderMore(force = false) {
     const panel = $("#panelMore");
     if (moreLoaded && !force) return;
@@ -1049,19 +1096,7 @@ async function renderMore(force = false) {
             onclick: async (event) => {
                 const code = promoInput.value.trim();
                 if (!code) return;
-                await busy(event.currentTarget, async () => {
-                    try {
-                        const result = await api.activatePromo(code);
-                        const ok = result.success ?? true;
-                        promoNote.className = ok ? "small ok" : "small danger";
-                        promoNote.textContent = [result.message, result.bonus_description]
-                            .filter(Boolean).join(" ") || (ok ? "Промокод активирован!" : "Не удалось активировать промокод.");
-                        if (ok) await Promise.all([loadBalance(), renderSubscription()]);
-                    } catch (error) {
-                        promoNote.className = "small danger";
-                        promoNote.textContent = error.message;
-                    }
-                });
+                await busy(event.currentTarget, () => applyPromo(code, null, promoNote));
             },
         }, "Активировать"),
         promoNote,
