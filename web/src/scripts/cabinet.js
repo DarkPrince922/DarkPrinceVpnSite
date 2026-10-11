@@ -8,6 +8,7 @@ import {
 import {
     renderSupport, deactivateSupport, startSupportUnreadPolling,
 } from "./support.js";
+import { emailLinkCard } from "./email-link.js";
 
 const state = {
     subscriptions: [],
@@ -956,11 +957,22 @@ async function renderMore(force = false) {
 
     // аккаунт
     const user = session.user;
+    // почты нет — вошли через Telegram: предлагаем привязать, чтобы входить
+    // и без него
+    if (user && !user.email) {
+        panel.append(emailLinkCard(() => {
+            api.me().then((fresh) => (session.user = fresh)).catch(() => { });
+        }));
+    }
     panel.append(el("div", { class: "card" }, [
         el("h3", { text: "Аккаунт" }),
         el("div", { class: "kv" }, [
             el("span", { class: "k", text: "Почта" }),
-            el("span", { text: user?.email || "—" }),
+            el("span", {
+                text: user?.email
+                    ? user.email + (user.email_verified === false ? " (не подтверждена — проверьте письмо)" : "")
+                    : "—",
+            }),
         ]),
         el("div", { class: "kv" }, [
             el("span", { class: "k", text: "Telegram" }),

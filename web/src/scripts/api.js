@@ -147,7 +147,10 @@ async function validAccessToken() {
     return token;
 }
 
-const AUTH_FREE = /\/cabinet\/auth\/(deeplink|email|password|refresh)/;
+// Без токена — только вход, регистрация с нуля, подтверждение почты и
+// пароль. «email» целиком сюда нельзя: соседний /email/register без хвоста —
+// это привязка почты к уже вошедшему аккаунту, ей токен нужен.
+const AUTH_FREE = /\/cabinet\/auth\/(deeplink|email\/(login|register\/standalone|verify|resend)|password|refresh)/;
 
 /**
  * Запрос к кабинету. На 401 один раз обновляет токен и повторяет.
@@ -229,6 +232,13 @@ export const api = {
     forgotPassword: (email) => post("cabinet/auth/password/forgot", { email }),
     logout: (refreshToken) => post("cabinet/auth/logout", { refresh_token: refreshToken }),
     me: () => get("cabinet/auth/me"),
+
+    // привязка почты к вошедшему аккаунту и объединение с занятой почтой
+    linkEmail: (email, password) => post("cabinet/auth/email/register", { email, password }),
+    verifyEmailMerge: (code) => post("cabinet/auth/email/merge/verify", { code }),
+    mergePreview: (token) => get(`cabinet/auth/merge/${encodeURIComponent(token)}`),
+    executeMerge: (token, keepFrom) =>
+        post(`cabinet/auth/merge/${encodeURIComponent(token)}`, { keep_subscription_from: keepFrom }),
 
     // --- подписка ---
     subscriptions: () => get("cabinet/subscriptions"),
