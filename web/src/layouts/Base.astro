@@ -8,9 +8,14 @@ interface Props {
     chrome?: boolean;
     /** Кабинет и страницы по одноразовым ссылкам в поиске не нужны. */
     noindex?: boolean;
+    /**
+     * Своя политика Referer поверх серверной same-origin. Окно входа Telegram
+     * узнаёт сайт по Referer: без него отвечает «origin required».
+     */
+    referrer?: string;
 }
 
-const { title, description, chrome = true, noindex = false } = Astro.props;
+const { title, description, chrome = true, noindex = false, referrer } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,6 +30,7 @@ const { title, description, chrome = true, noindex = false } = Astro.props;
         <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png" />
         <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
         {noindex && <meta name="robots" content="noindex" />}
+        {referrer && <meta name="referrer" content={referrer} />}
 
         {/*
           Гарнитуры лежат у нас же и грузятся сразу: без preload первый экран
