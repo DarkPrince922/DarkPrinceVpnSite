@@ -348,8 +348,17 @@ def ago(iso):
     return f"{minutes // 1440} дн назад"
 
 
-def app_name(user_agent):
-    return (user_agent or "неизвестно").split("/")[0].split(" ")[0][:30]
+# Наши приложения представляются панели как v2rayNG этой версии: по нему она отдаёт нужный формат.
+OUR_UA = "v2rayNG/1.10.7"
+
+
+def app_name(user_agent, platform=""):
+    ua = (user_agent or "").strip()
+    if ua.startswith(OUR_UA):
+        if (platform or "").lower() in ("windows", "linux"):
+            return "DarkPrince VPN"
+        return "DarkPrince VPN (или v2rayNG)"
+    return (ua or "неизвестно").split("/")[0].split(" ")[0][:30]
 
 
 async def facts_for(ticket):
@@ -384,7 +393,7 @@ async def facts_for(ticket):
                 lines.append(f"  Устройств с ID: {len(devices)}:")
                 for d in devices[:8]:
                     lines.append(f"   - {d.get('platform') or '?'} {d.get('deviceModel') or ''}, приложение "
-                                 f"{app_name(d.get('userAgent'))}, последний раз {ago(d.get('updatedAt'))}")
+                                 f"{app_name(d.get('userAgent'), d.get('platform'))}, последний раз {ago(d.get('updatedAt'))}")
             else:
                 lines.append("  Устройств с ID нет — приложение не передаёт ID устройства или подписку ещё не добавляли.")
             history = await panel(f"/api/users/{pu['id']}/subscription-request-history")
