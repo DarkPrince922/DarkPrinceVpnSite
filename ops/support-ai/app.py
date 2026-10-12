@@ -12,6 +12,7 @@
 """
 
 import asyncio
+import base64
 import html
 import json
 import logging
@@ -49,6 +50,7 @@ ADMIN_ID = int(env("ADMIN_CHAT_ID", required=True))
 POLL = int(env("POLL_SECONDS", "30"))
 DAILY_LIMIT = int(env("AI_DAILY_LIMIT", "150"))  # не больше стольких черновиков в сутки
 QUIET = int(env("QUIET_SECONDS", "45"))  # ждать, пока клиент допишет мысль
+VISION = env("AI_VISION", "true").lower() == "true"  # показывать модели фото от клиента
 MAX_AGE = int(env("MAX_AGE_HOURS", "24"))  # старые обращения не трогаем — например, при первом запуске
 
 DATA = Path(env("DATA_DIR", "/data"))
@@ -88,6 +90,18 @@ async def bot_api(method, path, **kw):
         return await r.json()
 
 
+async def bot_file(file_id, limit=5 * 1024 * 1024):
+    """Файл из обращения (фото клиента) — байты и тип."""
+    async with session.get(f"{BOT_API}/media/{file_id}", headers={"X-API-Key": BOT_TOKEN},
+                           timeout=aiohttp.ClientTimeout(total=60)) as r:
+        if r.status >= 400:
+            raise RuntimeError(f"файл {file_id}: HTTP {r.status}")
+        data = await r.content.read(limit + 1)
+        if len(data) > limit:
+            raise RuntimeError("файл больше 5 МБ")
+        return data, r.headers.get("Content-Type", "image/jpeg").split(";")[0]
+
+
 def panel_cookies():
     if ":" in PANEL_COOKIE:
         name, value = PANEL_COOKIE.split(":", 1)
@@ -101,6 +115,18 @@ async def panel(path):
         if r.status >= 400:
             raise RuntimeError(f"панель {path}: HTTP {r.status}")
         return (await r.json()).get("response")
+
+
+async def tg_photo(data, mime, caption):
+    """Фото — загрузкой: file_id основного бота другому боту не годится."""
+    form = aiohttp.FormData()
+    form.add_field("chat_id", str(ADMIN_ID))
+    form.add_field("caption", caption[:1000])
+    form.add_field("photo", data, filename="photo." + (mime.split("/")[-1] or "jpg"), content_type=mime)
+    async with session.post(f"{TG_API}/bot{TG_TOKEN}/sendPhoto", data=form, timeout=aiohttp.ClientTimeout(total=60)) as r:
+        result = await r.json()
+        if not result.get("ok"):
+            raise RuntimeError(f"telegram sendPhoto: {result.get('description')}")
 
 
 async def tg(method, **params):
@@ -177,15 +203,23 @@ RULES = """Ты — помощник поддержки VPN-сервиса DarkP
  "reason": "почему нужен админ, если escalate"}"""
 
 
-async def ask_model(facts, dialog):
+async def ask_model(facts, dialog, images=()):
     kb = KB_FILE.read_text() if KB_FILE.exists() else ""
+    text = f"# Факты о клиенте\n{facts}\n\n# Переписка\n{dialog}"
+    content = text
+    if images:
+        # фото клиента — обычно скриншот ошибки; модель умеет их читать
+        content = [{"type": "text", "text": text + "\n\nНиже — фото, которые приложил клиент."}] + [
+            {"type": "image_url", "image_url": {"url": "data:%s;base64,%s" % (mime, base64.b64encode(data).decode())}}
+            for data, mime in images
+        ]
     body = {
         "model": await pick_model(),
         "temperature": 0.3,
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": f"{RULES}\n\n# База знаний\n{kb}"},
-            {"role": "user", "content": f"# Факты о клиенте\n{facts}\n\n# Переписка\n{dialog}"},
+            {"role": "user", "content": content},
         ],
     }
     async def call(payload):
@@ -195,7 +229,12 @@ async def ask_model(facts, dialog):
             return r.status, await r.json(content_type=None)
 
     status, data = await call(body)
-    if status == 400:
+    if status == 400 and images:
+        # модель или посредник не принимает картинки — спрашиваем без них
+        log.warning("модель не приняла фото, отвечает без них")
+        body["messages"][1]["content"] = text + "\n\n(Клиент приложил фото, но показать его не удалось.)"
+        status, data = await call(body)
+    if status == 400 and "response_format" in body:
         # не все посредники пропускают строгий JSON-режим — просим JSON словами
         body.pop("response_format")
         status, data = await call(body)
@@ -350,11 +389,47 @@ async def process_ticket(brief):
     state["handled"][tid] = last["id"]
     save_state()
 
-    question = "\n".join((m.get("message_text") or "").strip() for m in messages
-                         if not m.get("is_from_admin") and m["id"] > max([x["id"] for x in messages if x.get("is_from_admin")] or [0]))
+    last_admin = max([x["id"] for x in messages if x.get("is_from_admin")] or [0])
+    fresh = [m for m in messages if not m.get("is_from_admin") and m["id"] > last_admin]
+    question = "\n".join((m.get("message_text") or "").strip() for m in fresh).strip()
+
+    # клиент дописал — прежний черновик по этому обращению больше не годится
+    for key, old in list(state["drafts"].items()):
+        if old["ticket_id"] == int(tid):
+            state["drafts"].pop(key)
+            try:
+                await tg("editMessageText", chat_id=ADMIN_ID, message_id=old["message_id"],
+                         text=draft_card(old, "⏭ Клиент дописал — смотрите новый черновик ниже")[:4000], parse_mode="HTML")
+            except Exception:
+                pass
+
+    # фото из новых сообщений клиента: не больше трёх
+    images, new_photos = [], []
+    seen = set(state.setdefault("photos_sent", []))
+    for m in fresh:
+        ids = [x.get("file_id") for x in (m.get("media_items") or []) if x.get("type", "photo") == "photo"]
+        if not ids and m.get("media_file_id") and (m.get("media_type") or "photo") == "photo":
+            ids = [m["media_file_id"]]
+        for file_id in ids:
+            if len(images) >= 3:
+                break
+            try:
+                images.append(await bot_file(file_id))
+                if file_id not in seen:
+                    new_photos.append((file_id, images[-1]))
+            except Exception as e:
+                log.warning("фото из обращения #%s не скачалось: %s", tid, e)
+    # админу — только фото, которых он ещё не видел (клиент мог дописать текст к тому же фото)
+    for file_id, (data, mime) in new_photos:
+        try:
+            await tg_photo(data, mime, f"📎 Фото из обращения #{tid}")
+            state["photos_sent"] = (state["photos_sent"] + [file_id])[-500:]
+        except Exception as e:
+            log.warning("фото в Telegram не ушло: %s", e)
+
     facts = await facts_for(ticket)
     try:
-        result = await ask_model(facts, dialog_text(ticket))
+        result = await ask_model(facts, dialog_text(ticket), images if VISION else ())
     except Exception as e:
         log.error("модель не ответила: %s", e)
         result = {"diagnosis": f"Модель не ответила: {e}", "reply": "", "escalate": True, "reason": "черновика нет"}
@@ -379,8 +454,11 @@ async def process_ticket(brief):
 async def send_reply(draft, text):
     """Ответить в обращение. Если тем временем уже ответили — не дублируем."""
     ticket = await bot_api("GET", f"/tickets/{draft['ticket_id']}")
-    if any(m.get("is_from_admin") and m["id"] > draft["after"] for m in ticket.get("messages", [])):
+    later = [m for m in ticket.get("messages", []) if m["id"] > draft["after"]]
+    if any(m.get("is_from_admin") for m in later):
         return "уже есть ответ поддержки — этот черновик не отправлен"
+    if later:
+        return "клиент дописал после черновика — дождитесь нового черновика"
     await bot_api("POST", f"/tickets/{draft['ticket_id']}/reply", json={"message_text": text})
     return None
 
@@ -423,7 +501,10 @@ async def on_message(msg):
         return
     draft = state["drafts"].get(draft_id)
     text = (msg.get("text") or "").strip()
-    if not draft or not text:
+    if not draft:
+        await tg("sendMessage", chat_id=ADMIN_ID, text="Этот черновик устарел: клиент дописал. Смотрите новый.")
+        return
+    if not text:
         return
     problem = await send_reply(draft, text)
     draft["reply"] = text
