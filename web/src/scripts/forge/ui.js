@@ -13,6 +13,8 @@ let view = "inbounds";
 let editing = null; // { list: "inbounds" | "outbounds" | "balancers", index, draft }
 let panelInbounds = null;
 let importedTags = new Set();
+// что вписать в хосты: адрес ноды и домен, если инбаунд за CDN
+let hostInfo = { address: "", domain: "" };
 let randomOpts = { exotic: false, hasCert: false, certFile: "/etc/letsencrypt/live/example.com/fullchain.pem", keyFile: "/etc/letsencrypt/live/example.com/privkey.pem" };
 let root = null;
 
@@ -22,6 +24,7 @@ const VIEWS = [
     ["routing", "Маршруты"],
     ["balancers", "Балансировщики"],
     ["dns", "DNS"],
+    ["hosts", "Хосты"],
     ["result", "Готово"],
 ];
 
@@ -44,7 +47,7 @@ function draw() {
     root.append(toolbar(), tabs(), statusLine());
     const box = el("div");
     root.append(box);
-    ({ inbounds: inboundsView, outbounds: outboundsView, routing: routingView, balancers: balancersView, dns: dnsView, result: resultView })[view](box);
+    ({ inbounds: inboundsView, outbounds: outboundsView, routing: routingView, balancers: balancersView, dns: dnsView, hosts: hostsView, result: resultView })[view](box);
 }
 
 // ---------------- общие кусочки ----------------
@@ -787,6 +790,105 @@ function dnsView(box) {
         checkbox("Задать DNS в профиле", d.enabled, (v) => { d.enabled = v; body.classList.toggle("hidden", !v); refreshStatus(); }),
         body,
     ));
+}
+
+// ---------------- хосты ----------------
+
+/**
+ * Что вписать в хост панели для каждого инбаунда. Панель многое берёт из
+ * инбаунда сама: публичный ключ Reality, первый shortId, SNI из serverNames,
+ * путь и serviceName. Такие поля показаны для сверки, вписывать их не нужно.
+ */
+function hostsView(box) {
+    const addr = input(hostInfo.address, (v) => { hostInfo.address = v.trim(); fill(); }, { class: "mono", placeholder: "IP или домен ноды" });
+    const dom = input(hostInfo.domain, (v) => { hostInfo.domain = v.trim(); fill(); }, { class: "mono", placeholder: "vpn.example.com" });
+    const cards = el("div");
+    box.append(card("Хосты в панели",
+        hint("Хост — это то, что увидит клиент в подписке. Создаётся в панели: «Хосты» → «Создать», выберите профиль и инбаунд и перенесите поля из карточки."),
+        grid(
+            field("Адрес ноды", addr),
+            field("Ваш домен (для TLS и схем за CDN)", dom),
+        ),
+    ), cards);
+
+    function fill() {
+        clear(cards);
+        const json = M.buildProfile(profile);
+        if (!json.inbounds.length) {
+            cards.append(card(null, hint("В профиле нет инбаундов.")));
+            return;
+        }
+        for (const ib of json.inbounds) cards.append(hostCard(ib));
+    }
+    fill();
+}
+
+function hostCard(ib) {
+    const st = ib.streamSettings || {};
+    const net = st.network || "tcp";
+    const sec = st.security || "none";
+    const cdn = sec === "none" && ["ws", "httpupgrade", "xhttp"].includes(net);
+    const nodeAddress = hostInfo.address || "IP или домен ноды";
+    const domain = hostInfo.domain || "ваш домен";
+    const rows = [];
+    // [поле в панели, значение, пометка, копировать ли]
+    const set = (label, value, note = "", copyable = true) => rows.push([label, String(value ?? ""), note, copyable]);
+    const auto = (label, value, note = "панель возьмёт сама") => rows.push([label, String(value ?? "—"), note, false]);
+
+    set("Название (Remark)", ib.tag.replace(/_/g, " "), "как хост увидят клиенты — можно с флагом страны");
+    set("Инбаунд", ib.tag, "выберите профиль и этот инбаунд", false);
+
+    if (cdn) {
+        set("Адрес", domain, "домен, проксируемый через CDN (оранжевое облако в Cloudflare)");
+        set("Порт", 443, "порт CDN, а не ноды");
+        set("Безопасность (Security layer)", "TLS", "TLS до CDN, дальше CDN идёт к ноде без шифрования");
+        set("SNI", domain);
+        set("Host", domain);
+        set("ALPN", net === "xhttp" ? "h2,http/1.1" : "http/1.1");
+        set("Fingerprint", "chrome");
+        rows.push(["Порт ноды за CDN", String(ib.port), "в CDN или nginx направьте домен на этот порт ноды", true]);
+    } else {
+        const tlsHost = sec === "tls" || ib.protocol === "hysteria";
+        set("Адрес", tlsHost ? domain : nodeAddress, tlsHost ? "домен из сертификата, смотрящий на ноду" : "");
+        set("Порт", ib.port);
+        set("Безопасность (Security layer)", "По умолчанию", "взять из инбаунда", false);
+        if (sec === "reality") {
+            const r = st.realitySettings;
+            auto("SNI", r.serverNames?.[0], "панель возьмёт первый serverName; вписывать, только если нужен другой из списка");
+            set("Fingerprint", "chrome", "chrome подходит почти всем; можно firefox, safari, randomized");
+            auto("Публичный ключ", M.publicOf(r.privateKey) || "—", "панель вычислит из приватного");
+            auto("shortId", r.shortIds?.[0] === "" ? "пустой" : r.shortIds?.[0], "панель отдаёт клиентам первый shortId из списка");
+            if (r.mldsa65Seed) auto("ML-DSA-65", "включено", "ключ проверки панель вычислит сама");
+        }
+        if (sec === "tls") {
+            set("SNI", domain);
+            auto("ALPN", (st.tlsSettings?.alpn || []).join(","), "из инбаунда");
+            set("Fingerprint", "chrome");
+        }
+        if (ib.protocol === "hysteria") set("SNI", domain);
+    }
+
+    if (net === "xhttp") {
+        auto("Путь", st.xhttpSettings?.path, "из инбаунда");
+        auto("Режим XHTTP", st.xhttpSettings?.mode || "auto", "из инбаунда");
+    }
+    if (net === "ws") auto("Путь", st.wsSettings?.path, "из инбаунда");
+    if (net === "httpupgrade") auto("Путь", st.httpupgradeSettings?.path, "из инбаунда");
+    if (net === "grpc") auto("serviceName", st.grpcSettings?.serviceName, "из инбаунда");
+    if (ib.protocol === "shadowsocks") auto("Шифр", ib.settings?.method, "из инбаунда; ключи пользователей — свои у каждого");
+    set("Ноды", "те, на которых стоит этот профиль", "без выбранных нод хост не попадёт в подписку", false);
+
+    const kind = ib.protocol === "shadowsocks" ? "Shadowsocks"
+        : `${M.PROTOCOLS[ib.protocol]} · ${M.NETWORKS[net === "raw" ? "tcp" : net] || net}${sec !== "none" ? ` · ${sec === "reality" ? "Reality" : "TLS"}` : cdn ? " · за CDN" : ""}`;
+
+    return card(ib.tag,
+        el("p", { class: "small muted", style: "margin:-6px 0 8px", text: kind }),
+        ...rows.map(([label, value, note, copyable]) => el("div", { class: "forge-host-row" }, [
+            el("div", { class: "forge-host-k" }, [el("span", { text: label }), note ? el("small", { class: "muted tiny", text: note }) : null]),
+            el("div", { class: `forge-host-v mono${copyable ? "" : " muted"}`, text: value }),
+            copyable ? el("button", { type: "button", class: "btn-sm", onclick: (e) => copy(value, e.currentTarget) }, "Копировать") : el("span"),
+        ])),
+    );
 }
 
 // ---------------- готово ----------------
