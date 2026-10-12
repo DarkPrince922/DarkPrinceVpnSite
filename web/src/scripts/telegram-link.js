@@ -16,7 +16,7 @@ import { mergeChoice, linkErrorText } from "./email-link.js";
 
 // Номер бота @VPNbyDPrincebot — цифры до двоеточия в его токене, не секрет.
 // Пусто — карточка не показывается.
-export const TELEGRAM_BOT_ID = "";
+export const TELEGRAM_BOT_ID = "8377795806";
 
 let returned = null;
 
