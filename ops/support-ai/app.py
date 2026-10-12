@@ -51,6 +51,18 @@ POLL = int(env("POLL_SECONDS", "30"))
 DAILY_LIMIT = int(env("AI_DAILY_LIMIT", "150"))  # не больше стольких черновиков в сутки
 QUIET = int(env("QUIET_SECONDS", "45"))  # ждать, пока клиент допишет мысль
 VISION = env("AI_VISION", "true").lower() == "true"  # показывать модели фото от клиента
+# Свободное плавание: простые вопросы помощник закрывает сам, сложные — админу.
+# Переключается и командой /auto в Telegram.
+AUTO_DEFAULT = env("AUTO_MODE", "off").lower() == "on"
+AUTO_MIN_CONFIDENCE = float(env("AUTO_MIN_CONFIDENCE", "0.8"))
+AUTO_MAX_PER_TICKET = int(env("AUTO_MAX_PER_TICKET", "2"))  # дальше — пусть ответит человек
+# Что недавно менялось: релизы и коммиты наших открытых репозиториев.
+GITHUB_REPOS = env("GITHUB_REPOS", "DarkPrince922/Androidvpnapp@claude/android-vpn-telegram-auth-knhmjh=Приложение Android,"
+                   "DarkPrince922/darkprincevpnwindows@main=Приложение Windows,"
+                   "DarkPrince922/darkprincevpnlinux@main=Приложение Linux,"
+                   "DarkPrince922/DarkPrinceVpnSite@main=Сайт и кабинет")
+GITHUB_TOKEN = env("GITHUB_TOKEN", "")
+VERSIONS_URL = env("VERSIONS_URL", "https://dprince.online/downloads.json")
 MAX_AGE = int(env("MAX_AGE_HOURS", "24"))  # старые обращения не трогаем — например, при первом запуске
 
 DATA = Path(env("DATA_DIR", "/data"))
@@ -199,15 +211,80 @@ RULES = """Ты — помощник поддержки VPN-сервиса DarkP
   клиенту иначе как простыми словами: «ID устройства», «лимит устройств».
 - Не пересказывай клиенту его личные данные целиком.
 
+- Раздел «Что недавно менялось» — для тебя. Используй его, чтобы понять, исправлена ли
+  проблема и в какой версии. Клиенту говори только простыми словами («в последнем
+  обновлении приложения это исправили — обновитесь до версии 2.0.8»). Никогда не упоминай
+  коммиты, код, репозитории, ветки, внутренние названия, админку и инструменты администратора.
+- Если клиент недоволен прошлым ответом поддержки или пишет третий раз по одной проблеме —
+  escalate = true.
+
 Ответь строго JSON-объектом:
 {"diagnosis": "что происходит, 1–3 предложения для админа",
  "reply": "готовый текст ответа клиенту",
  "escalate": true/false,
- "reason": "почему нужен админ, если escalate"}"""
+ "reason": "почему нужен админ, если escalate",
+ "confidence": число от 0 до 1 — насколько ты уверен, что ответ полностью решает вопрос
+   клиента и опирается только на факты и базу знаний}"""
+
+
+changes_cache = {"at": 0.0, "text": ""}
+
+# Изменения, о которых клиенту говорить незачем: админка, служебные инструменты, сборка.
+INTERNAL = ("админк", "помощник поддержки", "конструктор", "заметки к релизу", "merge", "ci ", "ops", "сборк",
+            "панель:", "скрипт", "загрузки:", "downloads.json", "выпустить", "релиз ", "релиз:", "readme")
+
+
+# Слова, при которых сам не отвечает, что бы ни решила модель: деньги, претензии, угрозы.
+RISKY = re.compile(r"верн[иу]т|возврат|деньг|рубл|оплатил|списал|списани|компенс|чарджбэк|жалоб|претензи|"
+                   r"мошен|обман|развод|суд|роспотреб|банк|отзыв|вывод|вывести|реферальн", re.I)
+
+
+async def changes_digest():
+    """Версии приложений и что менялось за три недели. Кэш на час: GitHub без ключа даёт 60 запросов в час."""
+    if time.time() - changes_cache["at"] < 3600 and changes_cache["text"]:
+        return changes_cache["text"]
+    lines = []
+    headers = {"Accept": "application/vnd.github+json"}
+    if GITHUB_TOKEN:
+        headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
+    try:
+        async with session.get(VERSIONS_URL, timeout=aiohttp.ClientTimeout(total=15)) as r:
+            v = await r.json(content_type=None)
+        parts = [f"{name.capitalize()} {info.get('version')} от {info.get('date')}" for name, info in v.items() if isinstance(info, dict) and info.get("version")]
+        lines.append("Текущие версии наших приложений (на dprince.online): " + "; ".join(parts) + ".")
+    except Exception as e:
+        log.warning("версии приложений: %s", e)
+    since = datetime.fromtimestamp(time.time() - 21 * 86400, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    for item in filter(None, (x.strip() for x in GITHUB_REPOS.split(","))):
+        repo_branch, _, label = item.partition("=")
+        repo, _, branch = repo_branch.partition("@")
+        try:
+            if "Android" in label:
+                async with session.get(f"https://api.github.com/repos/{repo}/releases", params={"per_page": 4},
+                                       headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as r:
+                    for rel in await r.json():
+                        notes = [l.strip("•- ").strip() for l in (rel.get("body") or "").splitlines()
+                                 if l.strip().startswith(("•", "-"))]
+                        if notes:
+                            lines.append(f"{label}, релиз {rel.get('tag_name')} ({(rel.get('published_at') or '')[:10]}): " + "; ".join(notes))
+            async with session.get(f"https://api.github.com/repos/{repo}/commits",
+                                   params={"sha": branch or "main", "since": since, "per_page": 25},
+                                   headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as r:
+                commits = await r.json()
+            for c in commits if isinstance(commits, list) else []:
+                subject = c["commit"]["message"].splitlines()[0].strip()
+                if any(word in subject.lower() for word in INTERNAL):
+                    continue
+                lines.append(f"{label}, {c['commit']['author']['date'][:10]}: {subject}")
+        except Exception as e:
+            log.warning("изменения %s: %s", repo, e)
+    changes_cache.update(at=time.time(), text="\n".join(lines[:80]))
+    return changes_cache["text"]
 
 
 async def ask_model(facts, dialog, images=()):
     kb = KB_FILE.read_text() if KB_FILE.exists() else ""
+    changes = await changes_digest()
     text = f"# Факты о клиенте\n{facts}\n\n# Переписка\n{dialog}"
     content = text
     if images:
@@ -221,7 +298,7 @@ async def ask_model(facts, dialog, images=()):
         "temperature": 0.3,
         "response_format": {"type": "json_object"},
         "messages": [
-            {"role": "system", "content": f"{RULES}\n\n# База знаний\n{kb}"},
+            {"role": "system", "content": f"{RULES}\n\n# База знаний\n{kb}\n\n# Что недавно менялось (только для тебя)\n{changes or 'нет данных'}"},
             {"role": "user", "content": content},
         ],
     }
@@ -438,12 +515,35 @@ async def process_ticket(brief):
         result = {"diagnosis": f"Модель не ответила: {e}", "reply": "", "escalate": True, "reason": "черновика нет"}
 
     draft_id = f"{tid}-{last['id']}"
+    auto_count = state.setdefault("auto_count", {}).get(tid, 0)
+    try:
+        confidence = float(result.get("confidence") or 0)
+    except (TypeError, ValueError):
+        confidence = 0.0
     draft = {
         "ticket_id": int(tid), "after": last["id"], "title": ticket.get("title"),
         "question": question or "[без текста]", "diagnosis": result.get("diagnosis", ""),
         "reply": (result.get("reply") or "").strip(), "escalate": bool(result.get("escalate")),
-        "reason": result.get("reason", ""),
+        "reason": result.get("reason", ""), "confidence": confidence,
     }
+
+    if RISKY.search(question) and not draft["escalate"]:
+        draft["escalate"] = True
+        draft["reason"] = draft["reason"] or "деньги или претензия — отвечает только человек"
+    can_auto = (state.get("auto", AUTO_DEFAULT) and draft["reply"] and not draft["escalate"]
+                and confidence >= AUTO_MIN_CONFIDENCE and auto_count < AUTO_MAX_PER_TICKET)
+    if can_auto:
+        problem = await send_reply(draft, draft["reply"])
+        if not problem:
+            state["auto_count"][tid] = auto_count + 1
+            await tg("sendMessage", chat_id=ADMIN_ID, parse_mode="HTML",
+                     text=draft_card(draft, f"🤖 <b>Ответил сам</b> (уверенность {confidence:.0%})")[:4000])
+            save_state()
+            return
+        log.info("автоответ на #%s не отправлен: %s", tid, problem)
+
+    if state.get("auto", AUTO_DEFAULT) and auto_count >= AUTO_MAX_PER_TICKET and not draft["escalate"]:
+        draft["escalate"], draft["reason"] = True, f"клиент пишет снова после {auto_count} автоответов — нужен человек"
     msg = await tg("sendMessage", chat_id=ADMIN_ID, text=draft_card(draft)[:4000], parse_mode="HTML",
                    reply_markup=keyboard(draft_id) if draft["reply"] else None)
     draft["message_id"] = msg["message_id"]
@@ -499,8 +599,7 @@ async def on_message(msg):
     reply_to = str((msg.get("reply_to_message") or {}).get("message_id", ""))
     draft_id = state["prompts"].pop(reply_to, None)
     if not draft_id:
-        if msg.get("text") == "/start":
-            await tg("sendMessage", chat_id=ADMIN_ID, text="Помощник поддержки на связи. Черновики ответов будут приходить сюда.")
+        await on_command((msg.get("text") or "").strip())
         return
     draft = state["drafts"].get(draft_id)
     text = (msg.get("text") or "").strip()
@@ -516,6 +615,28 @@ async def on_message(msg):
     await tg("sendMessage", chat_id=ADMIN_ID, text="Не отправлено: " + problem if problem else "Отправлено ✅")
     state["drafts"].pop(draft_id, None)
     save_state()
+
+
+async def on_command(text):
+    auto = state.get("auto", AUTO_DEFAULT)
+    if text in ("/auto on", "/auto_on"):
+        state["auto"] = True
+        save_state()
+        await tg("sendMessage", chat_id=ADMIN_ID, text=(
+            "🤖 Свободное плавание включено. Простые вопросы отвечу сам (уверенность от "
+            f"{AUTO_MIN_CONFIDENCE:.0%}), деньги, жалобы и всё непонятное — пришлю вам. "
+            f"На одно обращение — не больше {AUTO_MAX_PER_TICKET} автоответов. Выключить: /auto off"))
+    elif text in ("/auto off", "/auto_off"):
+        state["auto"] = False
+        save_state()
+        await tg("sendMessage", chat_id=ADMIN_ID, text="✋ Свободное плавание выключено: только черновики с кнопками.")
+    elif text in ("/status", "/start", "/help"):
+        new_day()
+        await tg("sendMessage", chat_id=ADMIN_ID, text=(
+            f"Помощник поддержки на связи. Модель: {AI_MODEL}.\n"
+            f"Режим: {'свободное плавание 🤖' if auto else 'черновики ✋'}.\n"
+            f"Черновиков сегодня: {state.get('used', 0)} из {DAILY_LIMIT}.\n\n"
+            "/auto on — отвечать на простое самому\n/auto off — только черновики\n/status — это сообщение"))
 
 
 # ---------------- циклы ----------------
@@ -559,7 +680,9 @@ async def main():
     async with aiohttp.ClientSession() as s:
         session = s
         await pick_model()
-        await tg("sendMessage", chat_id=ADMIN_ID, text=f"🤖 Помощник поддержки запущен. Модель: {AI_MODEL}.")
+        auto = state.get("auto", AUTO_DEFAULT)
+        await tg("sendMessage", chat_id=ADMIN_ID, text=f"🤖 Помощник поддержки запущен. Модель: {AI_MODEL}. "
+                                                       f"Режим: {'свободное плавание' if auto else 'черновики'}. /status — подробнее")
         await asyncio.gather(tickets_loop(), telegram_loop())
 
 

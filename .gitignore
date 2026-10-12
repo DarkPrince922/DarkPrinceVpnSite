@@ -6,3 +6,5 @@ site/updates/*.json
 web/node_modules/
 web/dist/
 web/.astro/
+
+__pycache__/

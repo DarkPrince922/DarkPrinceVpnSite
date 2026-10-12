@@ -3,6 +3,7 @@
 #
 #   bash install.sh          — установить или переустановить (ключи спросит, не показывая)
 #   bash install.sh update   — обновить код, ключи и базу знаний не трогает
+#   bash install.sh kb       — заменить базу знаний свежей из репозитория (старую сохранит рядом)
 #   bash install.sh logs     — последние строки журнала
 #   bash install.sh stop     — остановить
 #
@@ -111,6 +112,17 @@ update)
     fetch
     (cd "$DIR" && docker compose up -d --build) && sleep 5 && docker logs --tail 10 dp_support_ai 2>&1
     ;;
+kb)
+    [ -f "$DIR/.env" ] || die "Сначала bash install.sh"
+    if [ -f "$DIR/kb.md" ]; then
+        BAK="$DIR/kb.md.bak-$(date +%Y%m%d-%H%M%S)"
+        cp "$DIR/kb.md" "$BAK" && ok "Старая база сохранена: $BAK"
+    fi
+    # пишем в тот же файл, не подменяем его: он примонтирован в контейнер
+    curl -4 -fsSL "$RAW/kb.md" -o "$DIR/kb.md.new" || die "Не скачался kb.md"
+    cat "$DIR/kb.md.new" >"$DIR/kb.md" && rm -f "$DIR/kb.md.new"
+    ok "База знаний обновлена ($(wc -l <"$DIR/kb.md") строк) — помощник подхватит её со следующего ответа"
+    ;;
 logs)
     docker logs --tail 50 dp_support_ai 2>&1
     ;;
@@ -118,6 +130,6 @@ stop)
     (cd "$DIR" && docker compose down) && ok "Остановлен"
     ;;
 *)
-    sed -n 2,9p "$0"
+    sed -n 2,10p "$0"
     ;;
 esac
