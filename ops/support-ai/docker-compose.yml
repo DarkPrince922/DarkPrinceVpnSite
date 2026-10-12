@@ -1,0 +1,23 @@
+# Помощник поддержки рядом с ботом. Сеть бота — внешняя: так помощник ходит
+# в служебный API бота по имени контейнера, не открывая его наружу.
+services:
+  support-ai:
+    build: .
+    container_name: dp_support_ai
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/data
+      - ./kb.md:/app/kb.md:ro
+    networks:
+      - bot
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+networks:
+  bot:
+    external: true
+    name: ${BOT_NETWORK}

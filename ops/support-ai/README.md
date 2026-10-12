@@ -1,0 +1,34 @@
+# Помощник поддержки DarkPrince VPN
+
+Следит за обращениями в боте, собирает факты о клиенте (подписка, устройства и ID
+устройств, каким приложением обновлял подписку, работают ли серверы), просит
+DeepSeek подготовить ответ и присылает вам в Telegram:
+
+    🆕 Обращение #7 · Не работает подписка
+    🔎 Shadowrocket не передаёт ID устройства, поэтому панель не выдаёт серверы.
+    ✍️ Черновик: …
+    [✅ Отправить] [✏️ Изменить] [🙅 Сам]
+
+Клиенту ничего не уходит, пока вы не нажмёте «Отправить».
+
+## Что нужно заранее
+
+1. **Ключ DeepSeek API** — platform.deepseek.com → пополнить баланс → API keys.
+2. **Бот для черновиков** — @BotFather → /newbot. Откройте его и нажмите /start.
+3. **Токен панели только на чтение** — в панели в разделе API-токенов создайте токен
+   с правами `users:read`, `hwid-user-devices:read`, `nodes:read`.
+
+## Установка — на сервере бота
+
+    mkdir -p /root/upg && curl -4 -fsSL -o /root/upg/support-ai.sh https://raw.githubusercontent.com/DarkPrince922/DarkPrinceVpnSite/main/ops/support-ai/install.sh && bash /root/upg/support-ai.sh
+
+Остальное установщик сделает сам: возьмёт адрес панели из настроек бота, выпустит
+токен служебного API бота и спросит три ключа (ввод скрыт).
+
+## Обслуживание
+
+- `bash /root/upg/support-ai.sh logs` — журнал
+- `bash /root/upg/support-ai.sh update` — обновить код
+- `bash /root/upg/support-ai.sh stop` — остановить
+- База знаний: `/opt/dp-support-ai/kb.md` — правьте, помощник перечитывает её перед каждым ответом.
+- Не больше 150 черновиков в сутки (`AI_DAILY_LIMIT` в `/opt/dp-support-ai/.env`).
