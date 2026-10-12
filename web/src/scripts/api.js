@@ -439,6 +439,8 @@ export const api = {
     isAdmin: () => get("cabinet/auth/me/is-admin"),
     permissions: () => get("cabinet/auth/me/permissions"),
     adminDashboard: () => get("cabinet/admin/stats/dashboard"),
+    // инбаунды всех профилей панели — конструктору, чтобы не повторить тег
+    adminInbounds: () => get("cabinet/admin/remnawave/inbounds"),
     adminTickets: (status) => get("cabinet/admin/tickets", { page: 1, per_page: 50, status }),
     adminTicket: (id) => get(`cabinet/admin/tickets/${encodeURIComponent(id)}`),
     adminReply: (id, message) => post(`cabinet/admin/tickets/${encodeURIComponent(id)}/reply`, { message }),

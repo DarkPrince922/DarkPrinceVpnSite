@@ -1,4 +1,5 @@
-// Панель админа на сайте: сводка, обращения, люди, выводы, платежи, рассылки.
+// Панель админа на сайте: сводка, обращения, люди, выводы, платежи, рассылки
+// и конструктор Xray-профилей.
 // Те же запросы, что в приложении, — и права те же: раздел виден, только
 // если роль его позволяет.
 
@@ -21,6 +22,7 @@ const SECTIONS = [
     ["withdrawals", "Выводы", "withdrawals:read"],
     ["payments", "Платежи", "payments:read"],
     ["broadcasts", "Рассылки", "broadcasts:read"],
+    ["forge", "Конструктор", "remnawave:read"],
 ];
 
 /** Показать вкладку «Панель», если человек — админ. */
@@ -62,7 +64,19 @@ export async function renderAdmin() {
     }
     const body = el("div");
     panel.append(bar, body);
-    ({ summary, tickets, people, withdrawals, payments, broadcasts })[section](body);
+    ({ summary, tickets, people, withdrawals, payments, broadcasts, forge })[section](body);
+}
+
+// Конструктор большой и нужен редко — грузится, только когда его открыли.
+async function forge(body) {
+    body.append(card(null, el("span", { class: "spinner" })));
+    try {
+        const { renderForge } = await import("./forge/ui.js");
+        clear(body);
+        renderForge(body);
+    } catch (error) {
+        fail(body, error);
+    }
 }
 
 const note = () => el("p", { class: "small" });

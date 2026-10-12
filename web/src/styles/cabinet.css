@@ -829,3 +829,136 @@ footer.bottom a:hover {
 .bonus-part:not(:empty) + .bonus-part:not(:empty) {
     margin-top: 14px;
 }
+
+/* ---------------- конструктор профилей ---------------- */
+
+.forge-card + .forge-card,
+.forge-card + .card,
+.card + .forge-card {
+    margin-top: 14px;
+}
+
+.forge-hint {
+    margin: 0 0 12px;
+    max-width: 70ch;
+}
+
+.forge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0 12px;
+}
+
+.forge-grid > * {
+    min-width: 0;
+}
+
+.forge-with-btn {
+    display: flex;
+    gap: 6px;
+}
+
+.forge-with-btn input {
+    flex: 1;
+    min-width: 0;
+}
+
+.forge-check {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 4px 0;
+}
+
+.forge-check input {
+    width: auto;
+    margin-top: 3px;
+    accent-color: var(--gold);
+}
+
+.forge-block {
+    border-top: 1px solid var(--outline);
+    margin-top: 6px;
+    padding-top: 12px;
+}
+
+.forge-chips {
+    gap: 6px;
+    margin: -4px 0 12px;
+}
+
+.forge-chips .chip {
+    cursor: pointer;
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+.forge-chips .chip:hover {
+    color: var(--gold);
+    border-color: var(--gold-dim);
+}
+
+.forge-actions {
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.forge-code {
+    position: relative;
+    min-width: 0;
+}
+
+.forge-pre {
+    margin: 0;
+    padding: 14px;
+    max-height: 520px;
+    overflow: auto;
+    background: var(--bg);
+    border: 1px solid var(--outline);
+    border-radius: 12px;
+    font: 12px/1.6 ui-monospace, "Cascadia Mono", Consolas, monospace;
+    white-space: pre;
+    color: var(--text);
+}
+
+.forge-copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.forge-status {
+    margin: -4px 0 12px 2px;
+}
+
+.forge-notes {
+    display: grid;
+    gap: 6px;
+}
+
+.forge-note {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.forge-note::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--ok);
+}
+
+.forge-note.warn::before {
+    background: var(--gold);
+}
+
+.forge-note.bad::before {
+    background: var(--danger);
+}
