@@ -39,7 +39,8 @@ BOT_TOKEN = env("BOT_API_TOKEN", required=True)
 PANEL_URL = env("PANEL_URL", required=True).rstrip("/")
 PANEL_TOKEN = env("PANEL_TOKEN", required=True)
 PANEL_COOKIE = env("PANEL_COOKIE", "")  # «имя:значение», как REMNAWAVE_SECRET_KEY у бота
-AI_BASE = env("AI_BASE_URL", "https://api.deepseek.com").rstrip("/")
+# любой OpenAI-совместимый API: AITUNNEL (https://api.aitunnel.ru/v1), DeepSeek, OpenRouter
+AI_BASE = env("AI_BASE_URL", "https://api.aitunnel.ru/v1").rstrip("/")
 AI_KEY = env("AI_API_KEY", required=True)
 AI_MODEL = env("AI_MODEL", "")
 TG_TOKEN = env("TG_BOT_TOKEN", required=True)
@@ -113,8 +114,22 @@ async def tg(method, **params):
 
 # ---------------- модель ----------------
 
+def choose_model(ids):
+    """DeepSeek Flash, самый свежий. У посредников в списке сотни моделей —
+    берём именно DeepSeek, а не любую «flash» (у Gemini она тоже есть)."""
+    deepseek = [i for i in ids if "deepseek" in i.lower()]
+    flash = sorted((i for i in deepseek if "flash" in i.lower()), reverse=True)
+    if flash:
+        return flash[0]
+    for name in ("deepseek-chat", "deepseek-v4", "deepseek-v3"):
+        found = sorted((i for i in deepseek if name in i.lower() and "r1" not in i.lower()), reverse=True)
+        if found:
+            return found[0]
+    return None
+
+
 async def pick_model():
-    """Название модели берём у самого DeepSeek: Flash новее всего, если не задано руками."""
+    """Название модели спрашиваем у провайдера, если не задано руками в AI_MODEL."""
     global AI_MODEL
     if AI_MODEL:
         return AI_MODEL
@@ -124,9 +139,11 @@ async def pick_model():
             ids = [m["id"] for m in (await r.json()).get("data", [])]
     except Exception as e:
         raise SystemExit(f"Не получилось спросить список моделей у {AI_BASE}: {e}")
-    flash = sorted((i for i in ids if "flash" in i), reverse=True)
-    AI_MODEL = flash[0] if flash else (ids[0] if ids else "deepseek-chat")
-    log.info("модель: %s (доступны: %s)", AI_MODEL, ", ".join(ids))
+    AI_MODEL = choose_model(ids)
+    if not AI_MODEL:
+        raise SystemExit("У провайдера нет моделей DeepSeek — впишите нужную в AI_MODEL в .env. "
+                         "Доступны: " + ", ".join(ids[:40]))
+    log.info("модель: %s (всего у провайдера моделей: %d)", AI_MODEL, len(ids))
     return AI_MODEL
 
 
@@ -165,12 +182,19 @@ async def ask_model(facts, dialog):
             {"role": "user", "content": f"# Факты о клиенте\n{facts}\n\n# Переписка\n{dialog}"},
         ],
     }
-    async with session.post(f"{AI_BASE}/chat/completions", json=body,
-                            headers={"Authorization": f"Bearer {AI_KEY}"},
-                            timeout=aiohttp.ClientTimeout(total=120)) as r:
-        data = await r.json()
-        if r.status >= 400:
-            raise RuntimeError(f"модель: HTTP {r.status} {str(data)[:200]}")
+    async def call(payload):
+        async with session.post(f"{AI_BASE}/chat/completions", json=payload,
+                                headers={"Authorization": f"Bearer {AI_KEY}"},
+                                timeout=aiohttp.ClientTimeout(total=120)) as r:
+            return r.status, await r.json(content_type=None)
+
+    status, data = await call(body)
+    if status == 400:
+        # не все посредники пропускают строгий JSON-режим — просим JSON словами
+        body.pop("response_format")
+        status, data = await call(body)
+    if status >= 400:
+        raise RuntimeError(f"модель: HTTP {status} {str(data)[:200]}")
     text = data["choices"][0]["message"]["content"]
     try:
         result = json.loads(text)

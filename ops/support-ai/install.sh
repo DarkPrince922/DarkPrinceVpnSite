@@ -72,7 +72,7 @@ PY
 
     echo
     echo "Нужны три ключа. Ввод скрыт — так и должно быть."
-    AI_KEY=$(secret "1) Ключ DeepSeek API (platform.deepseek.com → API keys)")
+    AI_KEY=$(secret "1) Ключ AITUNNEL (aitunnel.ru → личный кабинет → API-ключи)")
     TG_TOKEN=$(secret "2) Токен нового бота для черновиков (@BotFather → /newbot)")
     PANEL_TOKEN=$(secret "3) Токен панели только на чтение (users:read, hwid-user-devices:read, nodes:read)")
     read -rp "Ваш Telegram ID [$ADMIN_DEFAULT]: " ADMIN </dev/tty
@@ -87,7 +87,7 @@ BOT_API_TOKEN=$BOT_API_TOKEN
 PANEL_URL=$PANEL_URL
 PANEL_TOKEN=$PANEL_TOKEN
 PANEL_COOKIE=$PANEL_COOKIE
-AI_BASE_URL=https://api.deepseek.com
+AI_BASE_URL=https://api.aitunnel.ru/v1
 AI_API_KEY=$AI_KEY
 AI_MODEL=
 TG_BOT_TOKEN=$TG_TOKEN
