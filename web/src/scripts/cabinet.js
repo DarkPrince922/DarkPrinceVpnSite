@@ -8,7 +8,7 @@ import {
 import {
     renderSupport, deactivateSupport, startSupportUnreadPolling, refreshSupportUnread,
 } from "./support.js";
-import { emailLinkCard } from "./email-link.js";
+import { emailLinkCard, emailChangeCard } from "./email-link.js";
 import {
     autopayCard, autopayAllowed, switchCard, revokeButton, trafficCard, goTopUp, isNotEnough,
     isDeletable, deleteSubscriptionCard,
@@ -1238,20 +1238,22 @@ async function renderMore(force = false) {
     const user = session.user;
     // почты нет — вошли через Telegram: предлагаем привязать, чтобы входить
     // и без него
-    if (user && !user.email) {
-        panel.append(emailLinkCard(() => {
-            api.me().then((fresh) => (session.user = fresh)).catch(() => { });
-        }));
-    }
+    const emailText = (u) => u?.email
+        ? u.email + (u.email_verified === false ? " (не подтверждена — проверьте письмо)" : "")
+        : "—";
+    const emailValue = el("span", { text: emailText(user) });
+    const refreshUser = () => api.me().then((fresh) => {
+        session.user = fresh;
+        emailValue.textContent = emailText(fresh);
+    }).catch(() => { });
+    if (user && !user.email) panel.append(emailLinkCard(refreshUser));
+    // почта есть — её можно сменить, например если ошиблись в адресе
+    if (user?.email) panel.append(emailChangeCard(user.email, refreshUser));
     panel.append(el("div", { class: "card" }, [
         el("h3", { text: "Аккаунт" }),
         el("div", { class: "kv" }, [
             el("span", { class: "k", text: "Почта" }),
-            el("span", {
-                text: user?.email
-                    ? user.email + (user.email_verified === false ? " (не подтверждена — проверьте письмо)" : "")
-                    : "—",
-            }),
+            emailValue,
         ]),
         el("div", { class: "kv" }, [
             el("span", { class: "k", text: "Telegram" }),

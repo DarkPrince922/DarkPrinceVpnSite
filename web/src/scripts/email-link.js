@@ -1,4 +1,4 @@
-// Привязка почты к аккаунту, вошедшему через Telegram.
+// Привязка почты к аккаунту, вошедшему через Telegram, и смена почты.
 //
 // С почтой в тот же аккаунт можно входить и без Telegram. Если почта уже
 // занята другим аккаунтом, бот предлагает объединить их: шлёт на неё
@@ -20,7 +20,16 @@ const KNOWN = [
     ["No pending account merge", "Время на подтверждение вышло. Начните заново."],
     ["invalid or expired", "Время на подтверждение вышло. Начните заново."],
     ["temporarily blocked", "Объединение пока недоступно. Попробуйте позже."],
-    ["Too many requests", "Слишком часто. Подождите минуту и попробуйте снова."],
+    ["Too many requests", "Слишком часто. Подождите несколько минут и попробуйте снова."],
+    // смена почты
+    ["already registered", "Эта почта уже занята другим аккаунтом."],
+    ["already taken", "Эта почта уже занята другим аккаунтом."],
+    ["same as current", "Это и так ваша почта."],
+    ["Disposable email", "Временные почтовые ящики не подходят — укажите обычную почту."],
+    ["Invalid verification code", "Неверный код. Проверьте письмо и попробуйте снова."],
+    ["code has expired", "Код устарел. Запросите новый."],
+    ["No pending email change", "Время на подтверждение вышло. Начните заново."],
+    ["No email address to change", "К аккаунту не привязана почта."],
 ];
 
 export function linkErrorText(error) {
@@ -179,5 +188,123 @@ export function emailLinkCard(onChanged) {
     }
 
     showForm();
+    return card;
+}
+
+/**
+ * Смена почты. Подтверждённая почта меняется по коду, который приходит на
+ * новый адрес. Неподтверждённую бот заменяет сразу и шлёт на новый адрес
+ * ссылку для подтверждения. Пароль остаётся прежним.
+ */
+export function emailChangeCard(currentEmail, onChanged) {
+    const card = el("div", { class: "card" });
+    const note = el("p", { class: "msg hidden" });
+    const field = (label, input) => el("label", { class: "field" }, [el("span", {}, label), input]);
+
+    function showStart() {
+        clear(card);
+        message(note, "");
+        card.append(
+            el("h3", { text: "Почта для входа" }),
+            el("p", { class: "small", text: currentEmail }),
+            el("button", { class: "btn-sm", onclick: showForm }, "Сменить почту"),
+        );
+    }
+
+    function showForm() {
+        clear(card);
+        message(note, "");
+        const email = el("input", { type: "email", autocomplete: "email", placeholder: "new@example.com" });
+        const send = async (event) => {
+            const address = email.value.trim();
+            if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) return message(note, "Проверьте адрес почты");
+            await busy(event.currentTarget, async () => {
+                try {
+                    const result = await api.requestEmailChange(address);
+                    // неподтверждённую почту бот меняет сразу — кода не будет
+                    if (!result.expires_in_minutes) {
+                        showDone("Почта изменена",
+                            `Теперь ваша почта — ${address}. Мы отправили на неё письмо со ссылкой: ` +
+                            "перейдите по ней, чтобы подтвердить адрес. Пароль прежний.");
+                        onChanged?.();
+                        return;
+                    }
+                    showCode(address, result.expires_in_minutes);
+                } catch (error) {
+                    message(note, linkErrorText(error));
+                }
+            });
+        };
+        card.append(
+            el("h3", { text: "Сменить почту" }),
+            el("p", {
+                class: "small muted",
+                text: `Сейчас: ${currentEmail}. На новый адрес придёт код из 6 цифр — так мы убедимся, ` +
+                    "что почта ваша. Пароль останется прежним.",
+            }),
+            field("Новая почта", email),
+            el("div", { class: "row wrap-row" }, [
+                el("button", { class: "btn", onclick: send }, "Отправить код"),
+                el("button", { class: "btn-sm", onclick: showStart }, "Отмена"),
+            ]),
+            note,
+        );
+    }
+
+    function showCode(address, minutes) {
+        clear(card);
+        message(note, "");
+        const code = el("input", { type: "text", inputmode: "numeric", maxlength: "6", autocomplete: "one-time-code" });
+        card.append(
+            el("h3", { text: "Введите код" }),
+            el("p", {
+                class: "small muted",
+                text: `Мы отправили код на ${address}` + (minutes ? `, он действует ${minutes} мин.` : ".") +
+                    " Письма нет — проверьте «Спам».",
+            }),
+            field("Код из письма", code),
+            el("div", { class: "row wrap-row" }, [
+                el("button", {
+                    class: "btn",
+                    onclick: async (event) => {
+                        const value = code.value.replace(/\D/g, "");
+                        if (value.length !== 6) return message(note, "Код — 6 цифр из письма");
+                        await busy(event.currentTarget, async () => {
+                            try {
+                                const result = await api.verifyEmailChange(value);
+                                currentEmail = result.new_email || address;
+                                showDone("Почта изменена",
+                                    `Теперь входите по адресу ${currentEmail} с прежним паролем.`);
+                                onChanged?.();
+                            } catch (error) {
+                                message(note, linkErrorText(error));
+                            }
+                        });
+                    },
+                }, "Подтвердить"),
+                el("button", {
+                    class: "btn-sm",
+                    onclick: async (event) => {
+                        await busy(event.currentTarget, async () => {
+                            await api.cancelEmailChange().catch(() => { });
+                            showStart();
+                        });
+                    },
+                }, "Отменить"),
+            ]),
+            note,
+        );
+    }
+
+    function showDone(title, text) {
+        clear(card);
+        card.append(el("h3", { text: title }), el("p", { class: "small", text }));
+    }
+
+    showStart();
+    // смену уже начинали — сразу к вводу кода
+    api.emailChangeStatus()
+        .then((status) => { if (status?.pending && status.new_email) showCode(status.new_email); })
+        .catch(() => { });
     return card;
 }

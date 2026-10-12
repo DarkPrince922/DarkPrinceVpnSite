@@ -273,6 +273,11 @@ export const api = {
 
     // привязка почты к вошедшему аккаунту и объединение с занятой почтой
     linkEmail: (email, password) => post("cabinet/auth/email/register", { email, password }),
+    // смена почты: код приходит на новый адрес
+    requestEmailChange: (newEmail) => post("cabinet/auth/email/change", { new_email: newEmail }),
+    verifyEmailChange: (code) => post("cabinet/auth/email/change/verify", { code }),
+    cancelEmailChange: () => post("cabinet/auth/email/change/cancel", {}),
+    emailChangeStatus: () => get("cabinet/auth/email/change/status"),
     verifyEmailMerge: (code) => post("cabinet/auth/email/merge/verify", { code }),
     mergePreview: (token) => get(`cabinet/auth/merge/${encodeURIComponent(token)}`),
     executeMerge: (token, keepFrom) =>
