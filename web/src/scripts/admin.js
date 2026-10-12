@@ -5,6 +5,7 @@
 
 import { api } from "./api.js";
 import { $, $$, el, clear, rubles, dateText, busy, copy } from "./ui.js";
+import { linkedText, messageAttachments } from "./support.js";
 
 let perms = null;
 let section = null;
@@ -166,9 +167,17 @@ async function openTicket(body, id) {
         ]));
     const chat = card(null);
     for (const m of t.messages || []) {
+        const attachments = messageAttachments(m);
+        const text = String(m.message_text || "").trim();
         chat.append(el("div", { class: "list-item", style: "display:block" }, [
             el("div", { class: m.is_from_admin ? "tiny gold" : "tiny muted", text: `${m.is_from_admin ? "Поддержка" : "Клиент"} · ${dateText(m.created_at)}` }),
-            el("div", { class: "small", style: "white-space:pre-wrap", text: m.message_text || (m.has_media ? "[вложение]" : "") }),
+            text ? linkedText(text, "div") : null,
+            ...attachments.map((a) => a.type === "photo"
+                ? el("a", { class: "support-image-link", href: a.url, target: "_blank", rel: "noopener" },
+                    el("img", { class: "support-image", src: a.url, alt: a.caption || "Фото от клиента", loading: "lazy" }))
+                : el("a", { class: "support-attachment", href: a.url, target: "_blank", rel: "noopener" },
+                    a.type === "video" ? "Открыть видео" : "Открыть вложение")),
+            !text && !attachments.length && m.has_media ? el("div", { class: "small muted", text: "[вложение не загрузилось — обновите обращение]" }) : null,
         ]));
     }
     body.append(head, chat);

@@ -612,12 +612,40 @@ hr.divider {
     overflow: hidden;
 }
 
+/* без scroll-behavior: smooth — Safari анимировал каждую подкрутку вниз,
+   и переписка дёргалась при каждом обновлении */
 .support-chat {
     min-height: 300px;
     max-height: 56vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 16px;
-    scroll-behavior: smooth;
+}
+
+.support-text {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.support-link {
+    color: var(--gold);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-all;
+}
+
+.support-copy {
+    display: inline-flex;
+    padding: 1px 6px;
+    margin: 0 2px 0 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    border-radius: 6px;
+    vertical-align: baseline;
 }
 
 .support-message-row {
@@ -684,12 +712,15 @@ hr.divider {
     margin-top: 8px;
 }
 
+/* скриншоты от клиентов показываем целиком, без обрезки */
 .support-image {
     display: block;
-    width: min(100%, 360px);
-    max-height: 280px;
-    object-fit: cover;
+    width: auto;
+    max-width: min(100%, 360px);
+    max-height: 420px;
+    object-fit: contain;
     border-radius: 10px;
+    background: var(--surface-2);
 }
 
 .support-composer {

@@ -3,7 +3,7 @@
 // поэтому открытый диалог обновляется коротким REST-опросом.
 
 import { api, session, ApiError } from "./api.js";
-import { $, el, clear, message, busy } from "./ui.js";
+import { $, el, clear, message, busy, copy } from "./ui.js";
 
 const DEFAULT_SUPPORT_URL = "https://t.me/skzfeee";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -457,7 +457,35 @@ function showCreateTicket() {
     title.focus();
 }
 
-function messageAttachments(item) {
+/**
+ * Текст сообщения со ссылками: ссылка открывается по нажатию, рядом — кнопка
+ * «скопировать». В Safari долгое нажатие на ссылку не всегда даёт её скопировать,
+ * а клиентам часто присылают ссылку подписки.
+ */
+export function linkedText(text, tag = "p") {
+    const node = el(tag, { class: "support-text" });
+    const re = /https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]}»]/g;
+    let last = 0;
+    for (const match of text.matchAll(re)) {
+        if (match.index > last) node.append(text.slice(last, match.index));
+        const url = match[0];
+        node.append(
+            el("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "support-link" }, url),
+            el("button", {
+                type: "button",
+                class: "support-copy",
+                title: "Скопировать ссылку",
+                "aria-label": "Скопировать ссылку",
+                onclick: (event) => copy(url, event.currentTarget),
+            }, "⧉"),
+        );
+        last = match.index + url.length;
+    }
+    if (last < text.length) node.append(text.slice(last));
+    return node;
+}
+
+export function messageAttachments(item) {
     const mediaItems = Array.isArray(item?.media_items) && item.media_items.length
         ? item.media_items
         : (item?.media_file_id ? [{
@@ -473,6 +501,7 @@ function messageAttachments(item) {
         if (!fileId || !token || seen.has(fileId)) return [];
         seen.add(fileId);
         return [{
+            fileId,
             type: media.type || item?.media_type || "document",
             caption: media.caption || item?.media_caption || "",
             url: `/api/cabinet/media/${encodeURIComponent(fileId)}?token=${encodeURIComponent(token)}`,
@@ -488,7 +517,7 @@ function messageBubble(item) {
     if (fromAdmin) bubble.append(el("strong", { class: "support-author", text: "Поддержка" }));
 
     const text = String(item.message_text || "").trim();
-    if (text) bubble.append(el("p", { text }));
+    if (text) bubble.append(linkedText(text));
 
     const attachments = messageAttachments(item);
     for (const attachment of attachments) {
@@ -498,11 +527,13 @@ function messageBubble(item) {
                 href: attachment.url,
                 target: "_blank",
                 rel: "noopener",
+                "data-file-id": attachment.fileId,
             }, el("img", {
                 class: "support-image",
                 src: attachment.url,
                 alt: attachment.caption || "Вложенное изображение",
-                loading: "lazy",
+                // картинка догрузилась — держим низ переписки, если человек был внизу
+                onload: () => state.chatRefs?.stick && keepBottom(),
             })));
         }
         bubble.append(el("a", {
@@ -510,6 +541,7 @@ function messageBubble(item) {
             href: attachment.url,
             target: "_blank",
             rel: "noopener",
+            "data-file-id": attachment.fileId,
         }, attachment.type === "photo" ? "Открыть изображение" :
             (attachment.type === "video" ? "Открыть видео" : "Открыть вложение")));
     }
@@ -521,14 +553,34 @@ function messageBubble(item) {
     }, bubble);
 }
 
+// Без токенов вложений: бот выдаёт их со сроком действия, и они меняются при
+// каждом запросе. С ними переписка перерисовывалась на каждом опросе, фото
+// грузились заново, а прокрутка в Safari прыгала вверх-вниз.
 function messageSignature(ticket) {
     return (ticket.messages || []).map((item) => [
         item.id,
         item.message_text,
         item.media_file_id,
-        item.media_token,
+        (item.media_items || []).map((m) => m.file_id).join(","),
         item.created_at,
     ].join(":")).join("|");
+}
+
+function keepBottom() {
+    const box = state.chatRefs?.messages;
+    if (box) box.scrollTop = box.scrollHeight;
+}
+
+/** Свежие токены — только в ссылки, картинки не трогаем, чтобы не перегружались. */
+function refreshAttachmentLinks(ticket) {
+    const urls = new Map();
+    for (const item of ticket.messages || []) {
+        for (const a of messageAttachments(item)) urls.set(a.fileId, a.url);
+    }
+    for (const link of state.chatRefs.messages.querySelectorAll("a[data-file-id]")) {
+        const url = urls.get(link.dataset.fileId);
+        if (url) link.href = url;
+    }
 }
 
 function replyComposer(ticketId) {
@@ -589,7 +641,8 @@ function updateOpenTicket(ticket, initial = false) {
     refs.status.className = `chip support-status${isClosed(ticket) ? " closed" : ""}`;
 
     const signature = messageSignature(ticket);
-    if (signature !== refs.messageSignature) {
+    if (signature === refs.messageSignature) refreshAttachmentLinks(ticket);
+    else {
         const nearBottom = refs.messages.scrollHeight - refs.messages.scrollTop - refs.messages.clientHeight < 120;
         refs.messageSignature = signature;
         clear(refs.messages);
@@ -599,9 +652,10 @@ function updateOpenTicket(ticket, initial = false) {
         } else {
             items.forEach((item) => refs.messages.append(messageBubble(item)));
         }
-        if (initial || nearBottom) requestAnimationFrame(() => {
-            refs.messages.scrollTop = refs.messages.scrollHeight;
-        });
+        if (initial || nearBottom) {
+            refs.stick = true;
+            requestAnimationFrame(keepBottom);
+        }
     }
 
     const replyState = isClosed(ticket) ? "closed" : (ticket.is_reply_blocked ? "blocked" : "open");
@@ -693,7 +747,14 @@ export async function openSupportTicket(ticketId) {
         composer,
         messageSignature: null,
         replyState: null,
+        stick: true,
     };
+    // внизу ли человек: тогда новые сообщения и догрузившиеся фото держат низ
+    messages.addEventListener("scroll", () => {
+        if (state.chatRefs?.messages === messages) {
+            state.chatRefs.stick = messages.scrollHeight - messages.scrollTop - messages.clientHeight < 120;
+        }
+    }, { passive: true });
     updateOpenTicket(ticket, true);
     try {
         await api.markSupportTicketRead(ticket.id);
