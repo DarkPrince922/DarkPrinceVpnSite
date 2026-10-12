@@ -49,7 +49,7 @@ dprince.online, www.dprince.online {
 		Referrer-Policy same-origin
 		Strict-Transport-Security "max-age=31536000"
 		# скрипты только свои: страница не подгружает ничего со стороны
-		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://oauth.telegram.org; connect-src 'self' https://oauth.telegram.org; frame-src https://oauth.telegram.org; frame-ancestors 'none'; base-uri 'none'"
 	}
 
 	log {

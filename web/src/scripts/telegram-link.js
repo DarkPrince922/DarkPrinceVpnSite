@@ -1,6 +1,9 @@
 // Привязка Telegram к аккаунту, созданному по почте.
 //
-// Вход Telegram здесь — переход на oauth.telegram.org и обратно, а не виджет
+// Основной путь — окно Telegram по стандарту OIDC (см. telegram-oidc.js): бот
+// проверяет id_token. Пока OIDC у бота не включён — запасной путь ниже.
+//
+// Запасной путь — переход на oauth.telegram.org и обратно, а не виджет
 // на странице: виджет — это чужой скрипт и рамка, а политика безопасности
 // сайта их не пускает. Telegram возвращает человека на кабинет с подписанными
 // данными в #tgAuthResult, бот проверяет подпись своим токеном
@@ -13,6 +16,7 @@
 import { api } from "./api.js";
 import { el, clear, message, busy } from "./ui.js";
 import { mergeChoice, linkErrorText } from "./email-link.js";
+import { prepareTelegramOidc, telegramOidcReady, openTelegramOidc } from "./telegram-oidc.js";
 
 // Номер бота @VPNbyDPrincebot — цифры до двоеточия в его токене, не секрет.
 // Пусто — карточка не показывается.
@@ -48,6 +52,7 @@ function startTelegramAuth() {
 /** Карточка «Привязать Telegram». [onChanged] — перечитать пользователя после привязки. */
 export function telegramLinkCard(onChanged) {
     if (!TELEGRAM_BOT_ID) return null;
+    prepareTelegramOidc();
     const card = el("div", { class: "card" });
     const note = el("p", { class: "msg hidden" });
 
@@ -60,7 +65,16 @@ export function telegramLinkCard(onChanged) {
                 text: "Чтобы входить в этот аккаунт и через Telegram, пользоваться ботом и приглашать " +
                     "друзей ссылкой прямо в бота. Откроется Telegram — подтвердите вход, и вы вернётесь сюда.",
             }),
-            el("button", { class: "btn", onclick: startTelegramAuth }, "Привязать Telegram"),
+            el("button", {
+                class: "btn",
+                onclick: () => {
+                    if (!telegramOidcReady()) return startTelegramAuth();
+                    openTelegramOidc((data) => {
+                        if (data.id_token) link({ id_token: data.id_token });
+                        else if (data.error && data.error !== "popup_closed") message(note, "Telegram не подтвердил вход. Попробуйте ещё раз.");
+                    });
+                },
+            }, "Привязать Telegram"),
             note
         );
     }

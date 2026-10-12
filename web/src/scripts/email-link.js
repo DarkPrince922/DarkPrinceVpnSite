@@ -35,6 +35,8 @@ const KNOWN = [
     ["Login Widget data", "Telegram не подтвердил вход. Попробуйте ещё раз."],
     ["authorization has already been used", "Это подтверждение уже использовано. Нажмите «Привязать» ещё раз."],
     ["just linked to another user", "Этот Telegram только что привязали к другому аккаунту."],
+    ["Telegram OIDC token", "Telegram не подтвердил вход. Попробуйте ещё раз."],
+    ["OIDC is not configured", "Вход через Telegram сейчас недоступен. Попробуйте позже."],
 ];
 
 export function linkErrorText(error) {

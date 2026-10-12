@@ -53,13 +53,24 @@ export const session = {
 };
 
 export class ApiError extends Error {
-    constructor(status, message, missingKopeks = null, code = null) {
+    constructor(status, message, missingKopeks = null, code = null, detail = null) {
         super(message);
         this.status = status;
         /** Сколько не хватает на балансе — только у ответа 402. */
         this.missingKopeks = missingKopeks;
         /** Машинный код отказа из {"detail": {"code": …}} — у новых разделов кабинета. */
         this.code = code;
+        /** {"detail": {…}} целиком — например, список документов у 428 «нужно согласие». */
+        this.detail = detail;
+    }
+}
+
+async function extractDetail(response) {
+    try {
+        const raw = (await response.clone().json()).detail;
+        return raw && typeof raw === "object" ? raw : null;
+    } catch {
+        return null;
     }
 }
 
@@ -181,7 +192,7 @@ async function validAccessToken() {
 // Без токена — только вход, регистрация с нуля, подтверждение почты и
 // пароль. «email» целиком сюда нельзя: соседний /email/register без хвоста —
 // это привязка почты к уже вошедшему аккаунту, ей токен нужен.
-const AUTH_FREE = /\/cabinet\/auth\/(deeplink|email\/(login|register\/standalone|verify|resend)|password|refresh)/;
+const AUTH_FREE = /\/cabinet\/auth\/(deeplink|telegram\/oidc|email\/(login|register\/standalone|verify|resend)|password|refresh)/;
 
 /**
  * Запрос к кабинету. На 401 один раз обновляет токен и повторяет.
@@ -235,6 +246,7 @@ export async function request(path, { method = "GET", body, query, raw = false }
             messageForStatus(response.status, await extractMessage(response)),
             await extractMissing(response),
             await extractCode(response),
+            await extractDetail(response),
         );
     }
     if (response.status === 204) return {};
@@ -260,13 +272,23 @@ export const api = {
             raw: true,
         }),
     emailLogin: (email, password) => post("cabinet/auth/email/login", { email, password }),
-    emailRegister: (email, password, referralCode) =>
+    emailRegister: (email, password, referralCode, accepted) =>
         post("cabinet/auth/email/register/standalone", {
             email,
             password,
             language: "ru",
             referral_code: referralCode || undefined,
+            accepted_legal_documents: accepted || undefined,
         }),
+    // вход через Telegram по стандарту OIDC: id_token из окна Telegram, бот проверяет подпись
+    telegramOidc: (idToken, referralCode, accepted) =>
+        post("cabinet/auth/telegram/oidc", {
+            id_token: idToken,
+            referral_code: referralCode || undefined,
+            accepted_legal_documents: accepted || undefined,
+        }),
+    // включён ли у бота вход Telegram OIDC и его client_id — публично
+    telegramLoginConfig: () => get("cabinet/branding/telegram-widget"),
     forgotPassword: (email) => post("cabinet/auth/password/forgot", { email }),
     logout: (refreshToken) => post("cabinet/auth/logout", { refresh_token: refreshToken }),
     me: () => get("cabinet/auth/me"),
@@ -279,7 +301,7 @@ export const api = {
     cancelEmailChange: () => post("cabinet/auth/email/change/cancel", {}),
     emailChangeStatus: () => get("cabinet/auth/email/change/status"),
     // привязка Telegram: данные, которыми Telegram подписал вход
-    linkTelegram: (data) => post("cabinet/auth/account/link/telegram", {
+    linkTelegram: (data) => post("cabinet/auth/account/link/telegram", data.id_token ? { id_token: data.id_token } : {
         id: data.id, first_name: data.first_name, last_name: data.last_name, username: data.username,
         photo_url: data.photo_url, auth_date: data.auth_date, hash: data.hash,
     }),

@@ -21,6 +21,7 @@ import { startEvents, stopEvents } from "./events.js";
 import { checkAdmin, renderAdmin } from "./admin.js";
 import { savedReferral, forgetReferral } from "./referral-code.js";
 import { telegramLinkCard, finishTelegramLink, hasTelegramReturn } from "./telegram-link.js";
+import { prepareTelegramOidc, telegramOidcReady, openTelegramOidc, LEGAL_DOCUMENTS } from "./telegram-oidc.js";
 
 const state = {
     subscriptions: [],
@@ -63,6 +64,50 @@ const invitedBy = savedReferral();
 if (invitedBy) $("#referralInput").value = invitedBy;
 if (new URLSearchParams(location.search).get("register") === "1") $("#toggleRegister").click();
 
+/**
+ * Новый аккаунт бот создаёт только с согласием на документы: без него отвечает
+ * 428 со списком. Показываем галочку и повторяем тот же запрос уже с согласием.
+ */
+function askConsent(documents, prechecked) {
+    $("#consentBox")?.remove();
+    return new Promise((resolve) => {
+        const box = el("input", { type: "checkbox" });
+        box.checked = Boolean(prechecked);
+        const links = documents.map((key) => {
+            const [title, href] = LEGAL_DOCUMENTS[key] || [key, "/terms.html"];
+            return el("a", { href, target: "_blank", rel: "noopener", text: title });
+        });
+        const label = el("label", { class: "small", style: "display:flex;gap:10px;align-items:flex-start;margin:12px 0" }, [
+            box,
+            el("span", {}, ["Я принимаю ", ...links.flatMap((a, i) => (i ? [" и ", a] : [a]))]),
+        ]);
+        const note = el("p", { class: "msg hidden" });
+        const panel = el("div", { id: "consentBox", class: "card", style: "margin:12px 0" }, [
+            el("p", { class: "small", style: "margin:0", text: "Почти готово — осталось согласиться с условиями сервиса." }),
+            label,
+            el("button", {
+                class: "btn btn-primary btn-block",
+                onclick: () => {
+                    if (!box.checked) return message(note, "Отметьте галочку, чтобы продолжить.");
+                    panel.remove();
+                    resolve(documents);
+                },
+            }, "Продолжить"),
+            note,
+        ]);
+        $("#authMessage").after(panel);
+    });
+}
+
+async function withConsent(send) {
+    try {
+        return await send(null);
+    } catch (error) {
+        if (error?.code !== "legal_consent_required" || !error.detail?.documents?.length) throw error;
+        return send(await askConsent(error.detail.documents, error.detail.prechecked));
+    }
+}
+
 $("#emailForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = $("#emailInput").value.trim();
@@ -72,7 +117,8 @@ $("#emailForm").addEventListener("submit", async (event) => {
     await busy($("#emailSubmit"), async () => {
         try {
             if (registerMode) {
-                const auth = await api.emailRegister(email, password, $("#referralInput").value.trim());
+                const auth = await withConsent((accepted) =>
+                    api.emailRegister(email, password, $("#referralInput").value.trim(), accepted));
                 forgetReferral();
                 if (session.save(auth)) {
                     await enterCabinet();
@@ -110,12 +156,43 @@ $("#forgotButton").addEventListener("click", async () => {
     });
 });
 
-// Вход через Telegram: просим одноразовый токен, открываем бота и ждём
+// Вход через Telegram. Основной путь — окно Telegram (OIDC): работает и для
+// тех, кого ещё нет в боте, и сразу учитывает приглашение. Если у бота он
+// выключен или окно не открывается — вход через бота, как раньше.
+if (!session.loggedIn) {
+    prepareTelegramOidc().then((ok) => $("#telegramBotButton")?.classList.toggle("hidden", !ok));
+}
+
+async function telegramOidcLogin(data) {
+    if (!data.id_token) {
+        if (data.error && data.error !== "popup_closed") message($("#authMessage"), "Telegram не подтвердил вход. Попробуйте ещё раз.");
+        return;
+    }
+    message($("#authMessage"), "");
+    await busy($("#telegramButton"), async () => {
+        try {
+            const auth = await withConsent((accepted) => api.telegramOidc(data.id_token, savedReferral(), accepted));
+            if (!session.save(auth)) return message($("#authMessage"), "Сервер вернул пустой ответ.");
+            forgetReferral();
+            await enterCabinet();
+        } catch (error) {
+            message($("#authMessage"), error.message);
+        }
+    });
+}
+
+$("#telegramButton").addEventListener("click", () => {
+    if (telegramOidcReady()) openTelegramOidc(telegramOidcLogin);
+    else telegramBotLogin();
+});
+$("#telegramBotButton")?.addEventListener("click", () => telegramBotLogin());
+
+// Вход через бота: просим одноразовый токен, открываем бота и ждём
 // подтверждения. Вкладку открываем сразу по клику — если открыть её после
 // запроса, браузер посчитает это всплывающим окном и заблокирует.
 let polling = false;
 
-$("#telegramButton").addEventListener("click", async () => {
+async function telegramBotLogin() {
     if (polling) return;
     const tab = window.open("", "_blank");
     message($("#authMessage"), "");
@@ -174,7 +251,7 @@ $("#telegramButton").addEventListener("click", async () => {
         polling = false;
         $("#telegramButton").disabled = false;
     }
-});
+}
 
 $("#logoutButton").addEventListener("click", async () => {
     stopEvents();
