@@ -11,6 +11,7 @@ import {
 import { emailLinkCard } from "./email-link.js";
 import {
     autopayCard, autopayAllowed, switchCard, revokeButton, trafficCard, goTopUp, isNotEnough,
+    isDeletable, deleteSubscriptionCard,
 } from "./subscription-tools.js";
 import { loadPending, clearPending, completePending } from "./pending.js";
 import { toast, openTab } from "./ui.js";
@@ -312,6 +313,14 @@ async function renderSubscription() {
     const legacy = sub.requires_tariff_selection === true;
     panel.append(subscriptionCard(sub));
     panel.append(connectionCard(sub));
+    if (isDeletable(sub)) {
+        panel.append(deleteSubscriptionCard(sub, () => {
+            // удалённой больше нет — при перерисовке выберется другая
+            state.currentId = null;
+            devicesLoaded = false;
+            renderSubscription();
+        }));
+    }
     if (legacy) return;
     if (isActive(sub) && autopayAllowed(sub)) panel.append(autopayCard(sub));
     if (isActive(sub) && !sub.is_trial && sub.tariff_id != null) {

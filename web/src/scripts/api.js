@@ -314,6 +314,8 @@ export const api = {
     switchTariff: (subscriptionId, tariffId, periodDays) =>
         post("cabinet/subscription/tariff/switch", { tariff_id: tariffId, period_days: periodDays }, { subscription_id: subscriptionId }),
     revoke: (subscriptionId) => post("cabinet/subscription/revoke", {}, { subscription_id: subscriptionId }),
+    // удалить закончившуюся подписку; действующую бот не удаляет
+    deleteSubscription: (subscriptionId) => del(`cabinet/subscriptions/${subscriptionId}`),
     // пауза суточного тарифа: одна ручка и ставит, и снимает
     toggleDailyPause: (subscriptionId) => post("cabinet/subscription/pause", {}, { subscription_id: subscriptionId }),
 

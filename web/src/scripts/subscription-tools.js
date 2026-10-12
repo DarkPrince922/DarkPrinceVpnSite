@@ -2,7 +2,7 @@
 // То же, что в приложении, на тех же запросах кабинета.
 
 import { api, ApiError, parseTariffs } from "./api.js";
-import { el, clear, rubles, dateText, busy, periodText, openTab } from "./ui.js";
+import { el, clear, rubles, dateText, busy, periodText, openTab, toast } from "./ui.js";
 import { rememberPending } from "./pending.js";
 
 const note = () => el("p", { class: "small" });
@@ -298,6 +298,50 @@ export function revokeButton(sub, onDone) {
         },
     }, "Сбросить ссылку");
     return el("div", { style: "margin-top:12px" }, [button, msg]);
+}
+
+// ---------------- удаление ----------------
+
+/**
+ * Удалить можно только закончившуюся подписку — и не во время временного
+ * доступа: его бот сначала доводит до конца.
+ */
+export const isDeletable = (sub) =>
+    ["expired", "disabled"].includes(String(sub.status || "").toLowerCase()) && !sub.grace_until;
+
+export function deleteSubscriptionCard(sub, onDone) {
+    const msg = note();
+    const name = sub.tariff_name || (sub.is_trial ? "Пробная подписка" : `Подписка #${sub.id}`);
+    const button = el("button", {
+        class: "btn-sm",
+        onclick: async (event) => {
+            if (!confirm(
+                `Удалить «${name}»?\n\nПодписка пропадёт из списка вместе со ссылкой и устройствами. ` +
+                "Вернуть её не получится — только купить новую.",
+            )) return;
+            await busy(event.currentTarget, async () => {
+                try {
+                    await api.deleteSubscription(sub.id);
+                    toast("Подписка удалена");
+                    onDone?.();
+                } catch (error) {
+                    say(msg, error.status === 409
+                        ? "Сейчас по подписке идёт временный доступ — удалить её можно, когда он закончится."
+                        : error.status === 400 ? "Удалить можно только закончившуюся подписку." : error.message,
+                    "small danger");
+                }
+            });
+        },
+    }, "Удалить подписку");
+    return el("div", { class: "card" }, [
+        el("h3", { text: "Подписка закончилась" }),
+        el("p", {
+            class: "small muted",
+            text: "Если она больше не нужна, её можно удалить, чтобы не мешала в списке.",
+        }),
+        button,
+        msg,
+    ]);
 }
 
 // ---------------- трафик ----------------
