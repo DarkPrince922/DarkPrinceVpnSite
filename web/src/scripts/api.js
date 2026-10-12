@@ -107,7 +107,11 @@ async function extractMessage(response) {
         // отсюда только сумму, а текст собираем свой.
         if (response.status === 402) {
             // бот кладёт сумму в missing_amount (копейки); старое имя — на всякий случай
-            const missing = raw && typeof raw === "object" ? (raw.missing_amount ?? raw.missing_kopeks) : null;
+            // снятие суточного с паузы отвечает {required, balance}, а не missing_amount
+            const missing = raw && typeof raw === "object"
+                ? (raw.missing_amount ?? raw.missing_kopeks
+                    ?? (typeof raw.required === "number" && typeof raw.balance === "number" ? raw.required - raw.balance : null))
+                : null;
             return typeof missing === "number" && missing > 0
                 ? `Не хватает ${(missing / 100).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₽ на балансе. Пополните счёт и повторите.`
                 : null;
@@ -310,6 +314,8 @@ export const api = {
     switchTariff: (subscriptionId, tariffId, periodDays) =>
         post("cabinet/subscription/tariff/switch", { tariff_id: tariffId, period_days: periodDays }, { subscription_id: subscriptionId }),
     revoke: (subscriptionId) => post("cabinet/subscription/revoke", {}, { subscription_id: subscriptionId }),
+    // пауза суточного тарифа: одна ручка и ставит, и снимает
+    toggleDailyPause: (subscriptionId) => post("cabinet/subscription/pause", {}, { subscription_id: subscriptionId }),
 
     // трафик
     trafficPackages: (subscriptionId) =>

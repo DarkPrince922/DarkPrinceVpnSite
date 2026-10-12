@@ -327,6 +327,7 @@ async function renderSubscription() {
 function reminderTab(target) {
     const path = String(target || "").toLowerCase();
     if (/balance|topup/.test(path)) return "balance";
+    if (/accounts|profile|email/.test(path)) return "more"; // привязка почты — на вкладке «Ещё»
     if (/referral|partner|gift|promo|loyalty|discount/.test(path)) return "bonus";
     if (/support|ticket/.test(path)) return "support";
     if (/device/.test(path)) return "devices";
@@ -460,6 +461,38 @@ function subscriptionCard(sub) {
             style: "color:var(--warn,#e0a63a);margin:10px 0 0",
             text: `Временный доступ до ${dateText(sub.grace_until)}. Продлите подписку, чтобы VPN не отключился.`,
         }));
+    }
+    // Суточный тариф: на паузе деньги не списываются, но и VPN по нему не работает.
+    // Снятие с паузы сразу списывает сутки.
+    if (sub.is_daily) {
+        const paused = sub.is_daily_paused === true;
+        const note = el("p", { class: "small", style: "margin:4px 0 0" });
+        card.append(
+            el("p", {
+                class: "small muted",
+                style: "margin:14px 0 8px",
+                text: paused
+                    ? "Суточный тариф на паузе: списаний нет, VPN по этой подписке не работает."
+                    : "Оплата списывается раз в сутки. Не нужен VPN — поставьте на паузу.",
+            }),
+            el("button", {
+                class: paused ? "primary" : "btn-sm",
+                onclick: (event) => busy(event.currentTarget, async () => {
+                    try {
+                        const result = await api.toggleDailyPause(sub.id);
+                        toast(result.is_paused ? "Суточный тариф на паузе" : "Суточный тариф возобновлён");
+                        await Promise.all([loadBalance(), renderSubscription()]);
+                    } catch (error) {
+                        note.className = "small danger";
+                        note.textContent = error.status === 402
+                            ? `${error.message} Сутки списываются сразу при возобновлении.`
+                            : error.message;
+                    }
+                }),
+            }, paused ? "Возобновить" : "Поставить на паузу"),
+            note,
+        );
+        return card; // у суточного продлевать нечего — списание идёт само
     }
     if (sub.requires_tariff_selection === true) {
         card.append(
