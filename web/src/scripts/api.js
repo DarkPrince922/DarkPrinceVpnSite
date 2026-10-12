@@ -278,6 +278,11 @@ export const api = {
     verifyEmailChange: (code) => post("cabinet/auth/email/change/verify", { code }),
     cancelEmailChange: () => post("cabinet/auth/email/change/cancel", {}),
     emailChangeStatus: () => get("cabinet/auth/email/change/status"),
+    // привязка Telegram: данные, которыми Telegram подписал вход
+    linkTelegram: (data) => post("cabinet/auth/account/link/telegram", {
+        id: data.id, first_name: data.first_name, last_name: data.last_name, username: data.username,
+        photo_url: data.photo_url, auth_date: data.auth_date, hash: data.hash,
+    }),
     verifyEmailMerge: (code) => post("cabinet/auth/email/merge/verify", { code }),
     mergePreview: (token) => get(`cabinet/auth/merge/${encodeURIComponent(token)}`),
     executeMerge: (token, keepFrom) =>

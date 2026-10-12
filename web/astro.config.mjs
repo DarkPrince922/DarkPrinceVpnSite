@@ -29,7 +29,7 @@ export default defineConfig({
     sitemap({
       // Кабинет и страницы по одноразовым ссылкам из писем в выдаче не нужны:
       // показывать там нечего, а адреса из писем живут считанные часы.
-      filter: (page) => !/\/(cabinet|verify-email|reset-password)\/?$/.test(page),
+      filter: (page) => !/\/(cabinet|verify-email|reset-password|invite)\/?$/.test(page),
 
       // Дополнение не знает про format: "file" и выдаёт адреса без .html —
       // то есть ведущие в 404. Скармливать поисковикам несуществующие

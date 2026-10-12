@@ -30,6 +30,11 @@ const KNOWN = [
     ["code has expired", "Код устарел. Запросите новый."],
     ["No pending email change", "Время на подтверждение вышло. Начните заново."],
     ["No email address to change", "К аккаунту не привязана почта."],
+    // привязка Telegram
+    ["Telegram is already linked", "Telegram уже привязан к этому аккаунту."],
+    ["Login Widget data", "Telegram не подтвердил вход. Попробуйте ещё раз."],
+    ["authorization has already been used", "Это подтверждение уже использовано. Нажмите «Привязать» ещё раз."],
+    ["just linked to another user", "Этот Telegram только что привязали к другому аккаунту."],
 ];
 
 export function linkErrorText(error) {
@@ -129,57 +134,12 @@ export function emailLinkCard(onChanged) {
         );
     }
 
-    // Выбрать надо только подписку: у аккаунта она одна. Остальное бот
-    // сводит в один аккаунт сам.
     function showChoose(token, preview) {
-        clear(card);
-        message(note, "");
-        let keep = preview.primary.id;
-        const option = (label, user) => {
-            const sub = user.subscription;
-            const input = el("input", { type: "radio", name: "keepSub", value: String(user.id) });
-            input.checked = user.id === keep;
-            input.addEventListener("change", () => (keep = user.id));
-            return el("label", { class: "card", style: "display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin:8px 0" }, [
-                input,
-                el("span", {}, [
-                    el("span", { class: "small muted", style: "display:block", text: label }),
-                    el("b", { text: sub ? sub.tariff_name || "Подписка" : "Без подписки" }),
-                    el("span", {
-                        class: "small muted", style: "display:block",
-                        text: [
-                            sub?.end_date ? `до ${dateText(sub.end_date)}` : null,
-                            `баланс ${rubles(user.balance_kopeks || 0)}`,
-                            user.email || (user.username ? `@${user.username}` : null),
-                        ].filter(Boolean).join(" · "),
-                    }),
-                ]),
-            ]);
-        };
-        card.append(
-            el("h3", { text: "Какую подписку оставить?" }),
-            el("p", { class: "small muted", text: "Вторая пропадёт — это нельзя будет отменить." }),
-            option("Этот аккаунт", preview.primary),
-            option("Аккаунт с почтой", preview.secondary),
-            el("button", {
-                class: "btn",
-                onclick: async (event) => {
-                    if (!confirm("Объединить аккаунты? Отменить это нельзя.")) return;
-                    await busy(event.currentTarget, async () => {
-                        try {
-                            const result = await api.executeMerge(token, keep);
-                            session.save(result);
-                            showDone("Аккаунты объединены",
-                                "Теперь это один аккаунт: в него можно входить и через Telegram, и по почте.");
-                            onChanged?.();
-                        } catch (error) {
-                            message(note, linkErrorText(error));
-                        }
-                    });
-                },
-            }, "Объединить аккаунты"),
-            note
-        );
+        mergeChoice(card, note, token, preview, {
+            other: "Аккаунт с почтой",
+            done: "Теперь это один аккаунт: в него можно входить и через Telegram, и по почте.",
+            onChanged,
+        });
     }
 
     function showDone(title, text) {
@@ -189,6 +149,62 @@ export function emailLinkCard(onChanged) {
 
     showForm();
     return card;
+}
+
+/**
+ * Какую подписку оставить при объединении аккаунтов. Выбрать надо только
+ * подписку: у аккаунта она одна. Остальное бот сводит в один аккаунт сам.
+ * Общее для привязки почты и Telegram — меняется только подпись второго аккаунта.
+ */
+export function mergeChoice(card, note, token, preview, { other, done, onChanged }) {
+    clear(card);
+    message(note, "");
+    let keep = preview.primary.id;
+    const option = (label, user) => {
+        const sub = user.subscription;
+        const input = el("input", { type: "radio", name: "keepSub", value: String(user.id) });
+        input.checked = user.id === keep;
+        input.addEventListener("change", () => (keep = user.id));
+        return el("label", { class: "card", style: "display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin:8px 0" }, [
+            input,
+            el("span", {}, [
+                el("span", { class: "small muted", style: "display:block", text: label }),
+                el("b", { text: sub ? sub.tariff_name || "Подписка" : "Без подписки" }),
+                el("span", {
+                    class: "small muted", style: "display:block",
+                    text: [
+                        sub?.end_date ? `до ${dateText(sub.end_date)}` : null,
+                        `баланс ${rubles(user.balance_kopeks || 0)}`,
+                        user.email || (user.username ? `@${user.username}` : null),
+                    ].filter(Boolean).join(" · "),
+                }),
+            ]),
+        ]);
+    };
+    card.append(
+        el("h3", { text: "Какую подписку оставить?" }),
+        el("p", { class: "small muted", text: "Вторая пропадёт — это нельзя будет отменить." }),
+        option("Этот аккаунт", preview.primary),
+        option(other, preview.secondary),
+        el("button", {
+            class: "btn",
+            onclick: async (event) => {
+                if (!confirm("Объединить аккаунты? Отменить это нельзя.")) return;
+                await busy(event.currentTarget, async () => {
+                    try {
+                        const result = await api.executeMerge(token, keep);
+                        session.save(result);
+                        clear(card);
+                        card.append(el("h3", { text: "Аккаунты объединены" }), el("p", { class: "small", text: done }));
+                        onChanged?.();
+                    } catch (error) {
+                        message(note, linkErrorText(error));
+                    }
+                });
+            },
+        }, "Объединить аккаунты"),
+        note
+    );
 }
 
 /**

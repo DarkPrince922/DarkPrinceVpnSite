@@ -19,6 +19,8 @@ import { renderBonus, invalidateBonus, promoStrip } from "./bonus.js";
 import { docsCard } from "./docs.js";
 import { startEvents, stopEvents } from "./events.js";
 import { checkAdmin, renderAdmin } from "./admin.js";
+import { savedReferral, forgetReferral } from "./referral-code.js";
+import { telegramLinkCard, finishTelegramLink, hasTelegramReturn } from "./telegram-link.js";
 
 const state = {
     subscriptions: [],
@@ -56,6 +58,11 @@ $("#toggleRegister").addEventListener("click", () => {
     message($("#authMessage"), "");
 });
 
+// Пришли по приглашению: код уже вписан, а ссылка «По почте» открывает сразу регистрацию.
+const invitedBy = savedReferral();
+if (invitedBy) $("#referralInput").value = invitedBy;
+if (new URLSearchParams(location.search).get("register") === "1") $("#toggleRegister").click();
+
 $("#emailForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = $("#emailInput").value.trim();
@@ -66,6 +73,7 @@ $("#emailForm").addEventListener("submit", async (event) => {
         try {
             if (registerMode) {
                 const auth = await api.emailRegister(email, password, $("#referralInput").value.trim());
+                forgetReferral();
                 if (session.save(auth)) {
                     await enterCabinet();
                 } else {
@@ -1242,11 +1250,22 @@ async function renderMore(force = false) {
         ? u.email + (u.email_verified === false ? " (не подтверждена — проверьте письмо)" : "")
         : "—";
     const emailValue = el("span", { text: emailText(user) });
+    const telegramText = (u) => u?.username ? `@${u.username}` : (u?.telegram_id ? String(u.telegram_id) : "—");
+    const telegramValue = el("span", { text: telegramText(user) });
     const refreshUser = () => api.me().then((fresh) => {
         session.user = fresh;
         emailValue.textContent = emailText(fresh);
+        telegramValue.textContent = telegramText(fresh);
     }).catch(() => { });
     if (user && !user.email) panel.append(emailLinkCard(refreshUser));
+    // вошли по почте — можно привязать Telegram; вернулись из Telegram — карточка доделает привязку
+    if (user && (!user.telegram_id || hasTelegramReturn())) {
+        const tgCard = telegramLinkCard(() => {
+            refreshUser();
+            invalidateBonus();
+        });
+        if (tgCard) panel.append(tgCard);
+    }
     // почта есть — её можно сменить, например если ошиблись в адресе
     if (user?.email) panel.append(emailChangeCard(user.email, refreshUser));
     panel.append(el("div", { class: "card" }, [
@@ -1257,7 +1276,7 @@ async function renderMore(force = false) {
         ]),
         el("div", { class: "kv" }, [
             el("span", { class: "k", text: "Telegram" }),
-            el("span", { text: user?.username ? `@${user.username}` : (user?.telegram_id ? String(user.telegram_id) : "—") }),
+            telegramValue,
         ]),
         el("div", { class: "row wrap-row", style: "margin-top:14px" }, [
             el("a", { class: "btn btn-sm", href: "/" }, "Скачать приложения"),
@@ -1309,8 +1328,11 @@ window.addEventListener("dp-balance-changed", () => loadBalance());
 
 // ================= старт =================
 
+// вернулись из Telegram после «Привязать Telegram»
+const telegramReturn = finishTelegramLink();
+
 if (session.loggedIn) {
-    enterCabinet();
+    enterCabinet().then(() => telegramReturn && openTab("more"));
     // имя и почта могли измениться в боте
     api.me().then((user) => (session.user = user)).catch(() => { });
 } else {

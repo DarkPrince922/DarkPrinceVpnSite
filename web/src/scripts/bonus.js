@@ -1,6 +1,7 @@
 // Вкладка «Бонусы»: скидки и уровни, подарки, приглашения с выводом денег.
 
-import { api, ApiError } from "./api.js";
+import { api, ApiError, session } from "./api.js";
+import { inviteLink, botInviteLink } from "./referral-code.js";
 import { $, el, clear, rubles, dateText, busy, copy, plural, openTab } from "./ui.js";
 
 const say = (node, text, cls = "small muted") => {
@@ -382,7 +383,11 @@ function referralSection() {
             api.withdrawalHistory().catch(() => null),
         ]);
         clear(wrap);
-        const link = info.bot_referral_link || info.referral_link;
+        // Делимся ссылкой на сайт: там друг выберет Telegram или почту, и приглашение
+        // засчитается в обоих случаях. Ссылка в бота — тем, у кого привязан Telegram.
+        const code = info.referral_code;
+        const link = code ? inviteLink(code) : (info.bot_referral_link || info.referral_link);
+        const botLink = code && session.user?.telegram_id ? (info.bot_referral_link || botInviteLink(code)) : "";
         const percent = terms?.commission_percent ?? info.commission_percent;
         const rules = [];
         if (terms?.first_payment_commission_percent && terms.first_payment_commission_percent !== percent) {
@@ -405,7 +410,12 @@ function referralSection() {
                     onclick: (e) => copy(`Попробуй наш VPN — быстрый и надёжный. Подключайся: ${link}`, e.currentTarget),
                 }, "Скопировать приглашение"),
             ]) : null,
-            info.referral_code ? el("p", { class: "tiny muted", style: "margin-top:8px", text: `Код для регистрации по почте: ${info.referral_code}` }) : null,
+            botLink ? el("div", { style: "margin-top:12px" }, [
+                el("p", { class: "tiny muted", style: "margin:0 0 4px", text: "Ссылка сразу в бота — для друзей, которые пользуются Telegram:" }),
+                el("p", { class: "mono", style: "margin:0 0 6px", text: botLink }),
+                el("button", { class: "btn-sm", onclick: (e) => copy(botLink, e.currentTarget) }, "Скопировать ссылку в бота"),
+            ]) : null,
+            info.referral_code ? el("p", { class: "tiny muted", style: "margin-top:8px", text: `Код приглашения: ${info.referral_code} — если друг регистрируется без ссылки` }) : null,
             el("div", { class: "kv", style: "margin-top:12px" }, [el("span", { class: "k", text: "Приглашено" }), el("span", { text: String(info.total_referrals ?? 0) })]),
             el("div", { class: "kv" }, [el("span", { class: "k", text: "Платят" }), el("span", { text: String(info.active_referrals ?? 0) })]),
             el("div", { class: "kv" }, [el("span", { class: "k", text: "Заработано" }), el("span", { class: "gold", text: rubles(info.total_earnings_kopeks ?? 0) })]),
