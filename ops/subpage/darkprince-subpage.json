@@ -1,0 +1,1790 @@
+{
+  "version": "1",
+  "locales": [
+    "ru",
+    "en"
+  ],
+  "brandingSettings": {
+    "title": "DPrince VPN",
+    "logoUrl": "https://dprince.online/assets/logo.png",
+    "supportUrl": "https://t.me/VPNbyDPrincebot"
+  },
+  "uiConfig": {
+    "subscriptionInfoBlockType": "cards",
+    "installationGuidesBlockType": "timeline"
+  },
+  "baseSettings": {
+    "metaTitle": "DPrince VPN — подписка",
+    "metaDescription": "Ваша подписка DPrince VPN: статус, срок и подключение",
+    "showConnectionKeys": false,
+    "hideGetLinkButton": false
+  },
+  "baseTranslations": {
+    "installationGuideHeader": {
+      "ru": "Установка",
+      "en": "Installation"
+    },
+    "connectionKeysHeader": {
+      "ru": "Ключи подключения",
+      "en": "Connection Keys"
+    },
+    "linkCopied": {
+      "ru": "Ссылка скопирована",
+      "en": "Link copied"
+    },
+    "linkCopiedToClipboard": {
+      "ru": "Ссылка скопирована в буфер обмена",
+      "en": "Link copied to clipboard"
+    },
+    "getLink": {
+      "ru": "Получение ссылки",
+      "en": "Get Link"
+    },
+    "scanQrCode": {
+      "ru": "Отсканируйте QR-код в приложении",
+      "en": "Scan the QR code above in the client"
+    },
+    "scanQrCodeDescription": {
+      "ru": "Простое добавление подписки в любой клиент. Есть и другой вариант: скопируйте ссылку ниже и вставьте в клиент.",
+      "en": "Easily add the subscription to any client. There's another option: copy the link below and paste it into the client"
+    },
+    "copyLink": {
+      "ru": "Скопировать ссылку",
+      "en": "Copy link"
+    },
+    "name": {
+      "ru": "Имя пользователя",
+      "en": "Username"
+    },
+    "status": {
+      "ru": "Статус",
+      "en": "Status"
+    },
+    "active": {
+      "ru": "Активна",
+      "en": "Active"
+    },
+    "inactive": {
+      "ru": "Неактивна",
+      "en": "Inactive"
+    },
+    "expires": {
+      "ru": "Истекает",
+      "en": "Expires"
+    },
+    "at": {
+      "ru": "В",
+      "en": "At"
+    },
+    "bandwidth": {
+      "ru": "Трафик",
+      "en": "Bandwidth"
+    },
+    "scanToImport": {
+      "ru": "Отсканируйте QR-код для импорта ключа",
+      "en": "Scan to import this key"
+    },
+    "expiresIn": {
+      "ru": "Истекает",
+      "en": "Expires"
+    },
+    "expired": {
+      "ru": "Истекла",
+      "en": "Expired"
+    },
+    "unknown": {
+      "ru": "Неизвестно",
+      "en": "Unknown"
+    },
+    "indefinitely": {
+      "ru": "Бессрочно",
+      "en": "Indefinitely"
+    }
+  },
+  "svgLibrary": {
+    "TV": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n      0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n      stroke-linejoin=\"round\"><path\n      stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3 7m0 2a2 2 0 0 1 2 -2h14a2\n      2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z\" /><path d=\"M16 3l-4 4l-4\n      -4\" /></svg>",
+    "Gear": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n          0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n          stroke-linejoin=\"round\"><path\n          stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M10.325 4.317c.426\n          -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31\n          .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724\n          1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0\n          0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573\n          -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756\n          -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826\n          -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z\" /><path d=\"M9 12a3 3 0\n          1 0 6 0a3 3 0 0 0 -6 0\" /></svg>",
+    "Plus": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\"\n            viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"\n            stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\"\n            fill=\"none\"/><path d=\"M12 5v14\" /><path d=\"M5 12h14\" /></svg>",
+    "Check": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n          0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n          stroke-linejoin=\"round\"><path\n          stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M5 12l5 5l10 -10\"\n          /></svg>",
+    "macOS": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n      0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n      stroke-linejoin=\"round\"><path\n      stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3 4m0 1a1 1 0 0 1 1 -1h16a1\n      1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z\" /><path d=\"M7 8v1\" /><path\n      d=\"M17 8v1\" /><path d=\"M12.5 4c-.654 1.486 -1.26 3.443 -1.5 9h2.5c-.19 2.867\n      .094 5.024 .5 7\" /><path d=\"M7 15.5c3.667 2 6.333 2 10 0\" /></svg>",
+    "Ubuntu": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M12 5m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /><path d=\"M17.723 7.41a7.992 7.992 0 0 0 -3.74 -2.162m-3.971 0a7.993 7.993 0 0 0 -3.789 2.216m-1.881 3.215a8 8 0 0 0 -.342 2.32c0 .738 .1 1.453 .287 2.132m1.96 3.428a7.993 7.993 0 0 0 3.759 2.19m4 0a7.993 7.993 0 0 0 3.747 -2.186m1.962 -3.43a8.008 8.008 0 0 0 .287 -2.131c0 -.764 -.107 -1.503 -.307 -2.203\" /><path d=\"M5 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /><path d=\"M19 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0\" /></svg>",
+    "Android": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n      0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n      stroke-linejoin=\"round\"><path\n      stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 10l0 6\" /><path d=\"M20\n      10l0 6\" /><path d=\"M7 9h10v8a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-8a5 5 0 0 1\n      10 0\" /><path d=\"M8 3l1 2\" /><path d=\"M16 3l-1 2\" /><path d=\"M9 18l0 3\" /><path\n      d=\"M15 18l0 3\" /></svg>",
+    "Windows": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n      0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n      stroke-linejoin=\"round\"><path\n      stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M17.8 20l-12 -1.5c-1 -.1\n      -1.8 -.9 -1.8 -1.9v-9.2c0 -1 .8 -1.8 1.8 -1.9l12 -1.5c1.2 -.1 2.2 .8 2.2 1.9v12.1c0\n      1.2 -1.1 2.1 -2.2 1.9z\" /><path d=\"M12 5l0 14\" /><path d=\"M4 12l16 0\" /></svg>",
+    "AppleIcon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n      0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n      stroke-linejoin=\"round\"><path\n      stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M8.286 7.008c-3.216 0\n      -4.286 3.23 -4.286 5.92c0 3.229 2.143 8.072 4.286 8.072c1.165 -.05 1.799 -.538\n      3.214 -.538c1.406 0 1.607 .538 3.214 .538s4.286 -3.229 4.286 -5.381c-.03 -.011\n      -2.649 -.434 -2.679 -3.23c-.02 -2.335 2.589 -3.179 2.679 -3.228c-1.096 -1.606\n      -3.162 -2.113 -3.75 -2.153c-1.535 -.12 -3.032 1.077 -3.75 1.077c-.729 0 -2.036\n      -1.077 -3.214 -1.077z\" /><path d=\"M12 4a2 2 0 0 0 2 -2a2 2 0 0 0 -2 2\" /></svg>",
+    "DownloadIcon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n          0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n          stroke-linejoin=\"round\"><path\n          stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 17v2a2 2 0 0 0\n          2 2h12a2 2 0 0 0 2 -2v-2\" /><path d=\"M7 11l5 5l5 -5\" /><path d=\"M12 4l0\n          12\" /></svg>",
+    "ExternalLink": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\"\n            viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"\n            stroke-linecap=\"round\" stroke-linejoin=\"round\"><path stroke=\"none\" d=\"M0\n            0h24v24H0z\" fill=\"none\"/><path d=\"M12 6h-6a2 2 0 0 0 -2 2v10a2 2 0 0 0\n            2 2h10a2 2 0 0 0 2 -2v-6\" /><path d=\"M11 13l9 -9\" /><path d=\"M15 4h5v5\"\n            /></svg>",
+    "CloudDownload": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0\n          0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"\n          stroke-linejoin=\"round\"><path\n          stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 18a3.5 3.5 0 0\n          0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4\" /><path d=\"M12 13l0\n          9\" /><path d=\"M9 19l3 3l3 -3\" /></svg>",
+    "VpnForTV": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M8.96283 4L13.1659 20.0974H13.3355L17.5385 4H20.0013L14.5669 23.7647H11.9345L6.5 4H8.96283Z\" fill=\"#FAFAFA\"/>\n<path d=\"M20.1057 23.7647V4H25.4885C26.6634 4 27.6367 4.27987 28.4085 4.83961C29.1803 5.39936 29.7579 6.16498 30.1414 7.13649C30.5248 8.10156 30.7165 9.18888 30.7165 10.3984C30.7165 11.6144 30.5223 12.7082 30.134 13.6797C29.7505 14.6448 29.1705 15.4104 28.3938 15.9766C27.622 16.5363 26.6511 16.8162 25.4811 16.8162H21.7795V14.2877H25.2747C26.017 14.2877 26.6192 14.1204 27.0812 13.7858C27.5433 13.4449 27.8825 12.9816 28.0988 12.3961C28.3151 11.8107 28.4233 11.1448 28.4233 10.3984C28.4233 9.65211 28.3151 8.98943 28.0988 8.41039C27.8825 7.83134 27.5409 7.37776 27.0739 7.04963C26.6118 6.72151 26.0022 6.55745 25.2452 6.55745H22.3842V23.7647H20.1057Z\" fill=\"#FAFAFA\"/>\n<path d=\"M43.5 4V23.7647H41.4059L33.7298 9.2693H33.5897V23.7647H31.3112V4H33.4201L41.1035 18.5147H41.2436V4H43.5Z\" fill=\"#FAFAFA\"/>\n<path d=\"M7.44103 42.1397V39.727L13.9668 26.2353H15.4194V29.7868H14.4977L9.83012 39.4568V39.6112H18.7745V42.1397H7.44103ZM14.6009 46V41.4062L14.6157 40.3061V26.2353H16.7762V46H14.6009Z\" fill=\"#FAFAFA\"/>\n<path d=\"M18.7295 28.8024V26.2353H30.4169V28.8024H25.7051V46H23.434V28.8024H18.7295Z\" fill=\"#FAFAFA\"/>\n<path d=\"M32.243 26.2353L36.446 42.3327H36.6156L40.8187 26.2353H43.2815L37.8471 46H35.2146L29.7802 26.2353H32.243Z\" fill=\"#FAFAFA\"/>\n</svg>\n",
+    "VRayNG": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M7.17 8.24503H2V3H15.16V20.9497L34.5475 3H49L7.17 47V8.24503Z\" fill=\"#FAFAFA\"/>\n</svg>\n",
+    "Streisand": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M25 46L24.2602 47.0076C24.7027 47.3325 25.3054 47.3306 25.7459 47.0031L25 46ZM6.14773 32.1591H4.89773C4.89773 32.557 5.0872 32.9312 5.40797 33.1667L6.14773 32.1591ZM43.6136 32.1591L44.3595 33.1622C44.6767 32.9263 44.8636 32.5543 44.8636 32.1591H43.6136ZM6.14773 19.9886L5.42485 18.9689C5.09421 19.2032 4.89773 19.5834 4.89773 19.9886H6.14773ZM25 6.625L25.729 5.6096L25.0046 5.08952L24.2771 5.60522L25 6.625ZM43.6136 19.9886H44.8636C44.8636 19.586 44.6697 19.208 44.3426 18.9732L43.6136 19.9886ZM3.25 38.5568C2.69772 38.971 2.58579 39.7545 3 40.3068C3.41421 40.8591 4.19772 40.971 4.75 40.5568L4 39.5568L3.25 38.5568ZM13.3409 34.1136C13.8932 33.6994 14.0051 32.9159 13.5909 32.3636C13.1767 31.8114 12.3932 31.6994 11.8409 32.1136L12.5909 33.1136L13.3409 34.1136ZM8.97727 42.8523C8.42499 43.2665 8.31306 44.05 8.72727 44.6023C9.14149 45.1546 9.92499 45.2665 10.4773 44.8523L9.72727 43.8523L8.97727 42.8523ZM19.0682 38.4091C19.6205 37.9949 19.7324 37.2114 19.3182 36.6591C18.904 36.1068 18.1205 35.9949 17.5682 36.4091L18.3182 37.4091L19.0682 38.4091ZM45.25 40.5568C45.8023 40.971 46.5858 40.8591 47 40.3068C47.4142 39.7545 47.3023 38.971 46.75 38.5568L46 39.5568L45.25 40.5568ZM38.1591 32.1136C37.6068 31.6994 36.8233 31.8114 36.4091 32.3636C35.9949 32.9159 36.1068 33.6994 36.6591 34.1136L37.4091 33.1136L38.1591 32.1136ZM39.5227 44.8523C40.075 45.2665 40.8585 45.1546 41.2727 44.6023C41.6869 44.05 41.575 43.2665 41.0227 42.8523L40.2727 43.8523L39.5227 44.8523ZM32.4318 36.4091C31.8795 35.9949 31.096 36.1068 30.6818 36.6591C30.2676 37.2114 30.3795 37.9949 30.9318 38.4091L31.6818 37.4091L32.4318 36.4091ZM46.2727 9.29545C46.825 8.88124 46.9369 8.09774 46.5227 7.54545C46.1085 6.99317 45.325 6.88124 44.7727 7.29545L45.5227 8.29545L46.2727 9.29545ZM36.1818 13.7386C35.6295 14.1528 35.5176 14.9364 35.9318 15.4886C36.346 16.0409 37.1295 16.1528 37.6818 15.7386L36.9318 14.7386L36.1818 13.7386ZM40.5455 5C41.0977 4.58579 41.2097 3.80228 40.7955 3.25C40.3812 2.69772 39.5977 2.58579 39.0455 3L39.7955 4L40.5455 5ZM30.4545 9.44318C29.9023 9.8574 29.7903 10.6409 30.2045 11.1932C30.6188 11.7455 31.4023 11.8574 31.9545 11.4432L31.2045 10.4432L30.4545 9.44318ZM5.70455 7.29545C5.15226 6.88124 4.36876 6.99317 3.95455 7.54545C3.54033 8.09774 3.65226 8.88124 4.20455 9.29545L4.95455 8.29545L5.70455 7.29545ZM12.7955 15.7386C13.3477 16.1528 14.1312 16.0409 14.5455 15.4886C14.9597 14.9364 14.8477 14.1528 14.2955 13.7386L13.5455 14.7386L12.7955 15.7386ZM11.4318 3C10.8795 2.58579 10.096 2.69772 9.68182 3.25C9.2676 3.80228 9.37953 4.58579 9.93182 5L10.6818 4L11.4318 3ZM18.5227 11.4432C19.075 11.8574 19.8585 11.7455 20.2727 11.1932C20.6869 10.6409 20.575 9.8574 20.0227 9.44318L19.2727 10.4432L18.5227 11.4432ZM25 46L25.7398 44.9924L6.88748 31.1515L6.14773 32.1591L5.40797 33.1667L24.2602 47.0076L25 46ZM43.6136 32.1591L42.8678 31.156L24.2541 44.9969L25 46L25.7459 47.0031L44.3595 33.1622L43.6136 32.1591ZM25 33.8295L25.7398 32.8219L6.88748 18.981L6.14773 19.9886L5.40797 20.9962L24.2602 34.8371L25 33.8295ZM6.14773 19.9886L6.87061 21.0084L25.7229 7.64478L25 6.625L24.2771 5.60522L5.42485 18.9689L6.14773 19.9886ZM25 6.625L24.271 7.6404L42.8846 21.004L43.6136 19.9886L44.3426 18.9732L25.729 5.6096L25 6.625ZM43.6136 19.9886L42.8678 18.9856L24.2541 32.8265L25 33.8295L25.7459 34.8326L44.3595 20.9917L43.6136 19.9886ZM43.6136 32.1591H44.8636V19.9886H43.6136H42.3636V32.1591H43.6136ZM25 33.8295H23.75V46H25H26.25V33.8295H25ZM6.14773 32.1591H7.39773V19.9886H6.14773H4.89773V32.1591H6.14773ZM4 39.5568L4.75 40.5568L13.3409 34.1136L12.5909 33.1136L11.8409 32.1136L3.25 38.5568L4 39.5568ZM9.72727 43.8523L10.4773 44.8523L19.0682 38.4091L18.3182 37.4091L17.5682 36.4091L8.97727 42.8523L9.72727 43.8523ZM46 39.5568L46.75 38.5568L38.1591 32.1136L37.4091 33.1136L36.6591 34.1136L45.25 40.5568L46 39.5568ZM40.2727 43.8523L41.0227 42.8523L32.4318 36.4091L31.6818 37.4091L30.9318 38.4091L39.5227 44.8523L40.2727 43.8523ZM45.5227 8.29545L44.7727 7.29545L36.1818 13.7386L36.9318 14.7386L37.6818 15.7386L46.2727 9.29545L45.5227 8.29545ZM39.7955 4L39.0455 3L30.4545 9.44318L31.2045 10.4432L31.9545 11.4432L40.5455 5L39.7955 4ZM4.95455 8.29545L4.20455 9.29545L12.7955 15.7386L13.5455 14.7386L14.2955 13.7386L5.70455 7.29545L4.95455 8.29545ZM10.6818 4L9.93182 5L18.5227 11.4432L19.2727 10.4432L20.0227 9.44318L11.4318 3L10.6818 4Z\" fill=\"#FAFAFA\"/>\n</svg>\n",
+    "Stash": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M24.4948 3.02051C33.172 2.52485 37.945 10.8183 37.7565 20.8945C42.3238 22.5003 51.8349 31.9328 47.3727 39.9775C43.0858 47.7061 35.3051 49.1534 24.9977 43.3711C21.2267 46.1366 8.15345 51.0387 2.81116 40.7939C-1.1406 33.2151 4.13135 24.7049 11.9244 20.8945C11.673 16.4661 13.4331 3.65239 24.4948 3.02051ZM12.6158 27.5371C10.3533 29.0455 6.77107 32.9426 8.21643 37.2793C9.63059 41.5219 15.6954 41.4901 19.4664 39.416C15.6328 35.5193 13.6717 31.2075 12.6158 27.5371ZM37.0651 27.5371C36.2606 33.1181 32.2045 37.7818 30.277 39.416C33.9223 41.2387 39.7858 41.396 41.653 37.2793C43.3898 33.4495 38.1545 28.1028 37.0651 27.5371ZM31.4088 24.584C29.2091 23.725 23.5022 22.5226 18.2731 24.584C18.5456 26.8888 20.0326 32.3148 24.8717 36.1484C27.239 34.263 31.1572 29.2349 31.4088 24.584ZM24.8717 9.43652C21.1637 9.43663 19.0896 13.208 18.0211 18.1729C21.0379 17.293 25.6894 16.7901 31.5973 18.1729C31.5973 15.2819 28.8313 9.43657 24.8717 9.43652Z\" fill=\"#FAFAFA\"/>\n</svg>\n",
+    "Shadowrocket": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M21.2394 36.832L16.5386 39.568C16.5386 39.568 13.7182 36.832 11.8379 33.184C9.95756 29.536 16.5386 23.152 16.5386 23.152M21.2394 36.832H28.7606M21.2394 36.832C21.2394 36.832 15.5985 24.064 17.4788 16.768C19.3591 9.472 25 4 25 4C25 4 30.6409 9.472 32.5212 16.768C34.4015 24.064 28.7606 36.832 28.7606 36.832M28.7606 36.832L33.4614 39.568C33.4614 39.568 36.2818 36.832 38.1621 33.184C40.0424 29.536 33.4614 23.152 33.4614 23.152M25 46L26.8803 40.528H23.1197L25 46ZM25.9402 17.68C26.4594 18.1837 26.4594 19.0003 25.9402 19.504C25.4209 20.0077 24.5791 20.0077 24.0598 19.504C23.5406 19.0003 23.5406 18.1837 24.0598 17.68C24.5791 17.1763 25.4209 17.1763 25.9402 17.68Z\" stroke=\"#FAFAFA\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>\n",
+    "Happ": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M22.3264 3H12.3611L9.44444 20.1525L21.3542 8.22034L22.3264 3Z\" fill=\"#FAFAFA\"/>\n<path d=\"M10.9028 20.1525L22.8125 8.22034L20.8681 21.1469H28.4028L27.9167 21.6441L20.8681 28.8531H19.4097V30.5932L7.5 42.5254L10.9028 20.1525Z\" fill=\"#FAFAFA\"/>\n<path d=\"M41.0417 8.22034L28.8889 20.1525L31.684 3H41.7708L41.0417 8.22034Z\" fill=\"#FAFAFA\"/>\n<path d=\"M30.3472 20.1525L42.5 8.22034L38.6111 30.3446L26.9444 42.5254L29.0104 28.8531H22.3264L29.6181 21.1469H30.3472V20.1525Z\" fill=\"#FAFAFA\"/>\n<path d=\"M40.0694 30.3446L28.4028 42.5254L27.9167 47H37.8819L40.0694 30.3446Z\" fill=\"#FAFAFA\"/>\n<path d=\"M18.6806 47H8.47222L8.95833 42.5254L20.8681 30.5932L18.6806 47Z\" fill=\"#FAFAFA\"/>\n</svg>\n",
+    "FlClashX": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 50 50\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<rect x=\"16.1458\" y=\"47\" width=\"6.66417\" height=\"46.9593\" rx=\"3.33209\" transform=\"rotate(-150 16.1458 47)\" fill=\"#FAFAFA\"/>\n<path d=\"M38.1165 40.751C39.0362 42.3446 38.4902 44.3827 36.8967 45.3027C35.3031 46.2228 33.2652 45.6764 32.345 44.083L25.6887 32.5537L29.5364 25.8896L38.1165 40.751ZM13.4163 4.63477C15.01 3.71464 17.0479 4.26078 17.968 5.85449L24.5334 17.2266L20.6868 23.8906L12.1975 9.18652C11.2775 7.59298 11.8229 5.55504 13.4163 4.63477Z\" fill=\"#FAFAFA\"/>\n</svg>\n",
+    "DPrince": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><image href=\"https://dprince.online/assets/mark.png\" xlink:href=\"https://dprince.online/assets/mark.png\" width=\"24\" height=\"24\"/></svg>",
+    "Incy": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"5\"/><path d=\"M12 8v8\"/><circle cx=\"12\" cy=\"5.5\" r=\"0.5\" fill=\"currentColor\"/></svg>"
+  },
+  "platforms": {
+    "android": {
+      "apps": [
+        {
+          "name": "DPrince VPN",
+          "svgIconKey": "DPrince",
+          "featured": true,
+          "blocks": [
+            {
+              "svgIconKey": "DownloadIcon",
+              "svgIconColor": "violet",
+              "title": {
+                "ru": "Установка",
+                "en": "Install"
+              },
+              "description": {
+                "ru": "Скачайте APK с нашего сайта и установите. Если телефон спросит — разрешите установку из этого источника.",
+                "en": "Download the APK from our website and install it. If asked, allow installs from this source."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://dprince.online/downloads/DarkPrinceVPN.apk",
+                  "text": {
+                    "ru": "Скачать APK",
+                    "en": "Download APK"
+                  },
+                  "svgIconKey": "DownloadIcon"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Gear",
+              "svgIconColor": "cyan",
+              "title": {
+                "ru": "Вход",
+                "en": "Sign in"
+              },
+              "description": {
+                "ru": "Откройте приложение и войдите <b>через Telegram или почту</b> — тем же аккаунтом, что в боте. Подписка подтянется сама, ссылку вводить не нужно.",
+                "en": "Open the app and sign in <b>with Telegram or email</b> — the same account you use in the bot. Your subscription loads automatically, no link needed."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://t.me/VPNbyDPrincebot",
+                  "text": {
+                    "ru": "Открыть бота",
+                    "en": "Open the bot"
+                  },
+                  "svgIconKey": "ExternalLink"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Check",
+              "svgIconColor": "teal",
+              "title": {
+                "ru": "Подключение",
+                "en": "Connect"
+              },
+              "description": {
+                "ru": "Нажмите большую кнопку в центре. Сервер выбирается автоматически, при желании поменяйте его в списке.",
+                "en": "Tap the big button in the center. The server is chosen automatically; you can pick another one from the list."
+              },
+              "buttons": []
+            }
+          ]
+        },
+        {
+          "name": "Happ",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://play.google.com/store/apps/details?id=com.happproxy",
+                  "text": {
+                    "ru": "Открыть в Google Play",
+                    "en": "Open in Google Play"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/Happ-proxy/happ-android/releases/latest/download/Happ.apk",
+                  "text": {
+                    "ru": "Скачать APK",
+                    "en": "Download APK"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в Google Play и установите приложение. Или установите приложение из APK файла напрямую, если Google Play не работает.",
+                "en": "Open the page in Google Play and install the app. Or install the app directly from the APK file if Google Play is not working."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "happ://add/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку",
+                "en": "Click the button below to add subscription"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Откройте приложение и подключитесь к серверу",
+                "en": "Open the app and connect to the server"
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Happ"
+        },
+        {
+          "name": "v2rayNG",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://github.com/2dust/v2rayNG/releases/download/1.10.31/v2rayNG_1.10.31_universal.apk",
+                  "text": {
+                    "ru": "Скачать APK",
+                    "en": "Download APK"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Скачайте и установите v2rayNG APK",
+                "en": "Download and install v2rayNG APK"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "v2rayng://install-config?name={{USERNAME}}&url={{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Обновление подписки",
+                "en": "Update subscriptions"
+              },
+              "buttons": [],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Нажмите на три точечки справа сверху и выберите Обновить подписку. После этого в списке появятся доступные серверы",
+                "en": "Tap the three dots in the top-right corner and select Update subscription. After that, the available servers will appear in the list."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Выберите требуемый сервер и нажмите кнопку Включить в правом нижнем углу",
+                "en": "Select the required server and click the Enable button in the bottom right corner."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "VRayNG"
+        },
+        {
+          "name": "FlClashX",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-android-universal.apk",
+                  "text": {
+                    "ru": "Скачать APK",
+                    "en": "Download APK"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Скачайте и установите FlClashX APK",
+                "en": "Download and install FlClashX APK"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "flclashx://install-config?url={{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку",
+                "en": "Click the button below to add subscription"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Если подписка не добавилась",
+                "en": "If the subscription is not added"
+              },
+              "buttons": [],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Если после нажатия на кнопку ничего не произошло, добавьте подписку вручную. Нажмите на этой страницу кнопку Получить ссылку в правом верхнем углу, скопируйте ссылку. В FlClashX перейдите в раздел Профили, нажмите кнопку +, выберите URL, вставьте вашу скопированную ссылку и нажмите Отправить",
+                "en": "If nothing happens after clicking the button, add a subscription manually. Click the Get link button on this page in the upper right corner, copy the link. In FlClashX, go to the Profiles section, click the + button, select the URL, paste your copied link and click Send"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Выберите добавленный профиль в разделе Профили. В Панели управления нажмите кнопку включить в правом нижнем углу. После запуска в разделе Прокси вы можете изменить выбор сервера к которому вас подключит. ",
+                "en": "Select the added profile in the Profiles section. In the Control Panel, click the Enable button in the bottom right corner. Once it's running, you can change the server you're connected to in the Proxy section."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "FlClashX"
+        }
+      ],
+      "svgIconKey": "Android",
+      "displayName": {
+        "ru": "Android",
+        "en": "Android"
+      }
+    },
+    "ios": {
+      "displayName": {
+        "ru": "iOS",
+        "en": "iOS"
+      },
+      "svgIconKey": "AppleIcon",
+      "apps": [
+        {
+          "name": "INCY",
+          "svgIconKey": "Incy",
+          "featured": true,
+          "blocks": [
+            {
+              "svgIconKey": "DownloadIcon",
+              "svgIconColor": "violet",
+              "title": {
+                "ru": "Установка",
+                "en": "Install"
+              },
+              "description": {
+                "ru": "Установите INCY из App Store. При первом запуске разрешите добавить VPN-конфигурацию.",
+                "en": "Install INCY from the App Store. On first launch allow it to add a VPN configuration."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://apps.apple.com/app/incy/id6756943388",
+                  "text": {
+                    "ru": "App Store",
+                    "en": "App Store"
+                  },
+                  "svgIconKey": "ExternalLink"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "CloudDownload",
+              "svgIconColor": "cyan",
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add subscription"
+              },
+              "description": {
+                "ru": "Нажмите кнопку ниже — INCY откроется и добавит подписку. Если не открылось, скопируйте ссылку и вставьте её в INCY через «+».",
+                "en": "Tap the button below — INCY opens and adds the subscription. If nothing happens, copy the link and paste it in INCY via \"+\"."
+              },
+              "buttons": [
+                {
+                  "type": "subscriptionLink",
+                  "link": "incy://import/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить в INCY",
+                    "en": "Add to INCY"
+                  },
+                  "svgIconKey": "Plus"
+                },
+                {
+                  "type": "copyButton",
+                  "link": "{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Скопировать ссылку",
+                    "en": "Copy link"
+                  },
+                  "svgIconKey": "Plus"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Check",
+              "svgIconColor": "teal",
+              "title": {
+                "ru": "Подключение",
+                "en": "Connect"
+              },
+              "description": {
+                "ru": "Нажмите большую кнопку в центре. Сервер выбирается автоматически, при желании поменяйте его в списке.",
+                "en": "Tap the big button in the center. The server is chosen automatically; you can pick another one from the list."
+              },
+              "buttons": []
+            }
+          ]
+        },
+        {
+          "name": "Happ",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/ru/app/happ-proxy-utility/id6783623643",
+                  "text": {
+                    "ru": "App Store (RU)",
+                    "en": "App Store (RU)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://apps.apple.com/us/app/happ-proxy-utility/id6504287215",
+                  "text": {
+                    "ru": "App Store (Global)",
+                    "en": "App Store (Global)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в App Store и установите приложение. Запустите его, в окне разрешения VPN-конфигурации нажмите Allow и введите свой пароль.",
+                "en": "Open the page in App Store and install the app. Launch it, in the VPN configuration permission window click Allow and enter your passcode."
+              },
+              "svgIconColor": "violet"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "happ://add/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "В главном разделе нажмите большую кнопку включения в центре для подключения к VPN. Не забудьте выбрать сервер в списке серверов. При необходимости выберите другой сервер из списка серверов.",
+                "en": "In the main section, click the large power button in the center to connect to VPN. Don't forget to select a server from the server list. If needed, choose another server from the server list."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Happ"
+        },
+        {
+          "name": "Streisand",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/ru/app/streisand/id6450534064",
+                  "text": {
+                    "ru": "Открыть в App Store",
+                    "en": "Open in App Store"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в App Store и установите приложение. Запустите его, в окне разрешения VPN-конфигурации нажмите Allow и введите свой пароль.",
+                "en": "Open the page in App Store and install the app. Launch it, in the VPN configuration permission window click Allow and enter your passcode."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "streisand://import/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "В главном разделе нажмите большую кнопку включения в центре для подключения к VPN. Не забудьте выбрать сервер в списке серверов. При необходимости выберите другой сервер из списка серверов.",
+                "en": "In the main section, click the large power button in the center to connect to VPN. Don't forget to select a server from the server list. If needed, choose another server from the server list."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Streisand"
+        },
+        {
+          "name": "Shadowrocket",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/ru/app/shadowrocket/id932747118",
+                  "text": {
+                    "ru": "Открыть в App Store",
+                    "en": "Open in App Store"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в App Store и установите приложение. Запустите его, в окне разрешения VPN-конфигурации нажмите Allow и введите свой пароль.",
+                "en": "Open the page in App Store and install the app. Launch it, in the VPN configuration permission window click Allow and enter your passcode."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "shadowrocket://add/{{SUBSCRIPTION_LINK}}#{{USERNAME}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "В главном разделе нажмите большую кнопку включения в центре для подключения к VPN. Не забудьте выбрать сервер в списке серверов. При необходимости выберите другой сервер из списка серверов.",
+                "en": "In the main section, click the large power button in the center to connect to VPN. Don't forget to select a server from the server list. If needed, choose another server from the server list."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Shadowrocket"
+        }
+      ]
+    },
+    "windows": {
+      "apps": [
+        {
+          "name": "DPrince VPN",
+          "svgIconKey": "DPrince",
+          "featured": true,
+          "blocks": [
+            {
+              "svgIconKey": "DownloadIcon",
+              "svgIconColor": "violet",
+              "title": {
+                "ru": "Установка",
+                "en": "Install"
+              },
+              "description": {
+                "ru": "Скачайте установщик и запустите. Если Windows покажет «Защитник SmartScreen» — «Подробнее» → «Выполнить в любом случае».",
+                "en": "Download the installer and run it. If SmartScreen warns you — \"More info\" → \"Run anyway\"."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://dprince.online/downloads/DarkPrinceVPN-setup.exe",
+                  "text": {
+                    "ru": "Скачать для Windows",
+                    "en": "Download for Windows"
+                  },
+                  "svgIconKey": "DownloadIcon"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Gear",
+              "svgIconColor": "cyan",
+              "title": {
+                "ru": "Вход",
+                "en": "Sign in"
+              },
+              "description": {
+                "ru": "Откройте приложение и войдите <b>через Telegram или почту</b> — тем же аккаунтом, что в боте. Подписка подтянется сама, ссылку вводить не нужно.",
+                "en": "Open the app and sign in <b>with Telegram or email</b> — the same account you use in the bot. Your subscription loads automatically, no link needed."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://t.me/VPNbyDPrincebot",
+                  "text": {
+                    "ru": "Открыть бота",
+                    "en": "Open the bot"
+                  },
+                  "svgIconKey": "ExternalLink"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Check",
+              "svgIconColor": "teal",
+              "title": {
+                "ru": "Подключение",
+                "en": "Connect"
+              },
+              "description": {
+                "ru": "Нажмите большую кнопку в центре. Сервер выбирается автоматически, при желании поменяйте его в списке.",
+                "en": "Tap the big button in the center. The server is chosen automatically; you can pick another one from the list."
+              },
+              "buttons": []
+            }
+          ]
+        },
+        {
+          "name": "Happ",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://github.com/Happ-proxy/happ-desktop/releases/latest/download/setup-Happ.x64.exe",
+                  "text": {
+                    "ru": "Windows",
+                    "en": "Windows"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
+                "en": "Choose the version for your device, click the button below and install the app."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "happ://add/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "В главном разделе нажмите большую кнопку включения в центре для подключения к VPN. Не забудьте выбрать сервер в списке серверов. При необходимости выберите другой сервер из списка серверов.",
+                "en": "In the main section, click the large power button in the center to connect to VPN. Don't forget to select a server from the server list. If needed, choose another server from the server list."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Happ"
+        },
+        {
+          "name": "FlClashX",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-windows-amd64-setup.exe",
+                  "text": {
+                    "ru": "Windows (Установщик)",
+                    "en": "Windows (Setup)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-windows-arm64-setup.exe",
+                  "text": {
+                    "ru": "Windows на ARM (Установщик)",
+                    "en": "Windows on ARM (Setup)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
+                "en": "Choose the version for your device, click the button below and install the app."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "flclashx://install-config?url={{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку",
+                "en": "Click the button below to add subscription"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Если подписка не добавилась",
+                "en": "If the subscription is not added"
+              },
+              "buttons": [],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Если после нажатия на кнопку ничего не произошло, добавьте подписку вручную. Нажмите на этой страницу кнопку Получить ссылку в правом верхнем углу, скопируйте ссылку. В FlClashX перейдите в раздел Профили, нажмите кнопку +, выберите URL, вставьте вашу скопированную ссылку и нажмите Отправить",
+                "en": "If nothing happens after clicking the button, add a subscription manually. Click the Get link button on this page in the upper right corner, copy the link. In FlClashX, go to the Profiles section, click the + button, select the URL, paste your copied link and click Send"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Выберите добавленный профиль в разделе Профили. В Панели управления нажмите кнопку включить в правом нижнем углу, а затем включите переключатель у пункта TUN. После запуска в разделе Прокси вы можете изменить выбор сервера к которому вас подключит. ",
+                "en": "Select the added profile in the Profiles section. In the Dashboard, click the enable button in the lower right corner, and then turn on the switch next to the TUN item. After launching, in the Proxy section, you can change the choice of the server to which you will be connected."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "FlClashX"
+        }
+      ],
+      "svgIconKey": "Windows",
+      "displayName": {
+        "ru": "Windows",
+        "en": "Windows"
+      }
+    },
+    "linux": {
+      "apps": [
+        {
+          "name": "DPrince VPN",
+          "svgIconKey": "DPrince",
+          "featured": true,
+          "blocks": [
+            {
+              "svgIconKey": "DownloadIcon",
+              "svgIconColor": "violet",
+              "title": {
+                "ru": "Установка",
+                "en": "Install"
+              },
+              "description": {
+                "ru": "Ubuntu/Debian — <b>.deb</b>, Arch — <b>.pkg.tar.zst</b> (pacman -U), остальные — <b>AppImage</b>.",
+                "en": "Ubuntu/Debian — <b>.deb</b>, Arch — <b>.pkg.tar.zst</b> (pacman -U), others — <b>AppImage</b>."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://dprince.online/downloads/DarkPrinceVPN.deb",
+                  "text": {
+                    "ru": ".deb",
+                    "en": ".deb"
+                  },
+                  "svgIconKey": "DownloadIcon"
+                },
+                {
+                  "type": "external",
+                  "link": "https://dprince.online/downloads/DarkPrinceVPN.pkg.tar.zst",
+                  "text": {
+                    "ru": "Arch",
+                    "en": "Arch"
+                  },
+                  "svgIconKey": "DownloadIcon"
+                },
+                {
+                  "type": "external",
+                  "link": "https://dprince.online/downloads/DarkPrinceVPN.AppImage",
+                  "text": {
+                    "ru": "AppImage",
+                    "en": "AppImage"
+                  },
+                  "svgIconKey": "DownloadIcon"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Gear",
+              "svgIconColor": "cyan",
+              "title": {
+                "ru": "Вход",
+                "en": "Sign in"
+              },
+              "description": {
+                "ru": "Откройте приложение и войдите <b>через Telegram или почту</b> — тем же аккаунтом, что в боте. Подписка подтянется сама, ссылку вводить не нужно.",
+                "en": "Open the app and sign in <b>with Telegram or email</b> — the same account you use in the bot. Your subscription loads automatically, no link needed."
+              },
+              "buttons": [
+                {
+                  "type": "external",
+                  "link": "https://t.me/VPNbyDPrincebot",
+                  "text": {
+                    "ru": "Открыть бота",
+                    "en": "Open the bot"
+                  },
+                  "svgIconKey": "ExternalLink"
+                }
+              ]
+            },
+            {
+              "svgIconKey": "Check",
+              "svgIconColor": "teal",
+              "title": {
+                "ru": "Подключение",
+                "en": "Connect"
+              },
+              "description": {
+                "ru": "Нажмите большую кнопку в центре. Сервер выбирается автоматически, при желании поменяйте его в списке.",
+                "en": "Tap the big button in the center. The server is chosen automatically; you can pick another one from the list."
+              },
+              "buttons": []
+            }
+          ]
+        },
+        {
+          "name": "FlClashX",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-amd64.deb",
+                  "text": {
+                    "ru": "amd64 (.deb)",
+                    "en": "amd64 (.deb)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-amd64.AppImage",
+                  "text": {
+                    "ru": "amd64 (AppImage)",
+                    "en": "amd64 (AppImage)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-amd64.rpm",
+                  "text": {
+                    "ru": "amd64 (.rpm)",
+                    "en": "amd64 (.rpm)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-arm64.deb",
+                  "text": {
+                    "ru": "arm64 (.deb)",
+                    "en": "arm64 (.deb)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
+                "en": "Choose the version for your device, click the button below and install the app."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "flclashx://install-config?url={{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку",
+                "en": "Click the button below to add subscription"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Если подписка не добавилась",
+                "en": "If the subscription is not added"
+              },
+              "buttons": [],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Если после нажатия на кнопку ничего не произошло, добавьте подписку вручную. Нажмите на этой страницу кнопку Получить ссылку в правом верхнем углу, скопируйте ссылку. В FlClashX перейдите в раздел Профили, нажмите кнопку +, выберите URL, вставьте вашу скопированную ссылку и нажмите Отправить",
+                "en": "If nothing happens after clicking the button, add a subscription manually. Click the Get link button on this page in the upper right corner, copy the link. In FlClashX, go to the Profiles section, click the + button, select the URL, paste your copied link and click Send"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Выберите добавленный профиль в разделе Профили. В Панели управления нажмите кнопку включить в правом нижнем углу, а затем включите переключатель у пункта TUN. После запуска в разделе Прокси вы можете изменить выбор сервера к которому вас подключит. ",
+                "en": "Select the added profile in the Profiles section. In the Dashboard, click the enable button in the lower right corner, and then turn on the switch next to the TUN item. After launching, in the Proxy section, you can change the choice of the server to which you will be connected."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "FlClashX"
+        }
+      ],
+      "svgIconKey": "Ubuntu",
+      "displayName": {
+        "ru": "Linux",
+        "en": "Linux"
+      }
+    },
+    "macos": {
+      "apps": [
+        {
+          "name": "Happ",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/ru/app/happ-proxy-utility/id6783623643",
+                  "text": {
+                    "ru": "App Store (RU)",
+                    "en": "App Store (RU)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://apps.apple.com/us/app/happ-proxy-utility/id6504287215",
+                  "text": {
+                    "ru": "App Store (Global)",
+                    "en": "App Store (Global)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
+                "en": "Choose the version for your device, click the button below and install the app."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "happ://add/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "В главном разделе нажмите большую кнопку включения в центре для подключения к VPN. Не забудьте выбрать сервер в списке серверов. При необходимости выберите другой сервер из списка серверов.",
+                "en": "In the main section, click the large power button in the center to connect to VPN. Don't forget to select a server from the server list. If needed, choose another server from the server list."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": true,
+          "svgIconKey": "Happ"
+        },
+        {
+          "name": "FlClashX",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-macos-arm64.dmg",
+                  "text": {
+                    "ru": "macOS (Apple Silicon)",
+                    "en": "macOS (Apple Silicon)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-macos-amd64.dmg",
+                  "text": {
+                    "ru": "macOS (Intel)",
+                    "en": "macOS (Intel)"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
+                "en": "Choose the version for your device, click the button below and install the app."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "flclashx://install-config?url={{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку",
+                "en": "Click the button below to add subscription"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Если подписка не добавилась",
+                "en": "If the subscription is not added"
+              },
+              "buttons": [],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Если после нажатия на кнопку ничего не произошло, добавьте подписку вручную. Нажмите на этой страницу кнопку Получить ссылку в правом верхнем углу, скопируйте ссылку. В FlClashX перейдите в раздел Профили, нажмите кнопку +, выберите URL, вставьте вашу скопированную ссылку и нажмите Отправить",
+                "en": "If nothing happens after clicking the button, add a subscription manually. Click the Get link button on this page in the upper right corner, copy the link. In FlClashX, go to the Profiles section, click the + button, select the URL, paste your copied link and click Send"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Выберите добавленный профиль в разделе Профили. В Панели управления нажмите кнопку включить в правом нижнем углу, а затем включите переключатель у пункта TUN. После запуска в разделе Прокси вы можете изменить выбор сервера к которому вас подключит. ",
+                "en": "Select the added profile in the Profiles section. In the Dashboard, click the enable button in the lower right corner, and then turn on the switch next to the TUN item. After launching, in the Proxy section, you can change the choice of the server to which you will be connected."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "FlClashX"
+        }
+      ],
+      "svgIconKey": "macOS",
+      "displayName": {
+        "ru": "macOS",
+        "en": "macOS"
+      }
+    },
+    "appleTV": {
+      "apps": [
+        {
+          "name": "Happ",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/us/app/happ-proxy-utility-for-tv/id6748297274",
+                  "text": {
+                    "ru": "App Store",
+                    "en": "App Store"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в App Store на Apple TV и установите приложение. Запустите его, предоставьте разрешение на VPN-конфигурацию, если потребуется, и введите свой пароль.",
+                "en": "Open the page in the App Store on your Apple TV and install the app. Launch it, allow VPN configuration if prompted, and enter your passcode if required."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Инструкции по установке",
+                "en": "Installation instructions"
+              },
+              "buttons": [
+                {
+                  "link": "https://www.happ.su/main/ru/faq/android-tv",
+                  "text": {
+                    "ru": "На русском",
+                    "en": "In Russian"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://www.happ.su/main/faq/android-tv",
+                  "text": {
+                    "ru": "На английском",
+                    "en": "In English"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Подробные инструкции, чтобы помочь вам настроить Happ на вашем устройстве.",
+                "en": "Detailed instructions to help you set up Happ on your device."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "happ://add/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку, если вы открыли страницу подписки на телевизоре",
+                "en": "Click the button below to add subscription, if you opened the subscription page on your TV"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Откройте приложение и подключитесь к серверу",
+                "en": "Open the app and connect to the server"
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": true,
+          "svgIconKey": "Happ"
+        },
+        {
+          "name": "Shadowrocket",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/ru/app/shadowrocket/id932747118",
+                  "text": {
+                    "ru": "Открыть в App Store",
+                    "en": "Open in App Store"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в App Store и установите приложение. Запустите его, в окне разрешения VPN-конфигурации нажмите Allow и введите свой пароль.",
+                "en": "Open the page in App Store and install the app. Launch it, in the VPN configuration permission window click Allow and enter your passcode."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "shadowrocket://add/{{SUBSCRIPTION_LINK}}#{{USERNAME}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение откроется, и подписка добавится автоматически.",
+                "en": "Click the button below — the app will open and the subscription will be added automatically"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "В главном разделе нажмите большую кнопку включения в центре для подключения к VPN. Не забудьте выбрать сервер в списке серверов. При необходимости выберите другой сервер из списка серверов.",
+                "en": "In the main section, click the large power button in the center to connect to VPN. Don't forget to select a server from the server list. If needed, choose another server from the server list."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Shadowrocket"
+        },
+        {
+          "name": "Stash",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://apps.apple.com/us/app/stash-rule-based-proxy/id1596063349",
+                  "text": {
+                    "ru": "Открыть в App Store",
+                    "en": "Open in App Store"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в App Store и установите приложение.",
+                "en": "Open the App Store page and install the app."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "stash://install-config?url={{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже — приложение Stash откроется, и конфигурация будет добавлена автоматически.",
+                "en": "Tap the button below — Stash will open and the configuration will be added automatically."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "На главном экране нажмите кнопку «Запуск». В появившемся окне разрешите добавление конфигураций VPN. После активации профиля перейдите в раздел «Политика» и выберите страну подключения.",
+                "en": "On the main screen, tap the Start button. When prompted, allow adding VPN configurations. After the profile is activated, open the Policy section and select the country you want to connect through."
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "Stash"
+        }
+      ],
+      "svgIconKey": "TV",
+      "displayName": {
+        "ru": "Apple TV",
+        "en": "Apple TV"
+      }
+    },
+    "androidTV": {
+      "apps": [
+        {
+          "name": "Happ",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://play.google.com/store/apps/details?id=com.happproxy",
+                  "text": {
+                    "ru": "Открыть в Google Play",
+                    "en": "Open in Google Play"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://github.com/Happ-proxy/happ-android/releases/latest/download/Happ.apk",
+                  "text": {
+                    "ru": "Скачать APK",
+                    "en": "Download APK"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в Google Play и установите приложение. Или установите приложение из APK файла напрямую, если Google Play не работает.",
+                "en": "Open the page in Google Play and install the app. Or install the app directly from the APK file if Google Play is not working."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Инструкции по установке",
+                "en": "Installation instructions"
+              },
+              "buttons": [
+                {
+                  "link": "https://www.happ.su/main/ru/faq/android-tv",
+                  "text": {
+                    "ru": "На русском",
+                    "en": "In Russian"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://www.happ.su/main/faq/android-tv",
+                  "text": {
+                    "ru": "На английском",
+                    "en": "In English"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Подробные инструкции, чтобы помочь вам настроить Happ на вашем устройстве.",
+                "en": "Detailed instructions to help you set up Happ on your device."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "happ://add/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку, если вы открыли страницу подписки на телевизоре",
+                "en": "Click the button below to add subscription, if you opened the subscription page on your TV"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Откройте приложение и подключитесь к серверу",
+                "en": "Open the app and connect to the server"
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": true,
+          "svgIconKey": "Happ"
+        },
+        {
+          "name": "vpn4tv",
+          "blocks": [
+            {
+              "title": {
+                "ru": "Установка приложения",
+                "en": "App Installation"
+              },
+              "buttons": [
+                {
+                  "link": "https://play.google.com/store/apps/details?id=com.vpn4tv.hiddify",
+                  "text": {
+                    "ru": "Открыть в Google Play",
+                    "en": "Open in Google Play"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://vpn4tv.com/download/vpn4tv.apk",
+                  "text": {
+                    "ru": "Скачать APK",
+                    "en": "Download APK"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "DownloadIcon",
+              "description": {
+                "ru": "Откройте страницу в Google Play и установите приложение. Или установите приложение из APK файла напрямую, если Google Play не работает.",
+                "en": "Open the page in Google Play and install the app. Or install the app directly from the APK file if Google Play is not working."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Инструкции по установке",
+                "en": "Installation instructions"
+              },
+              "buttons": [
+                {
+                  "link": "https://vpn4tv.com/quick-guide.html",
+                  "text": {
+                    "ru": "Краткое руководство",
+                    "en": "Quick Guide"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                },
+                {
+                  "link": "https://vpn4tv.com/sber.html",
+                  "text": {
+                    "ru": "Инструкция для Sber Box",
+                    "en": "Sber Box Guide"
+                  },
+                  "type": "external",
+                  "svgIconKey": "ExternalLink"
+                }
+              ],
+              "svgIconKey": "Gear",
+              "description": {
+                "ru": "Подробные инструкции, чтобы помочь вам настроить VPN4TV на вашем устройстве.",
+                "en": "Detailed instructions to help you set up VPN4TV on your device."
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Добавление подписки",
+                "en": "Add Subscription"
+              },
+              "buttons": [
+                {
+                  "link": "hiddify://import/{{SUBSCRIPTION_LINK}}",
+                  "text": {
+                    "ru": "Добавить подписку",
+                    "en": "Add Subscription"
+                  },
+                  "type": "subscriptionLink",
+                  "svgIconKey": "Plus"
+                }
+              ],
+              "svgIconKey": "CloudDownload",
+              "description": {
+                "ru": "Нажмите кнопку ниже, чтобы добавить подписку, если вы открыли страницу подписки на телевизоре",
+                "en": "Click the button below to add subscription, if you opened the subscription page on your TV"
+              },
+              "svgIconColor": "cyan"
+            },
+            {
+              "title": {
+                "ru": "Подключение и использование",
+                "en": "Connect and use"
+              },
+              "buttons": [],
+              "svgIconKey": "Check",
+              "description": {
+                "ru": "Откройте приложение и подключитесь к серверу",
+                "en": "Open the app and connect to the server"
+              },
+              "svgIconColor": "teal"
+            }
+          ],
+          "featured": false,
+          "svgIconKey": "VpnForTV"
+        }
+      ],
+      "svgIconKey": "TV",
+      "displayName": {
+        "ru": "Android TV",
+        "en": "Android TV"
+      }
+    }
+  }
+}
