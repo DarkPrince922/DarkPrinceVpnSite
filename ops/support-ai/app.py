@@ -573,6 +573,10 @@ async def on_callback(cq):
     if cq["from"]["id"] != ADMIN_ID:
         return
     action, _, draft_id = cq.get("data", "").partition(":")
+    if action == "mode":
+        await tg("answerCallbackQuery", callback_query_id=cq["id"])
+        await set_auto(draft_id == "on")
+        return
     draft = state["drafts"].get(draft_id)
     if not draft:
         await tg("answerCallbackQuery", callback_query_id=cq["id"], text="Черновик устарел")
@@ -620,26 +624,39 @@ async def on_message(msg):
     save_state()
 
 
+def mode_keyboard(auto):
+    if auto:
+        return {"inline_keyboard": [[{"text": "✋ Выключить — только черновики", "callback_data": "mode:off"}]]}
+    return {"inline_keyboard": [[{"text": "🤖 Включить свободное плавание", "callback_data": "mode:on"}]]}
+
+
+async def set_auto(on):
+    state["auto"] = on
+    save_state()
+    if on:
+        text = ("🤖 Свободное плавание включено. Простые вопросы отвечу сам (уверенность от "
+                f"{AUTO_MIN_CONFIDENCE:.0%}), деньги, жалобы и всё непонятное — пришлю вам. "
+                f"На одно обращение — не больше {AUTO_MAX_PER_TICKET} автоответов.")
+    else:
+        text = "✋ Свободное плавание выключено: только черновики с кнопками."
+    await tg("sendMessage", chat_id=ADMIN_ID, text=text, reply_markup=mode_keyboard(on))
+
+
 async def on_command(text):
-    auto = state.get("auto", AUTO_DEFAULT)
-    if text in ("/auto on", "/auto_on"):
-        state["auto"] = True
-        save_state()
-        await tg("sendMessage", chat_id=ADMIN_ID, text=(
-            "🤖 Свободное плавание включено. Простые вопросы отвечу сам (уверенность от "
-            f"{AUTO_MIN_CONFIDENCE:.0%}), деньги, жалобы и всё непонятное — пришлю вам. "
-            f"На одно обращение — не больше {AUTO_MAX_PER_TICKET} автоответов. Выключить: /auto off"))
-    elif text in ("/auto off", "/auto_off"):
-        state["auto"] = False
-        save_state()
-        await tg("sendMessage", chat_id=ADMIN_ID, text="✋ Свободное плавание выключено: только черновики с кнопками.")
-    elif text in ("/status", "/start", "/help"):
+    # «/auto on» Telegram подсвечивает только до пробела, а «/auto@бот» шлёт из меню
+    command = text.split("@", 1)[0].replace(" ", "_").lower()
+    if command == "/auto_on":
+        await set_auto(True)
+    elif command == "/auto_off":
+        await set_auto(False)
+    elif command in ("/status", "/start", "/help", "/auto"):
         new_day()
-        await tg("sendMessage", chat_id=ADMIN_ID, text=(
+        auto = state.get("auto", AUTO_DEFAULT)
+        await tg("sendMessage", chat_id=ADMIN_ID, reply_markup=mode_keyboard(auto), text=(
             f"Помощник поддержки на связи. Модель: {AI_MODEL}.\n"
             f"Режим: {'свободное плавание 🤖' if auto else 'черновики ✋'}.\n"
             f"Черновиков сегодня: {state.get('used', 0)} из {DAILY_LIMIT}.\n\n"
-            "/auto on — отвечать на простое самому\n/auto off — только черновики\n/status — это сообщение"))
+            "/auto_on — отвечать на простое самому\n/auto_off — только черновики\n/status — это сообщение"))
 
 
 # ---------------- циклы ----------------
@@ -684,7 +701,15 @@ async def main():
         session = s
         await pick_model()
         auto = state.get("auto", AUTO_DEFAULT)
-        await tg("sendMessage", chat_id=ADMIN_ID, text=f"🤖 Помощник поддержки запущен. Модель: {AI_MODEL}. "
+        try:  # меню команд у поля ввода
+            await tg("setMyCommands", commands=[
+                {"command": "status", "description": "Режим и счётчик за день"},
+                {"command": "auto_on", "description": "Свободное плавание: простое отвечать самому"},
+                {"command": "auto_off", "description": "Только черновики"},
+            ])
+        except Exception as e:
+            log.warning("меню команд: %s", e)
+        await tg("sendMessage", chat_id=ADMIN_ID, reply_markup=mode_keyboard(auto), text=f"🤖 Помощник поддержки запущен. Модель: {AI_MODEL}. "
                                                        f"Режим: {'свободное плавание' if auto else 'черновики'}. /status — подробнее")
         await asyncio.gather(tickets_loop(), telegram_loop())
 
