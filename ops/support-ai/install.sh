@@ -19,7 +19,17 @@ ok() { printf '\033[32m✔ %s\033[0m\n' "$*"; }
 warn() { printf '\033[33m! %s\033[0m\n' "$*"; }
 die() { printf '\033[31m✘ %s\033[0m\n' "$*" >&2; exit 1; }
 
+# raw.githubusercontent кэширует файлы по имени ветки несколько минут — берём по номеру
+# последнего коммита, тогда сразу приходит свежее.
+pin_raw() {
+    local sha
+    sha=$(curl -4 -fsSL https://api.github.com/repos/DarkPrince922/DarkPrinceVpnSite/commits/main 2>/dev/null |
+        grep -m1 '"sha"' | cut -d'"' -f4)
+    [ -n "$sha" ] && RAW=${RAW/\/main\//\/$sha\/}
+}
+
 fetch() {
+    pin_raw
     for f in app.py requirements.txt Dockerfile docker-compose.yml; do
         curl -4 -fsSL -o "$DIR/$f" "$RAW/$f" || die "Не скачался $f"
     done
@@ -114,6 +124,7 @@ update)
     ;;
 kb)
     [ -f "$DIR/.env" ] || die "Сначала bash install.sh"
+    pin_raw
     if [ -f "$DIR/kb.md" ]; then
         BAK="$DIR/kb.md.bak-$(date +%Y%m%d-%H%M%S)"
         cp "$DIR/kb.md" "$BAK" && ok "Старая база сохранена: $BAK"
