@@ -1580,3 +1580,677 @@ section {
     display: flex;
     padding: 11px 12px;
 }
+
+/* ---------------------------------------------------------- шаги -- */
+
+/* переключатель систем — островом, как в приложении */
+.g-tabs {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    padding: 6px;
+    margin-bottom: 26px;
+    border-radius: 28px;
+    background: rgba(13, 21, 29, 0.96);
+    border: 1px solid rgba(95, 240, 223, 0.2);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.4);
+}
+
+.g-tabs button {
+    flex: none;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 50px;
+    padding: 0 18px;
+    border-radius: 21px;
+    transition: gap 0.35s, padding 0.35s, background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.g-tabs button span {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition: max-width 0.35s, opacity 0.3s;
+}
+
+.g-tabs button[aria-selected="true"] {
+    gap: 9px;
+    padding: 0 22px;
+}
+
+.g-tabs button[aria-selected="true"] span {
+    max-width: 120px;
+    opacity: 1;
+}
+
+.guide {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.g-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 28px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+}
+
+.g-steps li + li {
+    border-top: 1px solid var(--line-soft);
+}
+
+.g-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 20px 22px;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.25s;
+}
+
+.g-step:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.g-n {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--wash);
+    color: var(--muted);
+    font-weight: 700;
+    transition: background 0.3s, color 0.3s;
+}
+
+.g-t {
+    flex: 1;
+    min-width: 0;
+}
+
+.g-t b {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.g-t span {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.g-step .chev {
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+}
+
+.g-step.on {
+    background: linear-gradient(90deg, rgba(95, 240, 223, 0.12), transparent);
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.g-step.on .g-n {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.g-shows {
+    position: relative;
+    padding: 26px;
+    border-radius: 28px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    min-height: 420px;
+}
+
+.g-show {
+    display: none;
+}
+
+.g-show.on {
+    display: block;
+    animation: fade-up 0.35s ease both;
+}
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+.g-show h3 {
+    font-size: 24px;
+    letter-spacing: -0.03em;
+}
+
+.g-show > p {
+    margin-top: 8px;
+    color: var(--muted);
+}
+
+.g-shot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-start;
+    margin-top: 18px;
+}
+
+.g-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* ---- нарисованные экраны ---- */
+
+.shot {
+    flex: 1 1 280px;
+    max-width: 440px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: #0b151d;
+    padding: 18px;
+    font-size: 13px;
+    line-height: 1.4;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+}
+
+.shot b {
+    font-weight: 600;
+}
+
+/* что нажать — обведено бирюзой и мерцает */
+.shot .hl {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+    animation: hl 1.6s ease-in-out infinite;
+}
+
+@keyframes hl {
+    50% {
+        outline-color: rgba(95, 240, 223, 0.35);
+        box-shadow: 0 0 0 6px rgba(95, 240, 223, 0.12);
+    }
+}
+
+/* загрузка в браузере телефона и Windows */
+.sd-bar,
+.wd-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sd-bar > div,
+.wd-row > div {
+    flex: 1;
+}
+
+.sd-bar span:first-child,
+.wd-row span:first-child {
+    font-size: 24px;
+}
+
+.sd-bar b,
+.wd-row b {
+    display: block;
+}
+
+.sd-bar div span,
+.wd-row div span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.sd-open,
+.wd-row .hl {
+    padding: 6px 12px;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* системные окна Android */
+.dialog-a {
+    background: #1d2329;
+    border-radius: 26px;
+    padding: 22px;
+}
+
+.dialog-a b {
+    display: block;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.dialog-a > span {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+}
+
+.dl-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 18px;
+    margin-top: 18px;
+    color: #9fd9ff;
+    font-weight: 600;
+}
+
+.dl-btns span {
+    padding: 4px 8px;
+}
+
+.toggle-a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1d2329;
+}
+
+.toggle-a span {
+    flex: 1;
+}
+
+.toggle-a i {
+    width: 44px;
+    height: 26px;
+    flex: none;
+    border-radius: 99px !important;
+    background: #9fd9ff;
+    position: relative;
+}
+
+.toggle-a i::after {
+    content: "";
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #0b2a3d;
+}
+
+/* экран входа приложения */
+.login {
+    max-width: 260px;
+    text-align: center;
+}
+
+.sl-logo {
+    margin: 4px 0 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.sl-logo small {
+    color: var(--accent);
+}
+
+.sl-field {
+    margin-bottom: 8px;
+    padding: 9px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    text-align: left;
+}
+
+.sl-btn {
+    padding: 9px;
+    border-radius: 99px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+    font-weight: 600;
+}
+
+.sl-or {
+    margin: 12px 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.sl-tg {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50% !important;
+    border: 1px solid var(--line);
+    font-size: 20px;
+}
+
+.sl-note {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* мини-приложение */
+.app {
+    max-width: 300px;
+}
+
+.sa-hero {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sa-hero b {
+    display: block;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.sa-hero span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.app.is-on .sa-hero span {
+    color: var(--accent);
+}
+
+.sa-disc {
+    width: 54px;
+    height: 54px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 50% !important;
+    font-size: 22px;
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--line);
+}
+
+.app.is-on .sa-disc {
+    color: var(--on-accent);
+    background: radial-gradient(circle at 36% 28%, #b9fff5, var(--accent) 58%, var(--accent-lo));
+    box-shadow: 0 0 0 5px rgba(95, 240, 223, 0.14);
+}
+
+.sa-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 14px 0 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--glass);
+    border: 1px solid var(--line);
+}
+
+.sa-chip {
+    padding: 2px 8px;
+    border-radius: 99px;
+    color: var(--accent);
+    background: rgba(95, 240, 223, 0.12);
+    font-size: 11px;
+}
+
+.sa-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 10px;
+    border-radius: 10px;
+}
+
+.sa-row em {
+    font-style: normal;
+    color: var(--muted);
+}
+
+.sa-row.sel {
+    background: linear-gradient(90deg, rgba(95, 240, 223, 0.14), transparent);
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* App Store, кабинет, меню INCY */
+.store {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f2f2f7;
+    color: #111;
+}
+
+.store > div {
+    flex: 1;
+}
+
+.store b {
+    display: block;
+    font-size: 15px;
+}
+
+.store div span {
+    color: #6b6b70;
+    font-size: 12px;
+}
+
+.ss-ico {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #4f8cff, #7a5cff);
+    color: #fff;
+    font-weight: 800;
+}
+
+.ss-get {
+    padding: 6px 16px;
+    border-radius: 99px !important;
+    background: #e5e5ea;
+    color: #0a66ff;
+    font-weight: 700;
+}
+
+.store .hl {
+    outline-color: #0a66ff;
+}
+
+.cab b {
+    display: block;
+    font-size: 15px;
+}
+
+.sc-link {
+    margin: 10px 0;
+    padding: 9px 12px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--line);
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 12px;
+}
+
+.sc-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 99px !important;
+    border: 1px solid var(--line);
+    font-weight: 600;
+}
+
+.sheet-i {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #1c1c1e;
+}
+
+.sheet-i b {
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.sheet-i span {
+    padding: 10px 12px;
+    color: #0a84ff;
+    text-align: center;
+    border-top: 1px solid #2c2c2e;
+}
+
+.dialog-i {
+    max-width: 280px;
+    padding: 0;
+    overflow: hidden;
+    text-align: center;
+    background: #2c2c2e;
+    border-radius: 14px;
+}
+
+.dialog-i b {
+    display: block;
+    padding: 18px 16px;
+}
+
+.di-btns {
+    display: flex;
+    border-top: 1px solid #3a3a3c;
+    color: #0a84ff;
+}
+
+.di-btns span {
+    flex: 1;
+    padding: 11px;
+}
+
+.di-btns span + span {
+    border-left: 1px solid #3a3a3c;
+}
+
+/* окно SmartScreen */
+.smartscreen {
+    background: #0f5eb6;
+    color: #fff;
+    border-radius: 6px;
+}
+
+.smartscreen b {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.smartscreen p {
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+.ss-more {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: underline;
+}
+
+.ss-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.ss-btns span {
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
+}
+
+/* выбор сборки Linux и терминал */
+.pick {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pick div {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--glass);
+}
+
+.pick span {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+}
+
+.term {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: #071016;
+}
+
+.term b {
+    font-weight: 500;
+    color: var(--accent);
+}
+
+.t-c {
+    margin-top: 6px;
+    color: var(--muted-2);
+}
+
+.t-c:first-child {
+    margin-top: 0;
+}
+
+@media (max-width: 900px) {
+    .guide {
+        grid-template-columns: 1fr;
+    }
+
+    .g-shows {
+        min-height: 0;
+    }
+
+    .g-tabs {
+        display: flex;
+        width: 100%;
+    }
+
+    .g-tabs button {
+        flex: 1;
+        justify-content: center;
+        padding: 0 10px;
+    }
+
+    .g-tabs button[aria-selected="true"] {
+        flex: 2.4;
+        padding: 0 12px;
+    }
+}
