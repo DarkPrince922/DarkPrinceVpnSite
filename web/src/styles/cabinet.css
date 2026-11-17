@@ -548,12 +548,20 @@ hr.divider {
     gap: 10px;
 }
 
+/* Обращение — кнопка, но выглядит строкой списка: не капсулой. */
 .support-ticket {
     display: block;
     width: 100%;
-    padding: 14px;
+    min-height: 0;
+    padding: 16px 18px;
+    border-radius: 20px;
     text-align: left;
-    background: var(--surface);
+    font-weight: 400;
+    background: var(--glass);
+}
+
+.support-ticket:active {
+    transform: none;
 }
 
 .support-ticket-head {
