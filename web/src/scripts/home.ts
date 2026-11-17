@@ -72,10 +72,15 @@ const titles: Record<string, [string, string]> = {
     linux: ["Скачать для Linux", "/downloads/DarkPrinceVPN.AppImage"],
 };
 
+// плитка своей системы подсвечена, как выбранный сервер в приложении
+if (platform) $(`#dl${platform[0].toUpperCase()}${platform.slice(1)}`)?.classList.add("mine");
+
 const main = $<HTMLAnchorElement>("#mainDownload");
 if (platform && main) {
     const [text, href] = titles[platform];
-    main.textContent = text;
+    const label = main.querySelector("span");
+    if (label) label.textContent = text;
+    else main.textContent = text;
     main.href = href;
 
     // и инструкцию сразу открываем на нужной вкладке
@@ -138,11 +143,10 @@ try {
             const link = $<HTMLAnchorElement>(linkSel);
             if (!item || !node) continue;
             if (item.file && link) link.href = `/${item.file.replace(/^\//, "")}`;
-            node.textContent = [
-                item.version ? `версия ${item.version}` : null,
-                item.size,
-                item.date,
-            ]
+            // у Linux размер у каждой сборки свой — пишем самый маленький
+            const sizes = Object.values(item.builds ?? {}).map((b) => b.size).filter(Boolean) as string[];
+            const size = item.size ?? (sizes.length ? `от ${sizes.sort((a, b) => parseFloat(a) - parseFloat(b))[0]}` : null);
+            node.textContent = [item.version, size]
                 .filter(Boolean)
                 .join(" · ");
         }

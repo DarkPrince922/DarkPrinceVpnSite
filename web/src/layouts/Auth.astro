@@ -9,21 +9,13 @@ const { title } = Astro.props;
 ---
 
 {/*
-  Страницы по одноразовым ссылкам из писем: подтверждение почты и новый
-  пароль. Шапка урезана до логотипа — предлагать «личный кабинет» человеку,
-  который как раз пытается в него попасть, незачем.
+  Страницы по одноразовым ссылкам: подтверждение почты, новый пароль,
+  приглашение. Крупный логотип стоит над формой, поэтому в шапке его нет —
+  на странице один логотип.
 */}
-<Base title={`${title} — DarkPrince VPN`} description={title} chrome={false} noindex>
-    <header class="top">
-        <div class="wrap">
-            <a class="brand" href="/">
-                <img src="/assets/logo.png" alt="" width="32" height="32" />
-                <span>DarkPrince <i>VPN</i></span>
-            </a>
-        </div>
-    </header>
-
-    <main class="auth-wrap">
+<Base title={`${title} — DarkPrince VPN`} description={title} logo={false} noindex>
+    <div class="auth-wrap">
+        <img class="auth-logo" src="/assets/wordmark.png" alt="DarkPrince VPN" width="360" height="84" />
         <slot />
-    </main>
+    </div>
 </Base>
