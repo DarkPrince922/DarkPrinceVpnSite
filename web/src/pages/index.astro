@@ -136,39 +136,74 @@ const builds = [
 
         {/* Витрина: главный экран приложения. Картинкой не делаем — так он
             чёткий на любом экране и весит меньше любого скриншота. */}
-        <div class="hero-phone" aria-hidden="true">
-            <div class="phone">
-                <div class="ph-head"><span>DARKPRINCE</span><b>🇩🇪 Франкфурт · 00:42:24</b></div>
-                <div class="ph-hero">
-                    <div class="ph-disc">
-                        <svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" /></svg>
+        {/* Живой макет приложения: кнопку можно нажать, сервер — выбрать,
+            вкладки — переключить. Ведёт его phone.ts, данные условные. */}
+        <div class="hero-phone">
+            <div class="phone" id="demoPhone" data-on="1">
+                <div class="ph-head"><span>DARKPRINCE</span><b id="phConn">🇩🇪 Франкфурт · 00:42:24</b></div>
+
+                <div class="ph-screen on" data-screen="home">
+                    <div class="ph-hero">
+                        <button class="ph-disc" id="phPower" aria-label="Подключиться или отключиться">
+                            <svg class="ic on-ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" /></svg>
+                            <svg class="ic off-ic" viewBox="0 0 24 24"><path d="M12 3v9" /><path d="M17.7 6.8a8 8 0 1 1-11.4 0" /></svg>
+                            <i class="ph-arc"></i>
+                        </button>
+                        <div><b id="phTitle">Защищено</b><span id="phLine">↓ 1,24 ГБ · ↑ 86,3 МБ</span></div>
                     </div>
-                    <div><b>Защищено</b><span>↓ 1,24 ГБ · ↑ 86,3 МБ</span></div>
+                    <div class="ph-card">
+                        <span class="ph-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /></svg></span>
+                        <div><b>Премиум</b><span>до 10.12</span></div>
+                        <span class="chip">23 дня</span>
+                    </div>
+                    <div class="ph-lh"><span>СЕРВЕРЫ · 5</span><span><button class="ph-chip" id="phPing">Пинг</button><button class="ph-chip" id="phRefresh" aria-label="Обновить">↻</button></span></div>
+                    <div class="ph-list" id="phList">
+                        {
+                            demo.map(([flag, name, tags, ping], index) => (
+                                <button class={index === 0 ? "ph-row sel" : "ph-row"} data-flag={flag} data-city={String(name).split(" · ")[1]}>
+                                    <span class="ph-flag">{flag}</span>
+                                    <div><b>{name}</b><span>{tags}</span></div>
+                                    <em data-ping={ping}>{ping}<small>мс</small></em>
+                                </button>
+                            ))
+                        }
+                    </div>
                 </div>
-                <div class="ph-card">
-                    <span class="ph-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /></svg></span>
-                    <div><b>Премиум</b><span>до 10.12</span></div>
-                    <span class="chip">23 дня</span>
+
+                <div class="ph-screen" data-screen="plans">
+                    <div class="ph-title">Тарифы</div>
+                    <div class="ph-list">
+                        <div class="ph-row"><div><b>Базовый</b><span>50 ГБ · 2 устройства</span></div><em class="ph-price">149 ₽</em></div>
+                        <div class="ph-row sel"><div><b>Премиум</b><span>Безлимит · 5 устройств</span></div><em class="ph-price">299 ₽</em></div>
+                        <div class="ph-row"><div><b>Семья</b><span>Безлимит · 10 устройств</span></div><em class="ph-price">499 ₽</em></div>
+                    </div>
+                    <div class="ph-btn">Продлить за 299 ₽</div>
                 </div>
-                <div class="ph-lh"><span>СЕРВЕРЫ · 6</span><span><i>Пинг</i><i>↻</i></span></div>
-                <div class="ph-list">
-                    {
-                        demo.map(([flag, name, tags, ping]) => (
-                            <div class="ph-row">
-                                <span class="ph-flag">{flag}</span>
-                                <div><b>{name}</b><span>{tags}</span></div>
-                                <em>{ping}<small>мс</small></em>
-                            </div>
-                        ))
-                    }
+
+                <div class="ph-screen" data-screen="balance">
+                    <div class="ph-title">Баланс</div>
+                    <div class="ph-card ph-money"><span>На счёте</span><b>1 245 ₽</b></div>
+                    <div class="ph-keys">{["300 ₽", "500 ₽", "1000 ₽"].map((sum) => <span>{sum}</span>)}</div>
+                    <div class="ph-btn">Пополнить</div>
                 </div>
-                <div class="ph-dock">
-                    <span class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /></svg>Главная</span>
-                    <span><svg class="ic" viewBox="0 0 24 24"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H7" /><circle cx="9.5" cy="19" r="1.3" /><circle cx="17" cy="19" r="1.3" /></svg></span>
-                    <span><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3" /><path d="M3 10h18" /></svg></span>
-                    <span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1" /></svg></span>
+
+                <div class="ph-screen" data-screen="more">
+                    <div class="ph-title">Ещё</div>
+                    <div class="ph-list">
+                        {["Приложения через VPN", "Подключённые устройства", "Пригласить друга", "Техподдержка"].map((row) => (
+                            <div class="ph-row"><div><b>{row}</b></div><em>›</em></div>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="ph-dock" id="phDock">
+                    <button class="on" data-go="home"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /></svg><span>Главная</span></button>
+                    <button data-go="plans"><svg class="ic" viewBox="0 0 24 24"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H7" /><circle cx="9.5" cy="19" r="1.3" /><circle cx="17" cy="19" r="1.3" /></svg><span>Тарифы</span></button>
+                    <button data-go="balance"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3" /><path d="M3 10h18" /></svg><span>Баланс</span></button>
+                    <button data-go="more"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1" /></svg><span>Ещё</span></button>
                 </div>
             </div>
+            <p class="ph-hint">Это живой макет — нажмите на кнопку или выберите сервер</p>
         </div>
     </section>
 
@@ -379,4 +414,5 @@ const builds = [
     </dialog>
 
     <script src="../scripts/home.ts"></script>
+    <script src="../scripts/phone.ts"></script>
 </Base>

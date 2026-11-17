@@ -702,11 +702,31 @@ body:has(.hero-map) .scene .world {
     border: 1px solid rgba(95, 240, 223, 0.2);
 }
 
-.ph-dock span {
+/* ---- живой макет: всё, что можно нажать ---- */
+
+.phone button {
+    font: inherit;
+    color: inherit;
+    border: 0;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.ph-dock button {
     flex: 1;
-    display: grid;
-    place-items: center;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    border: 1px solid transparent;
+    border-radius: 17px;
     color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    transition: flex-grow 0.4s var(--ease, ease), background 0.3s, color 0.3s, gap 0.3s;
 }
 
 .ph-dock .ic {
@@ -714,18 +734,249 @@ body:has(.hero-map) .scene .world {
     height: 17px;
 }
 
-.ph-dock .on {
-    flex: 2.6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.ph-dock button span {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition: max-width 0.4s, opacity 0.3s;
+}
+
+.ph-dock button.on {
+    flex-grow: 2.6;
     gap: 6px;
-    border-radius: 17px;
     background: rgba(95, 240, 223, 0.14);
-    border: 1px solid rgba(95, 240, 223, 0.38);
+    border-color: rgba(95, 240, 223, 0.38);
     color: var(--accent);
+}
+
+.ph-dock button.on span {
+    max-width: 70px;
+    opacity: 1;
+}
+
+.ph-screen {
+    display: none;
+}
+
+.ph-screen.on {
+    display: block;
+    animation: ph-in 0.35s ease both;
+}
+
+@keyframes ph-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.ph-title {
+    margin: 16px 4px 12px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+}
+
+/* кнопка: подключено — бирюзовая, нет — тёмная, подключаемся — бежит дуга */
+.ph-disc {
+    position: relative;
+    flex: none;
+    transition: transform 0.3s, box-shadow 0.5s, background 0.5s;
+}
+
+.ph-disc:hover {
+    transform: scale(1.05);
+}
+
+.ph-disc:active {
+    transform: scale(0.95);
+}
+
+.ph-disc .ic {
+    position: absolute;
+    transition: opacity 0.3s, transform 0.4s;
+}
+
+.phone[data-on="1"] .ph-disc .off-ic,
+.phone[data-on="0"] .ph-disc .on-ic {
+    opacity: 0;
+    transform: scale(0.6);
+}
+
+.phone[data-on="0"] .ph-disc,
+.phone[data-busy="1"] .ph-disc {
+    background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+    color: var(--muted);
+}
+
+.phone[data-busy="1"] .ph-disc .on-ic {
+    opacity: 0;
+}
+
+.phone[data-busy="1"] .ph-disc .off-ic {
+    opacity: 1;
+    transform: none;
+    color: var(--accent);
+}
+
+.ph-arc {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--accent);
+    opacity: 0;
+}
+
+.phone[data-busy="1"] .ph-arc {
+    opacity: 1;
+    animation: ph-spin 0.9s linear infinite;
+}
+
+@keyframes ph-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.phone[data-on="0"] .ph-hero span,
+.phone[data-busy="1"] .ph-hero span {
+    color: var(--muted);
+}
+
+.phone::before {
+    transition: opacity 0.8s;
+}
+
+.phone[data-on="0"]::before {
+    opacity: 0.08;
+}
+
+.ph-chip {
+    margin-left: 4px;
+    padding: 3px 9px !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 99px;
+    color: #cfd8dc;
+    font-size: 10px;
+}
+
+.ph-chip:hover {
+    border-color: rgba(95, 240, 223, 0.45) !important;
+}
+
+#phRefresh.spin {
+    animation: ph-spin 0.8s linear;
+}
+
+.ph-row {
+    width: 100%;
+    transition: background 0.25s;
+}
+
+button.ph-row:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.ph-row:first-child {
+    background: none;
+    box-shadow: none;
+}
+
+.ph-row.sel {
+    background: linear-gradient(90deg, rgba(95, 240, 223, 0.14), transparent);
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.ph-row em .dots {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.ph-row em .dots i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: ph-dot 0.9s ease-in-out infinite;
+}
+
+.ph-row em .dots i:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.ph-row em .dots i:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes ph-dot {
+    0%,
+    100% {
+        opacity: 0.25;
+    }
+    40% {
+        opacity: 1;
+    }
+}
+
+.ph-price {
+    color: var(--accent);
+    font-weight: 600 !important;
+}
+
+.ph-btn {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 99px;
+    background: var(--accent);
+    color: var(--on-accent);
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.ph-money {
+    display: block;
+    padding: 16px;
+}
+
+.ph-money span {
+    display: block;
     font-size: 11px;
-    font-weight: 500;
+}
+
+.ph-money b {
+    display: block !important;
+    font-size: 30px !important;
+    letter-spacing: -1px;
+}
+
+.ph-keys {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.ph-keys span {
+    flex: 1;
+    padding: 9px 0;
+    border-radius: 99px;
+    border: 1px solid var(--line);
+    background: var(--glass);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.ph-hint {
+    position: relative;
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
 }
 
 /* --------------------------------------------------------------- секции -- */
@@ -1309,4 +1560,23 @@ section {
         white-space: pre-wrap;
         overflow-wrap: anywhere;
     }
+}
+
+/* сброс стилей кнопок выше не должен трогать сам макет */
+.phone .ph-disc {
+    background: radial-gradient(circle at 36% 28%, #b9fff5, var(--accent) 58%, var(--accent-lo));
+    color: var(--on-accent);
+    box-shadow: 0 0 0 5px rgba(95, 240, 223, 0.14), 0 10px 30px rgba(95, 240, 223, 0.35);
+}
+
+.phone[data-on="0"] .ph-disc,
+.phone[data-busy="1"] .ph-disc {
+    background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+    color: var(--muted);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.phone button.ph-row {
+    display: flex;
+    padding: 11px 12px;
 }
