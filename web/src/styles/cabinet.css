@@ -1498,3 +1498,271 @@ body.co-open {
         gap: 0;
     }
 }
+
+/* ================= подписки плитками ================= */
+
+.sub-picker {
+    margin-bottom: 16px;
+}
+
+.sub-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.sub-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-height: 0;
+    padding: 16px 18px;
+    border-radius: 22px;
+    border: 1.5px solid var(--line);
+    background: var(--glass);
+    text-align: left;
+    font-weight: 400;
+}
+
+.sub-tile:hover {
+    border-color: rgba(95, 240, 223, 0.4);
+}
+
+.sub-tile:active {
+    transform: none;
+}
+
+.sub-tile.on {
+    border-color: var(--accent);
+    background: linear-gradient(160deg, rgba(95, 240, 223, 0.12), rgba(255, 255, 255, 0.04));
+}
+
+.sub-tile.off {
+    opacity: 0.65;
+}
+
+.sub-tile b {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.sub-tile > span {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.sub-tile .tone {
+    margin-top: 10px;
+}
+
+/* метка остатка: бирюзовая, на исходе — жёлтая, истекла — красная */
+.tone {
+    display: inline-block;
+    padding: 4px 11px;
+    border-radius: 99px;
+    font-style: normal;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--accent);
+    background: rgba(95, 240, 223, 0.12);
+    border: 1px solid rgba(95, 240, 223, 0.34);
+}
+
+.tone.warn {
+    color: var(--warn);
+    background: rgba(255, 190, 80, 0.12);
+    border-color: rgba(255, 190, 80, 0.35);
+}
+
+.tone.bad {
+    color: #ff8f8f;
+    background: rgba(255, 107, 107, 0.1);
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+.tone.big {
+    padding: 7px 16px;
+    font-size: 15px;
+}
+
+/* карточка подписки */
+.sub-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sub-top .grow {
+    flex: 1;
+    min-width: 0;
+}
+
+.sub-top h2 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.sub-top p {
+    margin: 2px 0 0;
+}
+
+.sub-ico {
+    width: 52px;
+    height: 52px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: var(--wash);
+}
+
+.sub-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.sub-facts > div {
+    min-width: 0;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.sub-facts span,
+.sub-facts small {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.sub-facts b {
+    display: block;
+    margin-top: 2px;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+}
+
+.sub-facts .bar {
+    margin: 8px 0 0;
+}
+
+.sub-renew {
+    min-height: 56px;
+    font-size: 16px;
+}
+
+/* ================= баланс ================= */
+
+.bal-head {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.bal-head .grow {
+    flex: 1;
+    min-width: 220px;
+}
+
+.bal-head p {
+    margin: 4px 0 0;
+}
+
+.bal-sum {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.bal-go {
+    min-height: 56px;
+    padding: 0 34px;
+    font-size: 16px;
+}
+
+/* окно пополнения: сумма */
+.co-center {
+    text-align: center;
+}
+
+.co-amount-wrap {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px 0 14px;
+}
+
+.co-amount {
+    width: 6ch;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: right;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    box-shadow: none !important;
+}
+
+.co-amount-wrap span {
+    font-size: 30px;
+    color: var(--muted);
+}
+
+.co-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.co-quick button {
+    min-height: 46px;
+    padding: 0;
+}
+
+.co-quick button.on {
+    background: rgba(95, 240, 223, 0.14);
+    border-color: rgba(95, 240, 223, 0.38);
+    color: var(--accent);
+}
+
+@media (max-width: 560px) {
+    .bal-go {
+        width: 100%;
+    }
+
+    .bal-sum {
+        font-size: 44px;
+    }
+}
+
+@media (max-width: 560px) {
+    /* плитки подписок на телефоне — строкой, листаются вбок */
+    .sub-tiles {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        margin: 0 -16px;
+        padding: 2px 16px 6px;
+        scrollbar-width: none;
+    }
+
+    .sub-tile {
+        flex: 0 0 72%;
+        scroll-snap-align: start;
+    }
+
+    .sub-top h2 {
+        font-size: 22px;
+    }
+}

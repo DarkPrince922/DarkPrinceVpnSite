@@ -31,6 +31,224 @@ function methodLook(method) {
  *   ctx.balance() — текущий баланс в копейках;
  *   ctx.refresh() — перечитать баланс (и оплатить отложенное) и подписку.
  */
+/** Каркас окна: затемнение, заголовок, шаги сверху, тело. */
+function frame(title, steps) {
+    const shade = el("div", { class: "co-shade" });
+    const box = el("div", { class: "co", role: "dialog", "aria-modal": "true" });
+    shade.append(box);
+    document.body.append(shade);
+    document.body.classList.add("co-open");
+    const timers = [];
+    const close = () => {
+        timers.forEach(clearTimeout);
+        shade.remove();
+        document.body.classList.remove("co-open");
+        document.removeEventListener("keydown", onKey);
+    };
+    const onKey = (event) => event.key === "Escape" && close();
+    document.addEventListener("keydown", onKey);
+    shade.addEventListener("click", (event) => event.target === shade && close());
+    const stepper = el("div", { class: "co-steps" });
+    const body = el("div", { class: "co-body" });
+    box.append(
+        el("div", { class: "co-head" }, [el("b", { text: title }), el("button", { class: "co-x", "aria-label": "Закрыть", onclick: close }, "✕")]),
+        stepper,
+        body,
+    );
+    const setStep = (n) => {
+        clear(stepper);
+        steps.forEach((name, index) => {
+            if (index) stepper.append(el("i"));
+            stepper.append(el("span", { class: index < n ? "done" : index === n ? "on" : "" }, [
+                el("em", { text: index < n ? "✓" : String(index + 1) }),
+                name,
+            ]));
+        });
+    };
+    return { body, setStep, close, timers };
+}
+
+/** Строки выбора способа оплаты. onPick(method) вызывается при выборе. */
+function methodList(methods, current, onPick) {
+    const list = el("div", { class: "co-list" });
+    for (const item of methods) {
+        const look = methodLook(item);
+        const row = el("button", { class: `co-opt${item === current ? " on" : ""}`, onclick: () => {
+            [...list.children].forEach((node) => node.classList.toggle("on", node === row));
+            onPick(item);
+        } }, [
+            look.svg ? el("span", { class: `co-pm ${look.cls}`, html: look.svg }) : el("span", { class: `co-pm ${look.cls}`, text: look.label }),
+            el("span", { class: "grow" }, [el("b", { text: item.name }), look.hint ? el("span", { text: look.hint }) : null]),
+            el("span", { class: "co-rad" }),
+        ]);
+        list.append(row);
+    }
+    return list;
+}
+
+/**
+ * Пополнение в три шага: сумма → способ → готово. Так же, как оплата
+ * подписки, — человеку не надо учить два разных окна.
+ *   prefill — сумма в рублях, с которой открыть (например, недостающая).
+ */
+export async function openTopup({ prefill = 300 } = {}, ctx) {
+    const { body, setStep, close, timers } = frame("Пополнение баланса", ["Сумма", "Оплата", "Готово"]);
+    setStep(0);
+    clear(body).append(el("div", { class: "co-wait" }, [el("span", { class: "co-ring" }), el("p", { class: "muted", text: "Загружаю способы оплаты…" })]));
+
+    let methods = [];
+    try {
+        methods = parsePaymentMethods(await api.paymentMethods());
+    } catch {
+        // покажем ниже, что оплатить нечем
+    }
+    if (!methods.length) {
+        clear(body).append(
+            el("h3", { text: "Оплата на сайте пока недоступна" }),
+            el("p", { class: "muted co-sub", text: "Способы оплаты ещё не подключены. Напишите в поддержку — поможем пополнить." }),
+        );
+        return;
+    }
+    const mins = methods.map((m) => m.min).filter(Boolean);
+    const maxs = methods.map((m) => m.max).filter(Boolean);
+    const minAll = mins.length ? Math.min(...mins) : 100;
+    const maxAll = maxs.length ? Math.max(...maxs) : null;
+    let rubAmount = Math.max(Math.ceil(minAll / 100), Math.round(prefill));
+    let method = methods[0];
+
+    const stepAmount = () => {
+        setStep(0);
+        clear(body);
+        const input = el("input", { class: "co-amount", type: "text", inputmode: "numeric", value: String(rubAmount), "aria-label": "Сумма, ₽" });
+        const quick = el("div", { class: "co-quick" });
+        const note = el("p", { class: "small danger co-note" });
+        const paint = () => {
+            [...quick.children].forEach((chip) => chip.classList.toggle("on", Number(chip.dataset.v) === rubAmount));
+        };
+        for (const value of [100, 300, 500, 1000]) {
+            quick.append(el("button", { "data-v": String(value), onclick: () => {
+                rubAmount = value;
+                input.value = String(value);
+                note.textContent = "";
+                paint();
+            } }, `${value} ₽`));
+        }
+        input.addEventListener("input", () => {
+            input.value = input.value.replace(/\D/g, "").slice(0, 6);
+            rubAmount = Number(input.value || 0);
+            note.textContent = "";
+            paint();
+        });
+        const next = el("button", { class: "primary btn-block co-go", onclick: () => {
+            if (rubAmount * 100 < minAll) {
+                note.textContent = `Минимальная сумма — ${rubles(minAll)}.`;
+                return;
+            }
+            if (maxAll && rubAmount * 100 > maxAll) {
+                note.textContent = `Максимальная сумма — ${rubles(maxAll)}.`;
+                return;
+            }
+            stepPay();
+        } }, "Дальше");
+        paint();
+        body.append(
+            el("h3", { class: "co-center", text: "Сколько пополнить?" }),
+            el("label", { class: "co-amount-wrap" }, [input, el("span", { text: "₽" })]),
+            quick,
+            el("p", { class: "small muted co-center", text: `Нажмите на сумму, чтобы ввести свою · от ${rubles(minAll)}${maxAll ? ` до ${rubles(maxAll)}` : ""}` }),
+            next,
+            note,
+        );
+        setTimeout(() => input.focus(), 50);
+    };
+
+    const stepPay = () => {
+        setStep(1);
+        clear(body);
+        const kopeks = rubAmount * 100;
+        // способы, которым эта сумма не подходит, не предлагаем вовсе
+        const fit = methods.filter((m) => (!m.min || kopeks >= m.min) && (!m.max || kopeks <= m.max));
+        const back = el("button", { class: "btn-ghost co-back", onclick: stepAmount }, "← Другая сумма");
+        if (!fit.length) {
+            body.append(el("h3", { text: "Для этой суммы нет способа оплаты" }), el("p", { class: "muted co-sub", text: "Попробуйте сумму побольше или поменьше." }), back);
+            return;
+        }
+        if (!fit.includes(method)) method = fit[0];
+        const note = el("p", { class: "small danger co-note" });
+        const pay = el("button", { class: "primary btn-block co-go" }, `Оплатить ${rubles(kopeks)}`);
+        pay.addEventListener("click", async () => {
+            // вкладку открываем сразу: окно, открытое после запроса, браузер не покажет
+            const tab = window.open("", "_blank");
+            pay.disabled = true;
+            pay.textContent = "Создаю счёт…";
+            try {
+                const payment = await api.topup(kopeks, method.id, method.option);
+                if (!payment.payment_url) throw new Error(payment.message || "Касса не вернула ссылку на оплату.");
+                if (tab) tab.location = payment.payment_url;
+                stepWait(payment, method.id, kopeks);
+            } catch (error) {
+                tab?.close();
+                pay.disabled = false;
+                pay.textContent = `Оплатить ${rubles(kopeks)}`;
+                note.textContent = error.message;
+            }
+        });
+        body.append(
+            el("h3", { text: "Как удобнее оплатить?" }),
+            methodList(fit, method, (picked) => (method = picked)),
+            el("div", { class: "co-sum" }, [el("div", { class: "co-total" }, [el("span", { class: "muted", text: "К оплате" }), el("b", { text: rubles(kopeks) })])]),
+            pay,
+            note,
+            back,
+        );
+    };
+
+    const stepWait = (payment, methodId, kopeks) => {
+        setStep(2);
+        clear(body);
+        const start = Number(ctx.balance() ?? 0);
+        const status = el("p", { class: "muted", text: "Оплатите в открывшейся вкладке — эта страница обновится сама." });
+        body.append(
+            el("div", { class: "co-wait" }, [el("span", { class: "co-ring" }), el("h3", { text: `Ждём оплату ${rubles(kopeks)}` }), status]),
+            el("a", { class: "btn btn-block", href: payment.payment_url, target: "_blank", rel: "noopener" }, "Открыть страницу оплаты ещё раз"),
+            el("button", { class: "btn-ghost btn-block co-back", onclick: () => tick(true) }, "Я оплатил — проверить"),
+        );
+        let attempt = 0;
+        async function tick(manual = false) {
+            timers.forEach(clearTimeout);
+            attempt += 1;
+            try {
+                if (payment.payment_id) await api.checkPending(methodId, payment.payment_id);
+            } catch {
+                // деньги ещё не дошли
+            }
+            await ctx.refresh().catch(() => { });
+            if (Number(ctx.balance() ?? 0) > start) {
+                stepDone();
+                return;
+            }
+            if (manual) status.textContent = "Пока не видим оплату. Если вы уже заплатили — подождите минуту, банк иногда задерживает.";
+            if (attempt < 80) timers.push(setTimeout(tick, attempt < 20 ? 4000 : 15000));
+        }
+        timers.push(setTimeout(tick, 4000));
+    };
+
+    const stepDone = () => {
+        setStep(3);
+        ctx.after?.();
+        clear(body).append(
+            el("div", { class: "co-wait" }, [
+                el("span", { class: "co-ok", text: "✓" }),
+                el("h3", { text: "Пополнено!" }),
+                el("p", { class: "muted", text: `На счёте ${rubles(ctx.balance() ?? 0)}.` }),
+            ]),
+            el("button", { class: "primary btn-block", onclick: close }, "Готово"),
+        );
+    };
+
+    stepAmount();
+}
+
 export async function openCheckout({ kind, sub = null, offer = null }, ctx) {
     const shade = el("div", { class: "co-shade" });
     const box = el("div", { class: "co", role: "dialog", "aria-modal": "true" });
