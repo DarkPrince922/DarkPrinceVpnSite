@@ -15,6 +15,8 @@
 
 html {
     scroll-behavior: smooth;
+    /* карта в герое шире экрана — вбок страница прокручиваться не должна */
+    overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -194,6 +196,25 @@ img {
     top: 18vw;
     background: radial-gradient(circle, rgba(70, 110, 255, 0.22), transparent 66%);
     animation: drift-b 32s ease-in-out infinite alternate;
+}
+
+/* карта из точек: на всех страницах — еле заметно, сверху */
+.scene .world {
+    position: absolute;
+    left: 50%;
+    top: -40px;
+    width: max(1600px, 120vw);
+    height: auto;
+    max-width: none;
+    transform: translateX(-50%);
+    opacity: 0.22;
+    -webkit-mask-image: linear-gradient(#000 30%, transparent 75%);
+    mask-image: linear-gradient(#000 30%, transparent 75%);
+}
+
+/* на главной карта стоит в самом герое, ярче — фоновая не нужна */
+body:has(.hero-map) .scene .world {
+    display: none;
 }
 
 @keyframes drift-a {
@@ -406,6 +427,46 @@ img {
 .trust span {
     font-size: 14px;
     color: var(--muted);
+}
+
+.hero-text,
+.hero-phone {
+    position: relative;
+    z-index: 1;
+}
+
+/* Карта под героем: ярче всего между текстом и телефоном, где Европа, к левому
+   краю и вниз растворяется — текст на ней читается. */
+/* Слой во всю ширину экрана, а не колонки: карта шире колонки, и её края
+   обрезаются здесь — страница вбок не прокручивается. */
+.hero-bg {
+    position: absolute;
+    z-index: 0;
+    left: 50%;
+    top: -110px;
+    width: 100vw;
+    height: 1100px;
+    transform: translateX(-50%);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-map {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: max(1600px, 125vw);
+    max-width: none;
+    height: auto;
+    transform: translateX(-50%);
+    opacity: 0.75;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35) 30%, #000 52%, #000 80%, transparent),
+        linear-gradient(transparent 4%, #000 22%, #000 68%, transparent 92%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35) 30%, #000 52%, #000 80%, transparent),
+        linear-gradient(transparent 4%, #000 22%, #000 68%, transparent 92%);
+    mask-composite: intersect;
 }
 
 /* ---- телефон с главным экраном приложения ---- */
@@ -972,6 +1033,14 @@ section {
 @media (max-width: 900px) {
     .hero {
         grid-template-columns: 1fr;
+    }
+
+    .hero-map {
+        width: 1100px;
+        top: 60px;
+        opacity: 0.32;
+        -webkit-mask-image: linear-gradient(transparent, #000 20%, #000 50%, transparent 80%);
+        mask-image: linear-gradient(transparent, #000 20%, #000 50%, transparent 80%);
     }
 
     .top-nav {
