@@ -18,12 +18,16 @@ import "../styles/cabinet.css";
     noindex
     referrer="strict-origin-when-cross-origin"
 >
+    {/*
+      Один логотип на странице: пока виден вход, крупный логотип стоит над
+      формой, а в шапке — ссылка на главную. После входа логотип в шапке.
+    */}
     <header class="top">
         <div class="wrap">
-            <a class="brand" href="/">
-                <img src="/assets/logo.png" alt="" width="32" height="32" />
-                <span>DarkPrince <i>VPN</i></span>
+            <a class="brand" href="/" aria-label="DarkPrince VPN — на главную">
+                <img src="/assets/wordmark.png" alt="DarkPrince VPN" width="164" height="38" />
             </a>
+            <a class="back" href="/">← На главную</a>
             <div class="spacer"></div>
             <span class="chip gold hidden" id="balanceChip">—</span>
             <button class="btn btn-sm btn-ghost hidden" id="logoutButton">Выйти</button>
@@ -31,9 +35,10 @@ import "../styles/cabinet.css";
     </header>
 
     <section class="auth-wrap" id="authView">
-        <div class="card">
-            <h2 id="authTitle" style="text-align:center">Вход в кабинет</h2>
-            <p class="small muted" style="text-align:center">
+        <img class="auth-logo" src="/assets/wordmark.png" alt="DarkPrince VPN" width="360" height="84" />
+        <div class="auth-card">
+            <h2 id="authTitle">Вход в кабинет</h2>
+            <p class="small muted auth-lead">
                 Если вы покупали подписку у бота — входите через Telegram, всё подтянется само.
             </p>
 
@@ -79,9 +84,6 @@ import "../styles/cabinet.css";
             </div>
         </div>
 
-        <p class="tiny muted" style="text-align:center;margin-top:16px">
-            <a href="/">← На главную</a>
-        </p>
     </section>
 
     <section class="wrap app-wrap hidden" id="appView" style="padding-top:22px;padding-bottom:48px">

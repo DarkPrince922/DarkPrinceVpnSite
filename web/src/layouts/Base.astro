@@ -13,9 +13,14 @@ interface Props {
      * узнаёт сайт по Referer: без него отвечает «origin required».
      */
     referrer?: string;
+    /**
+     * Логотип в шапке. Страницы, где крупный логотип стоит над формой
+     * (вход, приглашение, новый пароль), его выключают: на странице — один логотип.
+     */
+    logo?: boolean;
 }
 
-const { title, description, chrome = true, noindex = false, referrer } = Astro.props;
+const { title, description, chrome = true, noindex = false, referrer, logo = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,31 +30,16 @@ const { title, description, chrome = true, noindex = false, referrer } = Astro.p
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
         <meta name="description" content={description} />
-        <meta name="theme-color" content="#070a12" />
+        <meta name="theme-color" content="#050a0f" />
         <link rel="icon" href="/assets/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png" />
         <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
         {noindex && <meta name="robots" content="noindex" />}
         {referrer && <meta name="referrer" content={referrer} />}
 
-        {/*
-          Гарнитуры лежат у нас же и грузятся сразу: без preload первый экран
-          успевает нарисоваться системным шрифтом и потом дёргается.
-        */}
-        <link
-            rel="preload"
-            href="/fonts/unbounded-cyrillic-700-normal.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
-        <link
-            rel="preload"
-            href="/fonts/golos-text-cyrillic-400-normal.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
+        {/* Шрифт грузится сразу: без preload первый экран рисуется системным и дёргается. */}
+        <link rel="preload" href="/fonts/inter-regular.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/inter-bold.woff2" as="font" type="font/woff2" crossorigin />
 
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -69,15 +59,22 @@ const { title, description, chrome = true, noindex = false, referrer } = Astro.p
             chrome && (
                 <header class="top">
                     <div class="wrap">
-                        <a class="brand" href="/">
-                            <img src="/assets/logo.png" alt="" width="32" height="32" />
-                            <span>
-                                DarkPrince <i>VPN</i>
-                            </span>
-                        </a>
+                        {logo ? (
+                            <a class="brand" href="/" aria-label="DarkPrince VPN — на главную">
+                                <img src="/assets/wordmark.png" alt="DarkPrince VPN" width="164" height="38" />
+                            </a>
+                        ) : (
+                            <a class="back" href="/">← На главную</a>
+                        )}
                         <div class="spacer" />
+                        <nav class="top-nav">
+                            <a href="/#downloads">Приложения</a>
+                            <a href="/#install">Как начать</a>
+                            <a href="/help.html">Справка</a>
+                        </nav>
                         <a class="btn btn-sm" href="/cabinet.html">
-                            Личный кабинет
+                            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
+                            Кабинет
                         </a>
                     </div>
                 </header>
@@ -98,23 +95,18 @@ const { title, description, chrome = true, noindex = false, referrer } = Astro.p
             chrome && (
                 <footer class="bottom">
                     <div class="wrap">
+                        <span class="muted">DarkPrince VPN</span>
                         <nav>
                             <a href="/help.html">Справка</a>
-                            <a href="/cabinet.html">Личный кабинет</a>
                             <a href="/cabinet.html#support">Поддержка</a>
                             <a href="/privacy.html">Конфиденциальность</a>
                             <a href="/terms.html">Условия</a>
                         </nav>
-                        <p class="tiny">
-                            Вопросы и помощь с подключением —{" "}
-                            <a href="https://t.me/skzfeee" target="_blank" rel="noopener">
-                                @skzfeee
-                            </a>{" "}
-                            в Telegram
-                        </p>
-                        <p class="tiny" style="margin-top:6px">
-                            © {new Date().getFullYear()} DarkPrince VPN
-                        </p>
+                        <span class="muted">
+                            Помощь —{" "}
+                            <a href="https://t.me/skzfeee" target="_blank" rel="noopener">@skzfeee</a>
+                            {" "}· © {new Date().getFullYear()}
+                        </span>
                     </div>
                 </footer>
             )
