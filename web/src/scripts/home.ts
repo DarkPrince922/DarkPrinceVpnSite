@@ -37,6 +37,16 @@ if (!calmly && "IntersectionObserver" in window) {
     }
 }
 
+// шаги внутри системы: слева список, справа «что вы увидите»
+for (const panel of $$<HTMLElement>(".guide")) {
+    const show = (n: number) => {
+        for (const step of $$<HTMLElement>(".g-step", panel)) step.classList.toggle("on", step.dataset.step === String(n));
+        for (const card of $$<HTMLElement>(".g-show", panel)) card.classList.toggle("on", card.dataset.show === String(n));
+    };
+    for (const step of $$<HTMLElement>(".g-step", panel)) step.addEventListener("click", () => show(Number(step.dataset.step)));
+    for (const next of $$<HTMLElement>(".g-next", panel)) next.addEventListener("click", () => show(Number(next.dataset.next)));
+}
+
 // вкладки инструкций
 const tabs = $$<HTMLButtonElement>(".tabs button");
 for (const button of tabs) {
@@ -92,7 +102,7 @@ if (platform && main) {
 // Поэтому кнопка не качает сразу, а открывает окно с выбором.
 const picker = $<HTMLDialogElement>("#linuxPicker");
 if (typeof picker?.showModal === "function") {
-    for (const button of [$<HTMLAnchorElement>("#dlLinux"), main]) {
+    for (const button of [$<HTMLAnchorElement>("#dlLinux"), $<HTMLAnchorElement>("#guideLinux"), main]) {
         button?.addEventListener("click", (event) => {
             // главная кнопка ведёт на Linux только у гостей с Linux
             if (button.id === "mainDownload" && platform !== "linux") return;

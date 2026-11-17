@@ -1135,3 +1135,358 @@ p.mono {
     color: var(--accent);
     font-size: 13px;
 }
+
+/* ================= окно оплаты: срок → оплата → готово ================= */
+
+body.co-open {
+    overflow: hidden;
+}
+
+.co-shade {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 5vh 16px 24px;
+    overflow-y: auto;
+    background: rgba(3, 6, 10, 0.72);
+    backdrop-filter: blur(8px);
+    animation: co-fade 0.2s ease;
+}
+
+@keyframes co-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+.co {
+    width: 100%;
+    max-width: 540px;
+    padding: 22px 24px 26px;
+    border-radius: 28px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    animation: co-up 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes co-up {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+}
+
+.co-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.co-head b {
+    flex: 1;
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.co-x {
+    width: 38px;
+    height: 38px;
+    min-height: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--wash);
+}
+
+/* шаги сверху: где вы сейчас */
+.co-steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 22px;
+}
+
+.co-steps span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.co-steps em {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--wash);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.co-steps span.on {
+    color: var(--text);
+}
+
+.co-steps span.on em {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.co-steps span.done em {
+    background: rgba(95, 240, 223, 0.16);
+    color: var(--accent);
+}
+
+.co-steps i {
+    flex: 1;
+    min-width: 12px;
+    height: 1px;
+    background: var(--line);
+}
+
+.co-body h3 {
+    margin: 0 0 4px;
+    font-size: 26px;
+    letter-spacing: -0.03em;
+}
+
+.co-sub {
+    margin: 0 0 4px;
+}
+
+.co-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+/* строка выбора: срок или способ оплаты */
+.co-opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 0;
+    padding: 16px 18px;
+    border-radius: 20px;
+    border: 1.5px solid var(--line);
+    background: var(--glass);
+    text-align: left;
+    font-weight: 400;
+}
+
+.co-opt:hover {
+    border-color: rgba(95, 240, 223, 0.4);
+}
+
+.co-opt.on {
+    border-color: var(--accent);
+    background: linear-gradient(90deg, rgba(95, 240, 223, 0.12), rgba(255, 255, 255, 0.04));
+}
+
+.co-opt .grow {
+    flex: 1;
+    min-width: 0;
+}
+
+.co-opt b {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.co-opt .grow > span {
+    display: block;
+    margin-top: 2px;
+    font-size: 13.5px;
+    color: var(--muted);
+}
+
+.co-rad {
+    width: 22px;
+    height: 22px;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    transition: border-width 0.2s, border-color 0.2s;
+}
+
+.co-opt.on .co-rad {
+    border: 7px solid var(--accent);
+}
+
+.co-price {
+    font-size: 19px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.co-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 9px;
+    border-radius: 99px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 11.5px;
+    font-weight: 700;
+    vertical-align: 2px;
+}
+
+/* значок способа оплаты */
+.co-pm {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 800;
+    background: var(--wash);
+}
+
+.co-pm.sbp {
+    background: linear-gradient(135deg, #5b57d1, #1d9bf0, #22c55e);
+    color: #fff;
+}
+
+.co-pm.bank {
+    background: linear-gradient(135deg, #2b3a4a, #46607a);
+    font-size: 20px;
+}
+
+.co-pm.crypto {
+    background: #26a17b;
+    color: #fff;
+    font-size: 18px;
+}
+
+.co-pm.stars {
+    background: linear-gradient(135deg, #ffd257, #ff9f1c);
+    color: #3a2600;
+    font-size: 18px;
+}
+
+/* итог */
+.co-sum {
+    padding: 6px 4px 0;
+}
+
+.co-sum .kv {
+    font-size: 15px;
+}
+
+.co-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
+}
+
+.co-total b {
+    font-size: 32px;
+    letter-spacing: -0.04em;
+}
+
+.co-go {
+    margin-top: 16px;
+    min-height: 56px;
+    font-size: 16.5px;
+}
+
+.co-back {
+    margin-top: 6px;
+    width: 100%;
+}
+
+.co-note:empty,
+.co-extra:empty {
+    display: none;
+}
+
+.co-note,
+.co-extra {
+    margin: 10px 0 0;
+    text-align: center;
+}
+
+/* ждём деньги / готово */
+.co-wait {
+    padding: 8px 0 18px;
+    text-align: center;
+}
+
+.co-wait p {
+    margin: 6px auto 0;
+    max-width: 34ch;
+}
+
+.co-ring {
+    display: block;
+    width: 72px;
+    height: 72px;
+    margin: 4px auto 18px;
+    border-radius: 50%;
+    border: 4px solid var(--wash);
+    border-top-color: var(--accent);
+    animation: co-spin 0.9s linear infinite;
+}
+
+@keyframes co-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.co-ok {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin: 4px auto 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 38px;
+    font-weight: 800;
+    box-shadow: 0 0 0 10px rgba(95, 240, 223, 0.14);
+    animation: co-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes co-pop {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .co-shade {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .co {
+        max-width: none;
+        border-radius: 28px 28px 0 0;
+        padding: 18px 18px 24px;
+    }
+
+    .co-steps span:not(.on) {
+        font-size: 0;
+        gap: 0;
+    }
+}

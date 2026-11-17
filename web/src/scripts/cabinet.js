@@ -15,6 +15,7 @@ import {
 } from "./subscription-tools.js";
 import { loadPending, clearPending, completePending } from "./pending.js";
 import { toast, openTab } from "./ui.js";
+import { openCheckout } from "./checkout.js";
 import { renderBonus, invalidateBonus, promoStrip } from "./bonus.js";
 import { docsCard } from "./docs.js";
 import { startEvents, stopEvents } from "./events.js";
@@ -605,70 +606,10 @@ function subscriptionCard(sub) {
     renewBox.append(
         el("button", {
             class: "primary",
-            onclick: (event) => loadRenewal(renewBox, event.currentTarget, sub),
+            onclick: () => openCheckout({ kind: "renew", sub }, checkoutCtx),
         }, "Продлить подписку")
     );
     return card;
-}
-
-async function loadRenewal(box, button, sub) {
-    await busy(button, async () => {
-        let options = [];
-        try {
-            const data = await api.renewalOptions(sub.id);
-            options = asArray(data, ["options", "items"])
-                .map((item) => ({
-                    days: Number(item.period_days ?? item.days),
-                    price: Number(item.price_kopeks ?? item.price),
-                    highlighted: item.is_highlighted === true,
-                }))
-                .filter((item) => Number.isFinite(item.days) && Number.isFinite(item.price))
-                .sort((a, b) => a.days - b.days);
-        } catch (error) {
-            clear(box).append(el("p", { class: "small danger", text: error.message }));
-            return;
-        }
-
-        clear(box);
-        if (!options.length) {
-            box.append(el("p", {
-                class: "small muted",
-                text: "Продление для этой подписки сейчас недоступно.",
-            }));
-            return;
-        }
-
-        box.append(el("p", { class: "section-title", text: "На какой срок продлить" }));
-        const note = el("p", { class: "small muted" });
-        const row = el("div", { class: "periods" });
-        for (const option of options) {
-            row.append(el("button", {
-                class: "btn-sm",
-                onclick: async (event) => {
-                    if (!confirm(`Продлить на ${periodText(option.days)} за ${rubles(option.price)}? Сумма спишется с баланса.`)) return;
-                    await busy(event.currentTarget, async () => {
-                        try {
-                            await api.renew(option.days, sub.id);
-                            note.className = "small ok";
-                            note.textContent = "Подписка продлена.";
-                            await Promise.all([loadBalance(), renderSubscription()]);
-                        } catch (error) {
-                            if (isNotEnough(error)) {
-                                await goTopUp(error, {
-                                    kind: "renew", subscriptionId: sub.id, periodDays: option.days, price: option.price,
-                                    title: `${sub.tariff_name || "Подписка"} · продление на ${periodText(option.days)}`,
-                                }, () => (balanceLoaded = false));
-                                return;
-                            }
-                            note.className = "small danger";
-                            note.textContent = error.message;
-                        }
-                    });
-                },
-            }, `${option.highlighted ? "★ " : ""}${periodText(option.days)} — ${rubles(option.price)}`));
-        }
-        box.append(row, note);
-    });
 }
 
 function connectionCard(sub) {
@@ -830,31 +771,22 @@ function tariffCard(offer) {
         el("button", {
             class: "primary btn-block",
             style: "margin-top:12px",
-            onclick: async (event) => {
-                if (!confirm(`Купить «${offer.name}» на ${periodText(selected.days)} за ${rubles(selected.price)}?`)) return;
-                await busy(event.currentTarget, async () => {
-                    try {
-                        await api.purchaseTariff(offer.id, selected.days);
-                        note.className = "small ok";
-                        note.textContent = "Готово! Подписка активна.";
-                        await Promise.all([loadBalance(), renderSubscription()]);
-                    } catch (error) {
-                        if (isNotEnough(error)) {
-                            await goTopUp(error, {
-                                kind: "buy", tariffId: offer.id, periodDays: selected.days, price: selected.price,
-                                title: `${offer.name} · ${periodText(selected.days)}`,
-                            }, () => (balanceLoaded = false));
-                            return;
-                        }
-                        note.className = "small danger";
-                        note.textContent = error.message;
-                    }
-                });
-            },
-        }, "Купить"),
+            // срок, способ оплаты и итог — в окне оплаты
+            onclick: () => openCheckout({ kind: "buy", offer: { ...offer, periods: [selected, ...offer.periods.filter((p) => p !== selected)].sort((a, b) => a.days - b.days).map((p) => ({ ...p, highlighted: p === selected })) } }, checkoutCtx),
+        }, "Выбрать"),
         note,
     ]);
 }
+
+/** Окну оплаты: баланс, его перечитывание и что обновить после оплаты. */
+const checkoutCtx = {
+    balance: () => state.balanceKopeks,
+    refresh: () => loadBalance(),
+    after: () => {
+        balanceLoaded = false;
+        renderSubscription();
+    },
+};
 
 // ================= баланс =================
 

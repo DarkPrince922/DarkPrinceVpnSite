@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { guide } from "../data-guide";
 
 /**
  * Приложения по платформам. Ссылки и подписи под кнопками подменяет
@@ -136,39 +137,74 @@ const builds = [
 
         {/* Витрина: главный экран приложения. Картинкой не делаем — так он
             чёткий на любом экране и весит меньше любого скриншота. */}
-        <div class="hero-phone" aria-hidden="true">
-            <div class="phone">
-                <div class="ph-head"><span>DARKPRINCE</span><b>🇩🇪 Франкфурт · 00:42:24</b></div>
-                <div class="ph-hero">
-                    <div class="ph-disc">
-                        <svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" /></svg>
+        {/* Живой макет приложения: кнопку можно нажать, сервер — выбрать,
+            вкладки — переключить. Ведёт его phone.ts, данные условные. */}
+        <div class="hero-phone">
+            <div class="phone" id="demoPhone" data-on="1">
+                <div class="ph-head"><span>DARKPRINCE</span><b id="phConn">🇩🇪 Франкфурт · 00:42:24</b></div>
+
+                <div class="ph-screen on" data-screen="home">
+                    <div class="ph-hero">
+                        <button class="ph-disc" id="phPower" aria-label="Подключиться или отключиться">
+                            <svg class="ic on-ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /><path d="M8.8 12.2l2.3 2.3 4.2-4.4" /></svg>
+                            <svg class="ic off-ic" viewBox="0 0 24 24"><path d="M12 3v9" /><path d="M17.7 6.8a8 8 0 1 1-11.4 0" /></svg>
+                            <i class="ph-arc"></i>
+                        </button>
+                        <div><b id="phTitle">Защищено</b><span id="phLine">↓ 1,24 ГБ · ↑ 86,3 МБ</span></div>
                     </div>
-                    <div><b>Защищено</b><span>↓ 1,24 ГБ · ↑ 86,3 МБ</span></div>
+                    <div class="ph-card">
+                        <span class="ph-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /></svg></span>
+                        <div><b>Премиум</b><span>до 10.12</span></div>
+                        <span class="chip">23 дня</span>
+                    </div>
+                    <div class="ph-lh"><span>СЕРВЕРЫ · 5</span><span><button class="ph-chip" id="phPing">Пинг</button><button class="ph-chip" id="phRefresh" aria-label="Обновить">↻</button></span></div>
+                    <div class="ph-list" id="phList">
+                        {
+                            demo.map(([flag, name, tags, ping], index) => (
+                                <button class={index === 0 ? "ph-row sel" : "ph-row"} data-flag={flag} data-city={String(name).split(" · ")[1]}>
+                                    <span class="ph-flag">{flag}</span>
+                                    <div><b>{name}</b><span>{tags}</span></div>
+                                    <em data-ping={ping}>{ping}<small>мс</small></em>
+                                </button>
+                            ))
+                        }
+                    </div>
                 </div>
-                <div class="ph-card">
-                    <span class="ph-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z" /></svg></span>
-                    <div><b>Премиум</b><span>до 10.12</span></div>
-                    <span class="chip">23 дня</span>
+
+                <div class="ph-screen" data-screen="plans">
+                    <div class="ph-title">Тарифы</div>
+                    <div class="ph-list">
+                        <div class="ph-row"><div><b>Базовый</b><span>50 ГБ · 2 устройства</span></div><em class="ph-price">149 ₽</em></div>
+                        <div class="ph-row sel"><div><b>Премиум</b><span>Безлимит · 5 устройств</span></div><em class="ph-price">299 ₽</em></div>
+                        <div class="ph-row"><div><b>Семья</b><span>Безлимит · 10 устройств</span></div><em class="ph-price">499 ₽</em></div>
+                    </div>
+                    <div class="ph-btn">Продлить за 299 ₽</div>
                 </div>
-                <div class="ph-lh"><span>СЕРВЕРЫ · 6</span><span><i>Пинг</i><i>↻</i></span></div>
-                <div class="ph-list">
-                    {
-                        demo.map(([flag, name, tags, ping]) => (
-                            <div class="ph-row">
-                                <span class="ph-flag">{flag}</span>
-                                <div><b>{name}</b><span>{tags}</span></div>
-                                <em>{ping}<small>мс</small></em>
-                            </div>
-                        ))
-                    }
+
+                <div class="ph-screen" data-screen="balance">
+                    <div class="ph-title">Баланс</div>
+                    <div class="ph-card ph-money"><span>На счёте</span><b>1 245 ₽</b></div>
+                    <div class="ph-keys">{["300 ₽", "500 ₽", "1000 ₽"].map((sum) => <span>{sum}</span>)}</div>
+                    <div class="ph-btn">Пополнить</div>
                 </div>
-                <div class="ph-dock">
-                    <span class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /></svg>Главная</span>
-                    <span><svg class="ic" viewBox="0 0 24 24"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H7" /><circle cx="9.5" cy="19" r="1.3" /><circle cx="17" cy="19" r="1.3" /></svg></span>
-                    <span><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3" /><path d="M3 10h18" /></svg></span>
-                    <span><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1" /></svg></span>
+
+                <div class="ph-screen" data-screen="more">
+                    <div class="ph-title">Ещё</div>
+                    <div class="ph-list">
+                        {["Приложения через VPN", "Подключённые устройства", "Пригласить друга", "Техподдержка"].map((row) => (
+                            <div class="ph-row"><div><b>{row}</b></div><em>›</em></div>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="ph-dock" id="phDock">
+                    <button class="on" data-go="home"><svg class="ic" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /></svg><span>Главная</span></button>
+                    <button data-go="plans"><svg class="ic" viewBox="0 0 24 24"><path d="M3 4h2.5l2.2 10.5h10.3l2-7.5H7" /><circle cx="9.5" cy="19" r="1.3" /><circle cx="17" cy="19" r="1.3" /></svg><span>Тарифы</span></button>
+                    <button data-go="balance"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3" /><path d="M3 10h18" /></svg><span>Баланс</span></button>
+                    <button data-go="more"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M5.5 18.5l2.1-2.1M16.4 7.6l2.1-2.1" /></svg><span>Ещё</span></button>
                 </div>
             </div>
+            <p class="ph-hint">Это живой макет — нажмите на кнопку или выберите сервер</p>
         </div>
     </section>
 
@@ -217,116 +253,65 @@ const builds = [
     <section class="wrap" id="install">
         <div class="section-head">
             <p class="eyebrow">Как начать</p>
-            <h2>Три шага до подключения</h2>
+            <h2>Подключение за 3 минуты</h2>
             <p>
-                Вкладка откроется на вашей системе — её мы определяем сами. Подробнее, с
-                разбором частых заминок, — в <a href="/help.html">справке</a>.
+                Вкладку вашей системы мы выбрали сами. У каждого шага — то, что вы увидите на экране, и
+                обведено, что нажать. Подробнее — в <a href="/help.html">справке</a>.
             </p>
         </div>
 
-        <div class="card">
-            <div class="tabs" role="tablist">
-                <button role="tab" aria-selected="true" data-tab="android">Android</button>
-                <button role="tab" aria-selected="false" data-tab="ios">iPhone</button>
-                <button role="tab" aria-selected="false" data-tab="windows">Windows</button>
-                <button role="tab" aria-selected="false" data-tab="linux">Linux</button>
-            </div>
-
-            <ol class="steps" data-panel="android">
-                <li>
-                    <b>Скачайте APK</b> кнопкой выше. Android спросит разрешение на установку из
-                    этого источника — его нужно дать: приложения нет в Google Play, и это нормально
-                    для VPN.
-                </li>
-                <li>
-                    <b>Установите и откройте.</b> Войдите через Telegram — если вы уже покупали
-                    подписку у бота, всё подтянется само.
-                </li>
-                <li>
-                    <b>Нажмите кнопку подключения</b> и разрешите создание VPN-профиля. Это системный
-                    запрос Android, он появится один раз.
-                </li>
-            </ol>
-
-            <ol class="steps hidden" data-panel="ios">
-                <li>
-                    <b>Установите INCY</b> из
-                    <a href="https://apps.apple.com/app/id6756943388" target="_blank" rel="noopener"
-                        >App Store</a
-                    >. Приложение бесплатное. Если в вашем App Store его не видно, переключите страну
-                    аккаунта — приложение доступно не во всех регионах.
-                </li>
-                <li>
-                    <b>Скопируйте ссылку подписки</b> в
-                    <a href="/cabinet.html">личном кабинете</a>, раздел «Подключение». Там же есть
-                    QR-код — его можно отсканировать с другого устройства.
-                </li>
-                <li>
-                    <b>В INCY откройте подписки</b> и добавьте новую по ссылке: приложение принимает
-                    ссылку из буфера обмена и QR-код. Список серверов подтянется сам.
-                </li>
-                <li>
-                    <b>Выберите сервер и подключитесь.</b> iOS один раз спросит разрешение на добавление
-                    VPN-конфигурации — его нужно дать.
-                </li>
-            </ol>
-
-            <ol class="steps hidden" data-panel="windows">
-                <li>
-                    <b>Запустите установщик.</b> Windows покажет предупреждение SmartScreen — программа
-                    не подписана сертификатом. Нажмите «Подробнее» → «Выполнить в любом случае». Всё
-                    нужное, включая ядро, уже внутри — доскачивать ничего не надо.
-                </li>
-                <li>
-                    <b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте. Список
-                    серверов и подписка подтянутся сами.
-                </li>
-                <li>
-                    <b>Выберите режим.</b> «Прокси» работает без прав администратора и подходит
-                    браузерам. «Весь трафик» перехватывает всё, включая игры и торренты, — для него
-                    приложение попросит перезапуск от администратора.
-                </li>
-                <li>
-                    <b>Закрытие окна не выключает VPN.</b> Крестик спросит: свернуть в трей (значок у
-                    часов) или выйти совсем. Подключиться и отключиться можно прямо из меню значка.
-                </li>
-            </ol>
-
-            <ol class="steps hidden" data-panel="linux">
-                <li>
-                    <b>Выберите дистрибутив.</b> Кнопка выше открывает окно с тремя сборками: пакет для
-                    Arch, .deb для Ubuntu и Debian, AppImage для всего остального. Приложение во всех
-                    одно и то же — отличается только упаковка.
-                </li>
-                <li>
-                    <b>Поставьте пакет.</b> На Arch —
-                    <span class="mono">sudo pacman -U DarkPrinceVPN.pkg.tar.zst</span>, на Ubuntu и
-                    Debian — <span class="mono">sudo apt install ./DarkPrinceVPN.deb</span>. И там, и
-                    там зависимости подтянутся сами, а ярлык появится в меню. AppImage ставить не
-                    нужно: сделайте файл исполняемым (<span class="mono">chmod +x</span> или свойства
-                    файла → «Разрешить выполнение») и запускайте.
-                </li>
-                <li>
-                    <b>Войдите</b> через Telegram или по почте — тем же аккаунтом, что и в боте.
-                </li>
-                <li>
-                    <b>Выберите режим.</b> «Прокси» работает без пароля и настраивает прокси рабочего
-                    стола. «Весь трафик» перехватывает всё, включая консольные программы, — система
-                    один раз спросит пароль.
-                </li>
-                <li>
-                    <b>Не хотите наше приложение?</b> Подписка в обычном формате, подойдёт
-                    <a href="https://github.com/Mahdi-zarei/nekoray/releases" target="_blank" rel="noopener"
-                        >Nekoray</a
-                    >,
-                    <a href="https://github.com/v2rayA/v2rayA" target="_blank" rel="noopener">v2rayA</a>
-                    или
-                    <a href="https://github.com/hiddify/hiddify-app/releases" target="_blank" rel="noopener"
-                        >Hiddify</a
-                    >. Ссылку возьмёте в кабинете.
-                </li>
-            </ol>
+        <div class="g-tabs tabs" role="tablist">
+            {
+                Object.entries(guide).map(([key, item], index) => (
+                    <button role="tab" data-tab={key} aria-selected={String(index === 0)}>
+                        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" set:html={icons[key]} />
+                        <span>{item.name}</span>
+                    </button>
+                ))
+            }
         </div>
+
+        {
+            Object.entries(guide).map(([key, item], index) => (
+                <div class={index === 0 ? "guide" : "guide hidden"} data-panel={key}>
+                    <ol class="g-steps">
+                        {item.steps.map((step, n) => (
+                            <li>
+                                <button class={n === 0 ? "g-step on" : "g-step"} data-step={n}>
+                                    <span class="g-n">{n + 1}</span>
+                                    <span class="g-t"><b>{step.title}</b><span>{step.sub}</span></span>
+                                    <svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+                                </button>
+                            </li>
+                        ))}
+                    </ol>
+                    <div class="g-shows">
+                        {item.steps.map((step, n) => (
+                            <div class={n === 0 ? "g-show on" : "g-show"} data-show={n}>
+                                <h3>{step.head}</h3>
+                                <p>{step.text}</p>
+                                <div class="g-shot" set:html={step.shot} />
+                                <div class="g-actions">
+                                    {step.action && (
+                                        <a
+                                            class="btn btn-primary"
+                                            href={step.action.href}
+                                            id={step.action.id}
+                                            {...(step.action.external ? { target: "_blank", rel: "noopener" } : {})}
+                                        >
+                                            {step.action.text}
+                                        </a>
+                                    )}
+                                    {n < item.steps.length - 1 && (
+                                        <button class="btn g-next" data-next={n + 1}>Дальше →</button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))
+        }
     </section>
 
     <section class="wrap" id="ios-note">
@@ -379,4 +364,5 @@ const builds = [
     </dialog>
 
     <script src="../scripts/home.ts"></script>
+    <script src="../scripts/phone.ts"></script>
 </Base>
