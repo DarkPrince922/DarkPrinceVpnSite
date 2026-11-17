@@ -31,9 +31,12 @@ export function clear(node) {
 
 export function rubles(kopeks) {
     const value = Number(kopeks || 0) / 100;
-    const text = Math.abs(value - Math.round(value)) < 0.005
-        ? value.toFixed(0)
-        : value.toFixed(2);
+    const whole = Math.abs(value - Math.round(value)) < 0.005;
+    // по-русски: «1 245,50 ₽», а не «1245.5 ₽»
+    const text = value.toLocaleString("ru-RU", {
+        minimumFractionDigits: whole ? 0 : 2,
+        maximumFractionDigits: whole ? 0 : 2,
+    });
     return `${text} ₽`;
 }
 
@@ -81,7 +84,7 @@ export function periodText(days) {
 }
 
 export const gb = (value) =>
-    value === null || value === undefined ? "∞" : `${Number(value).toFixed(1)} ГБ`;
+    value === null || value === undefined ? "∞" : `${Number(value).toFixed(1).replace(".", ",")} ГБ`;
 
 // ---------- взаимодействие ----------
 

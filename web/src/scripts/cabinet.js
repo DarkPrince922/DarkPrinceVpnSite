@@ -1,6 +1,6 @@
 // Личный кабинет: вход, подписка, тарифы, баланс, устройства, поддержка.
 
-import { api, session, ApiError, asArray, parseTariffs, parsePaymentMethods } from "./api.js";
+import { api, session, ApiError, asArray, parseTariffs } from "./api.js";
 import {
     $, $$, el, clear, rubles, plural, daysWord, daysUntil, dateText, periodText, gb,
     copy, message, busy, qrNode,
@@ -15,7 +15,7 @@ import {
 } from "./subscription-tools.js";
 import { loadPending, clearPending, completePending } from "./pending.js";
 import { toast, openTab } from "./ui.js";
-import { openCheckout } from "./checkout.js";
+import { openCheckout, openTopup } from "./checkout.js";
 import { renderBonus, invalidateBonus, promoStrip } from "./bonus.js";
 import { docsCard } from "./docs.js";
 import { startEvents, stopEvents } from "./events.js";
@@ -490,22 +490,33 @@ function noSubscriptionCard() {
     ]);
 }
 
+/** Подписки плитками: срок и остаток видно сразу, нажатие открывает подписку. */
 function subscriptionPicker(list) {
-    const select = el("select", {
-        onchange: (event) => {
-            state.currentId = Number(event.target.value);
-            // устройства у каждой подписки свои — перечитать при следующем открытии
-            devicesLoaded = false;
-            renderSubscription();
-        },
-    });
+    const grid = el("div", { class: "sub-tiles" });
     for (const sub of list) {
         const name = sub.tariff_name || (sub.is_trial ? "Пробная подписка" : `Подписка #${sub.id}`);
-        select.append(el("option", { value: sub.id, selected: sub.id === state.currentId }, name));
+        const days = sub.days_left ?? daysUntil(sub.end_date);
+        const active = isActive(sub);
+        const tone = !active || days === 0 ? "bad" : days !== null && days <= 7 ? "warn" : "ok";
+        const label = !active ? "неактивна" : days === null ? "активна" : `${days} ${daysWord(days)}`;
+        grid.append(el("button", {
+            class: `sub-tile${sub.id === state.currentId ? " on" : ""}${active ? "" : " off"}`,
+            onclick: () => {
+                if (sub.id === state.currentId) return;
+                state.currentId = sub.id;
+                // устройства у каждой подписки свои — перечитать при следующем открытии
+                devicesLoaded = false;
+                renderSubscription();
+            },
+        }, [
+            el("b", { text: name }),
+            el("span", { text: sub.end_date ? `${active ? "до" : "закончилась"} ${dateText(sub.end_date)}` : "" }),
+            el("i", { class: `tone ${tone}`, text: label }),
+        ]));
     }
-    return el("div", { class: "card" }, [
-        el("p", { class: "section-title", text: "Ваши подписки" }),
-        select,
+    return el("div", { class: "sub-picker" }, [
+        el("p", { class: "section-title", text: `Ваши подписки · ${list.length}` }),
+        grid,
     ]);
 }
 
@@ -516,37 +527,24 @@ function subscriptionCard(sub) {
     const unlimited = limit === null || limit === undefined || Number(limit) === 0;
     const share = unlimited || !limit ? 0 : Math.min(1, used / Number(limit));
 
-    const card = el("div", { class: "card" }, [
-        el("div", { class: "sub-head" }, [
+    const tone = !isActive(sub) || days === 0 ? "bad" : days !== null && days <= 7 ? "warn" : "ok";
+    const card = el("div", { class: "card sub-main" }, [
+        el("div", { class: "sub-top" }, [
+            el("span", { class: "sub-ico", html: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3l7.5 3v5.6c0 4.4-3 8-7.5 9.4-4.5-1.4-7.5-5-7.5-9.4V6z"/></svg>' }),
+            el("div", { class: "grow" }, [
+                el("h2", { text: sub.tariff_name || (sub.is_trial ? "Пробная подписка" : "Подписка") }),
+                el("p", { class: "muted", text: `${isActive(sub) ? "Активна" : "Неактивна"}${sub.end_date ? ` · до ${dateText(sub.end_date)}` : ""}` }),
+            ]),
+            days === null ? null : el("span", { class: `tone big ${tone}`, text: `${days} ${daysWord(days)}` }),
+        ]),
+        el("div", { class: "sub-facts" }, [
             el("div", {}, [
-                el("h2", {
-                    style: "margin-bottom:2px",
-                    text: sub.tariff_name || (sub.is_trial ? "Пробная подписка" : "Подписка"),
-                }),
-                el("p", {
-                    class: "small muted",
-                    style: "margin:0",
-                    text: isActive(sub) ? "Активна" : "Неактивна",
-                }),
+                el("span", { text: "Трафик" }),
+                el("b", { text: unlimited ? gb(used) : `${gb(used)} из ${gb(limit)}` }),
+                unlimited ? el("small", { text: "безлимит" }) : el("div", { class: "bar" }, [el("i", { style: `width:${Math.round(share * 100)}%` })]),
             ]),
-            el("div", { style: "text-align:right" }, [
-                el("div", { class: "days", text: days === null ? "—" : String(days) }),
-                el("div", { class: "tiny muted", text: days === null ? "" : `${daysWord(days)} осталось` }),
-            ]),
-        ]),
-        // при безлимите полоса заполнения только сбивает с толку
-        unlimited ? null : el("div", { class: "bar" }, [el("i", { style: `width:${Math.round(share * 100)}%` })]),
-        el("div", { class: "kv" }, [
-            el("span", { class: "k", text: "Трафик" }),
-            el("span", { text: unlimited ? `${gb(used)} · безлимит` : `${gb(used)} из ${gb(limit)}` }),
-        ]),
-        el("div", { class: "kv" }, [
-            el("span", { class: "k", text: "Устройств по тарифу" }),
-            el("span", { text: sub.device_limit ?? "—" }),
-        ]),
-        el("div", { class: "kv" }, [
-            el("span", { class: "k", text: "Действует до" }),
-            el("span", { text: dateText(sub.end_date) }),
+            el("div", {}, [el("span", { text: "Устройств по тарифу" }), el("b", { text: String(sub.device_limit ?? "—") })]),
+            el("div", {}, [el("span", { text: "Действует до" }), el("b", { text: sub.end_date ? dateText(sub.end_date) : "—" })]),
         ]),
     ]);
 
@@ -605,7 +603,7 @@ function subscriptionCard(sub) {
     card.append(renewBox);
     renewBox.append(
         el("button", {
-            class: "primary",
+            class: "primary btn-block sub-renew",
             onclick: () => openCheckout({ kind: "renew", sub }, checkoutCtx),
         }, "Продлить подписку")
     );
@@ -799,13 +797,6 @@ async function renderBalance(force = false) {
     balanceLoaded = true;
     loading(panel);
 
-    let methods = [];
-    try {
-        methods = parsePaymentMethods(await api.paymentMethods());
-    } catch {
-        // способы оплаты могли не отдаться — покажем это ниже
-    }
-
     clear(panel);
     const pending = loadPending();
     if (pending) {
@@ -819,157 +810,17 @@ async function renderBalance(force = false) {
             }, "Отменить"),
         ]));
     }
-    panel.append(el("div", { class: "card" }, [
-        el("p", { class: "section-title", text: "На счету" }),
-        el("div", { class: "days", text: rubles(state.balanceKopeks ?? 0) }),
-        el("p", {
-            class: "small muted",
-            style: "margin-top:8px",
-            text: "С этого счёта оплачиваются тарифы, продление и дополнительные устройства.",
-        }),
-    ]));
-
     // пришли за недостающей суммой — подставляем её, округлив до рубля
     const prefill = pending ? Math.max(10, Math.ceil(pending.missing / 100)) : 300;
-    panel.append(topupCard(methods, prefill));
+    panel.append(el("div", { class: "card bal-head" }, [
+        el("div", { class: "grow" }, [
+            el("span", { class: "muted", text: "На счёте" }),
+            el("div", { class: "bal-sum", text: rubles(state.balanceKopeks ?? 0) }),
+            el("p", { class: "small muted", text: "С этого счёта оплачиваются тарифы, продление и дополнительные устройства." }),
+        ]),
+        el("button", { class: "primary bal-go", onclick: () => openTopup({ prefill }, { ...checkoutCtx, after: () => renderBalance(true) }) }, "Пополнить"),
+    ]));
     panel.append(transactionsCard());
-}
-
-function topupCard(methods, prefill = 300) {
-    const note = el("p", { class: "small" });
-
-    if (!methods.length) {
-        return el("div", { class: "card" }, [
-            el("h3", { text: "Пополнение" }),
-            el("p", {
-                class: "small muted",
-                text: "Способы оплаты сейчас недоступны. Пополнить баланс можно в Telegram-боте.",
-            }),
-        ]);
-    }
-
-    const amount = el("input", { type: "number", min: "1", step: "1", value: String(prefill) });
-    const method = el("select");
-    for (const item of methods) method.append(el("option", { value: item.key }, item.name));
-
-    const quick = el("div", { class: "amounts" });
-    for (const value of [100, 300, 500, 1000]) {
-        quick.append(el("button", {
-            class: "btn-sm",
-            onclick: () => (amount.value = String(value)),
-        }, `${value} ₽`));
-    }
-
-    const pending = el("div");
-
-    return el("div", { class: "card" }, [
-        el("h3", { text: "Пополнить баланс" }),
-        quick,
-        el("label", { class: "field" }, [el("span", {}, "Сумма, ₽"), amount]),
-        el("label", { class: "field" }, [el("span", {}, "Способ оплаты"), method]),
-        el("button", {
-            class: "primary",
-            onclick: async (event) => {
-                const rublesAmount = Number(amount.value);
-                if (!Number.isFinite(rublesAmount) || rublesAmount <= 0) {
-                    note.className = "small danger";
-                    note.textContent = "Введите сумму.";
-                    return;
-                }
-                const chosen = methods.find((m) => m.key === method.value);
-                const kopeks = Math.round(rublesAmount * 100);
-                if (chosen?.min && kopeks < chosen.min) {
-                    note.className = "small danger";
-                    note.textContent = `Минимальная сумма для этого способа — ${rubles(chosen.min)}.`;
-                    return;
-                }
-                if (chosen?.max && kopeks > chosen.max) {
-                    note.className = "small danger";
-                    note.textContent = `Максимальная сумма для этого способа — ${rubles(chosen.max)}.`;
-                    return;
-                }
-
-                // вкладку открываем заранее: ссылка придёт после запроса, а
-                // окно, открытое позже, браузер посчитает всплывающим
-                const tab = window.open("", "_blank");
-                await busy(event.currentTarget, async () => {
-                    try {
-                        const payment = await api.topup(kopeks, chosen.id, chosen.option);
-                        if (payment.payment_url) {
-                            if (tab) tab.location = payment.payment_url;
-                            else window.open(payment.payment_url, "_blank");
-                            note.className = "small muted";
-                            note.textContent = "Счёт открыт в новой вкладке. После оплаты вернитесь сюда.";
-                            clear(pending).append(pendingBlock(chosen.id, payment.payment_id));
-                            watchPayment(chosen.id, payment.payment_id);
-                        } else {
-                            tab?.close();
-                            note.className = "small muted";
-                            note.textContent = payment.message || "Счёт создан.";
-                        }
-                    } catch (error) {
-                        tab?.close();
-                        note.className = "small danger";
-                        note.textContent = error.message;
-                    }
-                });
-            },
-        }, "Пополнить"),
-        note,
-        pending,
-    ]);
-}
-
-/**
- * Пока висит счёт, сами спрашиваем, дошли ли деньги, — сначала часто, потом
- * реже. Без этого после оплаты приходилось жать «проверить».
- */
-let paymentWatch = null;
-
-function watchPayment(method, paymentId) {
-    if (!paymentId) return;
-    clearTimeout(paymentWatch);
-    const start = state.balanceKopeks;
-    let attempt = 0;
-    const tick = async () => {
-        attempt += 1;
-        try {
-            await api.checkPending(method, paymentId);
-        } catch {
-            // не дошёл ещё — спросим позже
-        }
-        await loadBalance();
-        if (state.balanceKopeks !== start) {
-            toast(`Баланс пополнен: ${rubles(state.balanceKopeks)}`);
-            if (balanceLoaded) renderBalance(true);
-            return;
-        }
-        if (attempt < 40) paymentWatch = setTimeout(tick, attempt < 12 ? 5000 : 15000);
-    };
-    paymentWatch = setTimeout(tick, 5000);
-}
-
-function pendingBlock(method, paymentId) {
-    if (!paymentId) return el("span");
-    const status = el("p", { class: "small muted" });
-    return el("div", { style: "margin-top:12px" }, [
-        el("button", {
-            class: "btn-sm",
-            onclick: async (event) => {
-                await busy(event.currentTarget, async () => {
-                    try {
-                        await api.checkPending(method, paymentId);
-                    } catch {
-                        // платёж мог ещё не дойти — просто перечитаем баланс
-                    }
-                    await loadBalance();
-                    renderBalance(true);
-                    status.textContent = `Баланс обновлён: ${rubles(state.balanceKopeks ?? 0)}`;
-                });
-            },
-        }, "Я оплатил — проверить"),
-        status,
-    ]);
 }
 
 function transactionsCard() {
