@@ -7,13 +7,13 @@
   },
   "windows": {
     "file": "downloads/DarkPrinceVPN-setup.exe",
-    "version": "1.3.7",
-    "size": "17.6 МБ",
-    "date": "16.11.2026"
+    "version": "2.0.0",
+    "size": "17.5 МБ",
+    "date": "17.11.2026"
   },
   "linux": {
-    "version": "1.3.7",
-    "date": "16.11.2026",
+    "version": "2.0.0",
+    "date": "17.11.2026",
     "builds": {
       "arch": {
         "file": "downloads/DarkPrinceVPN.pkg.tar.zst",
@@ -21,7 +21,7 @@
       },
       "deb": {
         "file": "downloads/DarkPrinceVPN.deb",
-        "size": "25.4 МБ"
+        "size": "25.3 МБ"
       },
       "appimage": {
         "file": "downloads/DarkPrinceVPN.AppImage",
